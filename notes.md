@@ -146,3 +146,23 @@ The last `POST` (Clocking) handles both the departure and the arrival of users.
 **Tips**
 
 Use [Postman](https://www.postman.com/downloads/) for routes testing
+
+## Work Done
+
+Please keep this section at end of Project section !
+
+- Create schemas/controllers thanks to the json generator `$> mix phx.gen.json ...`
+- Edit the migration files located at ${PROJECT_ROOT}/priv/repo/migrations/<files_here.exs>` to fill requirements
+- Do the migration `$> mix ecto.migrate`
+- Edit router file locate at ${PROJECT_ROOT}/lib/{PROJECT_NAME}_web/router.ex and edit the "/api" scope as below
+
+```
+scope "/api", TimeManagerWeb do
+  pipe_through :api
+  resources "/users", UserController
+  resources "/clocks", ClockController
+  resources "/workingtimes", WorkingtimeController
+end
+```
+
+**Careful to have the pipe_through as first line of scope**
