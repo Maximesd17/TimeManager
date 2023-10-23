@@ -98,16 +98,51 @@ $> sudo apt-get install erlang-xmerl
 
 # Project
 
-table users:
+## Tables
+
+### users
 - username: string - required - not null
 - email: string - required - not null - "X@X.X" 
 
-table clocks:
+### clocks:
 - time: datetime - required - not null
 - status: boolean - required - true (when clock'in) - not null
 - user: user - required - not null
 
-table workingtimes:
+### workingtimes:
 - start: datetime - required - not null - "YYYY-MM-DD HH:mm:ss"
 - datetime - required - not null - "YYYY-MM-DD HH:mm:ss"
 - user - required - not null
+
+## Routes
+
+**api default route**: `http://localhost:4000/api`
+
+### User
+
+- **GET** /users?email=XXX&username=YYY
+- **GET** /users/:userID
+- **POST** /users
+- **PUT** /users/:userID
+- **DELETE** /users/:userID
+
+### Working Time
+
+- **GET** /workingtimes/:userID?start=XXX&end=YYY
+- **GET** /workingtimes/:userID/:id
+- **POST** /workingtimes/:userID
+- **PUT** /workingtimes/:id
+- **DELETE** /workingtimes/:id
+
+### Clocking
+
+- **GET** /clocks/:userID
+- **POST** /clocks/:userID
+
+**WARNING !!**
+
+The last `POST` (Clocking) handles both the departure and the arrival of users.
+
+**Tips**
+
+Use [Postman](https://www.postman.com/downloads/) for routes testing
