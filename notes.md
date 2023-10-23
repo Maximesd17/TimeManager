@@ -99,15 +99,15 @@ $> sudo apt-get install erlang-xmerl
 # Project
 
 table users:
-    - username: string - required - not null
-    - email: string - required - not null - "X@X.X" 
+- username: string - required - not null
+- email: string - required - not null - "X@X.X" 
 
 table clocks:
-    - time: datetime - required - not null
-    - status: boolean - required - true (when clock'in) - not null
-    - user: user - required - not null
+- time: datetime - required - not null
+- status: boolean - required - true (when clock'in) - not null
+- user: user - required - not null
 
 table workingtimes:
-    - start: datetime - required - not null - "YYYY-MM-DD HH:mm:ss"
-    - end: datetime - required - not null - "YYYY-MM-DD HH:mm:ss"
-    - user: user - required - not null
+- start: datetime - required - not null - "YYYY-MM-DD HH:mm:ss"
+- datetime - required - not null - "YYYY-MM-DD HH:mm:ss"
+- user - required - not null
