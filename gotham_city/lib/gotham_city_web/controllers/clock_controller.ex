@@ -15,14 +15,14 @@ defmodule GothamCityWeb.ClockController do
   def update(conn, %{"userID" => user_id}) do
     user = Accounts.get_user!(user_id)
     now = NaiveDateTime.utc_now()
+    clock = Accounts.get_clock_by_user(user)
 
-    if Accounts.clock_exist_for_user(user) do
-      clock = Accounts.get_clock_by_user(user)
-
+    if clock do
       if clock.status do
         with {:ok, %Clock{} = updated_clock} <-
                Accounts.update_clock(clock, %{"status" => false}) do
-          render(conn, :show, clock: updated_clock)
+                Accounts.create_workingtime(user, %{"start" => clock.time, "end" => now})
+                render(conn, :show, clock: updated_clock)
         end
       else
         with {:ok, %Clock{} = updated_clock} <-
