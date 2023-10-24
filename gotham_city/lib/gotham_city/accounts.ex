@@ -136,6 +136,31 @@ defmodule GothamCity.Accounts do
   end
 
   @doc """
+  Checks if a clock exists for a user.
+
+  ## Examples
+
+      iex> clock_exist_for_user(user)
+      true
+
+      iex> clock_exist_for_user(user)
+      false
+
+  """
+  def clock_exist_for_user(user), do: Repo.exists?(Clock, user: user.id)
+
+  @doc """
+  Gets user's clock.
+
+  ## Examples
+
+      iex> get_clock_by_user(user)
+      [%Clock{}, ...]
+
+  """
+  def get_clock_by_user(user), do: Repo.get_by(Clock, user: user.id)
+
+  @doc """
   Gets a single clock.
 
   Raises `Ecto.NoResultsError` if the Clock does not exist.
@@ -152,6 +177,22 @@ defmodule GothamCity.Accounts do
   def get_clock!(id), do: Repo.get!(Clock, id)
 
   @doc """
+  Gets a single clock by user_id.
+
+  Raises `Ecto.NoResultsError` if the Clock does not exist.
+
+  ## Examples
+
+        iex> get_clock_by_user_id(123)
+        %Clock{}
+
+        iex> get_clock_by_user_id(456)
+        ** (Ecto.NoResultsError)
+
+  """
+  def get_clock_by_user_id(user_id), do: Repo.get_by!(Clock, user_id: user_id)
+
+  @doc """
   Creates a clock.
 
   ## Examples
@@ -163,8 +204,8 @@ defmodule GothamCity.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_clock(attrs \\ %{}) do
-    %Clock{}
+  def create_clock(user, attrs \\ %{}) do
+    %Clock{user: user.id}
     |> Clock.changeset(attrs)
     |> Repo.insert()
   end
@@ -248,6 +289,42 @@ defmodule GothamCity.Accounts do
   def get_workingtime!(id), do: Repo.get!(Workingtime, id)
 
   @doc """
+  Gets a single workingtime.
+
+  Raises `Ecto.NoResultsError` if the Workingtime does not exist.
+
+  ## Examples
+
+      iex> get_workingtime_by_user(123, user)
+      %Workingtime{}
+
+      iex> get_workingtime_by_user(456, user)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_workingtime_by_user(id, user), do: Repo.get_by(Workingtime, id: id, user: user.id)
+
+  @doc """
+  Gets all workingtimes by user in date range.
+
+  ## Examples
+
+        iex> get_workingtime_by_user_and_dates(123, '2015-01-01 00:00:00', '2015-01-31  00:00:00')
+        %Workingtime{}
+
+        iex> get_workingtime_by_user_and_dates(456, '2015-01-01 00:00:00', '2015-01-31 00:00:00')
+        ** (Ecto.NoResultsError)
+
+  """
+  def get_workingtime_by_user_and_dates(user, start_time, end_time) do
+      Repo.all(
+        from(w in Workingtime,
+          where: w.user == ^user.id and w.start >= ^start_time and w.end <= ^end_time
+        )
+      )
+  end
+
+  @doc """
   Creates a workingtime.
 
   ## Examples
@@ -259,8 +336,8 @@ defmodule GothamCity.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_workingtime(attrs \\ %{}) do
-    %Workingtime{}
+  def create_workingtime(user, attrs \\ %{}) do
+    %Workingtime{user: user.id}
     |> Workingtime.changeset(attrs)
     |> Repo.insert()
   end

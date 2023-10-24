@@ -31,6 +31,19 @@ defmodule GothamCityWeb.Router do
       put("/:userID", UserController, :update)
       delete("/:userID", UserController, :delete)
     end
+
+    scope "/workingtimes" do
+      get("/:userID", WorkingtimeController, :index)
+      get("/:userID/:id", WorkingtimeController, :show)
+      post("/:userID", WorkingtimeController, :create)
+      put("/:id", WorkingtimeController, :update)
+      delete("/:id", WorkingtimeController, :delete)
+    end
+
+    scope "/clocks" do
+      get("/:userID", ClockController, :show)
+      post("/:userID", ClockController, :update)
+    end
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
