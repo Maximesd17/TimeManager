@@ -166,3 +166,20 @@ end
 ```
 
 **Careful to have the pipe_through as first line of scope**
+
+
+## Some routes testing
+
+(Assuming you have no data in your database and you follow all the below commands one by one)
+
+`curl http://localhost:4000/api/users` - Get all users
+
+`curl -X POST http://localhost:4000/api/users -H "Content-Type: application/json" -d '{"user": {"username": "toto", "email": "toto75@hotmail.fr"}}'` - Create user called "toto" with its associated email
+
+`curl http://localhost:4000/api/users/1` - Get specific user by ID
+
+`curl -X PUT http://localhost:4000/api/users/1 -H "Content-Type: application/json" -d '{"user": {"username": "toto75"}}'` - Edit an user. You can specify its username, its email or even both of them. Only the specified elements will be edited.
+
+`curl -X DELETE http://localhost:4000/api/users/1` - Delete an user.
+
+For the below examples, let's recreate the toto user as above.
