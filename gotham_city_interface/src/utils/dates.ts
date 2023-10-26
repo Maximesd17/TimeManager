@@ -15,3 +15,25 @@ export function formatDateTime(date: Date | string): string {
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+
+export function formatDate(date: Date | string): string {
+    if (typeof date === 'string') date = new Date(date);
+    const year = padStartZero(date.getFullYear());
+    const month = padStartZero(date.getMonth() + 1);
+    const day = padStartZero(date.getDate());
+
+    return `${year}-${month}-${day}`;
+}
+
+export function formatDateTimeToHuman(date: Date | string): string {
+    if (typeof date === 'string') date = new Date(date);
+    const year = padStartZero(date.getFullYear());
+    const month = padStartZero(date.getMonth() + 1);
+    const day = padStartZero(date.getDate());
+
+    const hours = padStartZero(date.getHours());
+    const minutes = padStartZero(date.getMinutes());
+    const seconds = padStartZero(date.getSeconds());
+
+    return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
+}

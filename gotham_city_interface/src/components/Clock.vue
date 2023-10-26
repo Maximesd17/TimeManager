@@ -1,13 +1,13 @@
 <template>
     <div
-        class="rounded-full w-12 h-12 m-4 relative shadow-lg"
+        class="absolute rounded-full w-8 h-8 inset-4 shadow-lg"
         :class="{
             'bg-green': clock.status,
             'bg-red': !clock.status
         }"
         v-tooltip="
             clock.status
-                ? `In since ${formatDateTime(props.clock.time)}`
+                ? `In since ${formatDateTimeToHuman(props.clock.time)}`
                 : 'Out'
         "
     ></div>
@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import type { Clock } from '@/types';
-import { formatDateTime } from '@/utils/dates';
+import { formatDateTimeToHuman } from '@/utils/dates';
 import type { PropType } from 'vue';
 
 const props = defineProps({

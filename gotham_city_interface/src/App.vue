@@ -10,22 +10,33 @@
     </Confirm>
 
     <header
-        class="h-[4.5rem] -mt-2 bg-primary flex items-center justify-center rounded-b-xl"
+        class="h-[4.5rem] bg-primary rounded-b-xl grid place-content-center"
     >
-        <UserSelector @fetch:user="fetchUser" />
+        <UserSelector class="h-full" @fetch:user="fetchUser" />
     </header>
 
-    <div v-if="clock && workingTimes" class="flex">
-        <ClockComponent :clock="clock" />
-        <WorkingTimeComponent :workingTimes="workingTimes" />
-    </div>
-
-    <div v-else class="flex justify-center items-center h-[calc(100vh-4.5rem)]">
-        <div class="flex flex-col items-center">
-            <div class="text-2xl font-bold">No user selected</div>
-            <div class="text-xl">Please select a user</div>
+    <main class="relative h-[calc(100vh-4.5rem)] w-full">
+        <div class="flex gap-4 p-4 h-full" v-if="user">
+            <Card class="h-full relative w-1/3">
+                <ClockComponent v-if="clock" :clock="clock" />
+                <UserDetailsComponent :user="user" />
+            </Card>
+            <Card class="h-full w-2/3">
+                <div v-if="workingTimes">
+                    <WorkingTimeComponent :workingTimes="workingTimes" />
+                </div>
+            </Card>
         </div>
-    </div>
+        <div
+            v-else
+            class="flex justify-center items-center h-[calc(100vh-4.5rem)]"
+        >
+            <div class="flex flex-col items-center">
+                <div class="text-2xl font-bold">No user selected</div>
+                <div class="text-xl">Please select a user</div>
+            </div>
+        </div>
+    </main>
 </template>
 
 <script lang="ts" setup>
@@ -38,8 +49,10 @@ import { formatDateTime } from '@/utils/dates';
 
 import UserSelector from '@/components/User.vue';
 import Confirm from '@/components/ui/input/Confirm.vue';
+import Card from '@/components/ui/cards/Rectangle.vue';
 import ClockComponent from '@/components/Clock.vue';
 import WorkingTimeComponent from '@/components/WorkingTimes.vue';
+import UserDetailsComponent from '@/components/UserDetails.vue';
 
 const user = ref(null as User | null);
 const workingTimes = ref(null as WorkingTime[] | null);
@@ -112,7 +125,12 @@ async function fetchClock() {
     );
 
     if (error.value) {
-        useToast.error(`Error during clock fetching`);
+        clock.value = {
+            id: 0,
+            user: user.value.id,
+            status: false,
+            time: new Date(),
+        };
     } else {
         clock.value = data.value;
     }

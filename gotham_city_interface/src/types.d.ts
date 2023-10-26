@@ -9,7 +9,7 @@ export interface Clock {
     id: number;
     user: number;
     time: Date;
-    status: string;
+    status: boolean;
 }
 
 export interface User {
