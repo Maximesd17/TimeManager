@@ -10,27 +10,27 @@ type AsyncData<T> = {
 
 export async function useApiFetch<T>(
     request: string,
-    opts: AxiosRequestConfig
+    opts: AxiosRequestConfig = {}
 ): Promise<AsyncData<T>> {
     const data = ref(undefined as T);
     const error = ref(false as string | boolean);
 
-    if (opts.method && opts.method !== 'GET' && opts.method !== 'get') {
-        opts.headers = {...opts.headers}
-    }
+    // if (opts.method && opts.method !== 'GET' && opts.method !== 'get') {
+    //     console.log('Adding CORS header');
+    //     opts.headers = { ...opts.headers, 'Access-Control-Allow-Origin': '*' };
+    // }
     const res = await axios({
         ...opts,
         url: request,
         validateStatus: () => true,
         headers: {
             ...opts.headers,
-            'Content-Type': 'application/json',
+            'content-type': 'application/json'
         },
-        data: opts.data ? JSON.stringify(opts.data) : undefined,
+        data: opts.data ? JSON.stringify(opts.data) : undefined
     });
     data.value = res.data.data ?? undefined;
-    error.value =
-        !data.value ? `${res.status} (${res.statusText})` : false;
+    error.value = !data.value ? `${res.status} (${res.statusText})` : false;
 
     return Promise.resolve({ data, error } as AsyncData<T>);
 }

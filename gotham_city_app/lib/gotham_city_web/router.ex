@@ -11,12 +11,6 @@ defmodule GothamCityWeb.Router do
   end
 
   pipeline :api do
-    plug(CORSPlug,
-      origin: "*",
-      methods: ["GET", "POST", "PUT", "DELETE"],
-      allow_headers: ["access-control-allow-origin", "authorization", "content-type"]
-    )
-
     plug(:accepts, ["json"])
   end
 
