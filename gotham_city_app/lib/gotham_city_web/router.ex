@@ -11,6 +11,12 @@ defmodule GothamCityWeb.Router do
   end
 
   pipeline :api do
+    plug(CORSPlug,
+      origin: "*",
+      methods: ["GET", "POST", "PUT", "DELETE"],
+      allow_headers: ["access-control-allow-origin", "authorization", "content-type"]
+    )
+
     plug(:accepts, ["json"])
   end
 
@@ -21,13 +27,14 @@ defmodule GothamCityWeb.Router do
   # end
 
   # Other scopes may use custom stacks.
+
   scope "/api", GothamCityWeb do
     pipe_through(:api)
 
     scope "/users" do
       get("/", UserController, :identifier)
       get("/:userID", UserController, :show)
-      post("", UserController, :create)
+      post("/", UserController, :create)
       put("/:userID", UserController, :update)
       delete("/:userID", UserController, :delete)
     end

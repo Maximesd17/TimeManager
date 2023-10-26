@@ -1,85 +1,70 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+    <Confirm
+        v-if="tmpUserCreation"
+        width="40vw"
+        height="30vh"
+        @yes="createUser"
+        @no="tmpUserCreation = null"
+    >
+        This user doesn't exist, do you want to create it ?
+    </Confirm>
+    <header
+        class="h-[4.5rem] -mt-2 bg-primary flex items-center justify-center rounded-b-xl"
+    >
+        <UserSelector @fetch:user="fetchUser" />
+    </header>
+    {{ user }}
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+<script lang="ts" setup>
+import { ref } from 'vue';
+import { useApiFetch } from '@/composables/useApiFetch';
+import useToast from '@/composables/useToast';
+
+import type { Clock, User, WorkingTime } from '@/types';
+
+import UserSelector from '@/components/User.vue';
+import Confirm from '@/components/ui/input/Confirm.vue';
+
+const user = ref(null as User | null);
+const workingTime = ref(null as WorkingTime[] | null);
+const clock = ref(null as Clock | null);
+
+const tmpUserCreation = ref(null as { username: string; email: string } | null);
+
+async function createUser() {
+    if (!tmpUserCreation.value) return;
+    const { data, error } = await useApiFetch<User>('/users', {
+        method: 'POST',
+        data: {
+            user: {
+                username: tmpUserCreation.value.username,
+                email: tmpUserCreation.value.email
+            }
+        }
+    });
+    tmpUserCreation.value = null;
+    if (error.value) {
+        useToast.error(`Error during user creation`);
+    } else {
+        user.value = data.value;
+    }
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+async function fetchUser(fUser: { username: string; email: string }) {
+    const { data, error } = await useApiFetch<User>('/users', {
+        params: {
+            username: fUser.username,
+            email: fUser.email
+        }
+    });
+
+    if (error.value) {
+        tmpUserCreation.value = fUser;
+    } else {
+        user.value = data.value;
+    }
 }
+</script>
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
+<style lang="scss" scoped></style>
