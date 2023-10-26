@@ -13,6 +13,7 @@
 
 <script lang="ts" setup>
 import type { User } from '@/types';
+import type { PropType } from 'vue';
 
 const props = defineProps({
     user: {
