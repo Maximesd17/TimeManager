@@ -21,9 +21,9 @@
                 <ClockComponent v-if="clock" :clock="clock" />
                 <UserDetailsComponent :user="user" />
             </Card>
-            <Card class="h-full w-2/3">
+            <Card class="h-1/2 w-2/3 relative">
                 <div v-if="workingTimes">
-                    <WorkingTimeComponent :workingTimes="workingTimes" />
+                    <WorkingTimeComponent :workingTimes="workingTimes" :start="startDate" :end="endDate"/>
                 </div>
             </Card>
         </div>
@@ -59,6 +59,15 @@ const workingTimes = ref(null as WorkingTime[] | null);
 const clock = ref(null as Clock | null);
 
 const tmpUserCreation = ref(null as { username: string; email: string } | null);
+
+const startDate = new Date();
+startDate.setDate(1);
+startDate.setMonth(startDate.getMonth() - 1);
+startDate.setHours(0, 0, 0, 0);
+
+const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
+endDate.setHours(23, 59, 59, 999);
+
 
 async function createUser() {
     if (!tmpUserCreation.value) return;
@@ -96,17 +105,13 @@ async function fetchUser(fUser: { username: string; email: string }) {
 
 async function fetchWorkingTime() {
     if (!user.value?.id) return;
-    const startTime = new Date();
-    startTime.setHours(0, 0, 0, 0);
-    const endTime = new Date();
-    endTime.setHours(23, 59, 59, 999);
 
     const { data, error } = await useApiFetch<WorkingTime[]>(
         `/workingtimes/${user.value?.id}`,
         {
             params: {
-                start: formatDateTime(startTime),
-                end: formatDateTime(endTime)
+                start: formatDateTime(startDate),
+                end: formatDateTime(endDate)
             }
         }
     );
