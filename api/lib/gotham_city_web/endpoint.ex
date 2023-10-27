@@ -21,25 +21,17 @@ defmodule TimeManagerWeb.Endpoint do
     at: "/",
     from: :gotham_city,
     gzip: false,
-<<<<<<<< HEAD:api/lib/gotham_city_web/endpoint.ex
-    only: TimeManagerWeb.static_paths()
-========
     only: GothamCityWeb.static_paths()
   )
->>>>>>>> origin/val:gotham_city_app/lib/gotham_city_web/endpoint.ex
-
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
-<<<<<<<< HEAD:api/lib/gotham_city_web/endpoint.ex
     plug Phoenix.CodeReloader
     plug Phoenix.Ecto.CheckRepoStatus, otp_app: :gotham_city
-========
     socket("/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket)
     plug(Phoenix.LiveReloader)
     plug(Phoenix.CodeReloader)
     plug(Phoenix.Ecto.CheckRepoStatus, otp_app: :gotham_city)
->>>>>>>> origin/val:gotham_city_app/lib/gotham_city_web/endpoint.ex
   end
 
   plug(Phoenix.LiveDashboard.RequestLogger,
@@ -56,17 +48,14 @@ defmodule TimeManagerWeb.Endpoint do
     json_decoder: Phoenix.json_library()
   )
 
-<<<<<<<< HEAD:api/lib/gotham_city_web/endpoint.ex
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
   plug TimeManagerWeb.Router
-========
   plug(Plug.MethodOverride)
   plug(Plug.Head)
   plug(Plug.Session, @session_options)
 
   plug(CORSPlug)
   plug(GothamCityWeb.Router)
->>>>>>>> origin/val:gotham_city_app/lib/gotham_city_web/endpoint.ex
 end
