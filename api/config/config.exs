@@ -13,12 +13,8 @@ config :gotham_city,
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
-<<<<<<<< HEAD:api/config/config.exs
-config :gotham_city, TimeManagerWeb.Endpoint,
-========
 config :gotham_city, GothamCityWeb.Endpoint,
   http: [port: 4000],
->>>>>>>> origin/val:gotham_city_app/config/config.exs
   url: [host: "localhost"],
   adapter: Phoenix.Endpoint.Cowboy2Adapter,
   render_errors: [
