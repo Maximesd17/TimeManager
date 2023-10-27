@@ -67,6 +67,7 @@ export function useBarChartGenerateOptions(): ChartOptions<'bar'> {
                 borderWidth: 1,
                 borderColor: useChartColors['blue']
             },
+            //@ts-ignore
             datalabels: {
                 display: false
             }
