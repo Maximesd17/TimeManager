@@ -17,7 +17,7 @@
 
     <main class="relative h-[calc(100vh-4.5rem)] w-full">
         <div class="flex gap-4 p-4 h-full" v-if="user">
-            <UserDetailsComponent :user="user" v-model:clock="clock" />
+            <UserDetailsComponent v-if="clock" :user="user" v-model:clock="clock" />
             <div class="flex flex-col w-2/3 h-full gap-4">
                 <div v-if="workingTimes" class="h-full">
                     <WorkingTimeComponent

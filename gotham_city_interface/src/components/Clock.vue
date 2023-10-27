@@ -1,6 +1,6 @@
 <template>
     <div
-        class="absolute rounded-full w-8 h-8 inset-4 shadow-lg"
+        class="absolute rounded-full w-8 h-8 inset-4 shadow-lg cursor-pointer"
         :class="{
             'bg-green': clock.status,
             'bg-red': !clock.status
