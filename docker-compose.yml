@@ -16,12 +16,17 @@ services:
       - 'pgdata:/var/lib/postgresql/data'
   gotham_city_app:
     build:
-      context: .
+      context: ./gotham_city_app
     env_file:
       - .env
     ports:
       - '4000:4000'
     depends_on:
       - db
+  gotham_city_interfaces:
+    build:
+      context: ./gotham_city_interface
+    ports:
+      - '8080:8080'
 volumes:
   pgdata:
