@@ -1,17 +1,17 @@
-defmodule TimeManagerWeb.ClockControllerTest do
-  use TimeManagerWeb.ConnCase
+defmodule GothamCityWeb.ClockControllerTest do
+  use GothamCityWeb.ConnCase
 
-  import TimeManager.ClocksFixtures
+  import GothamCity.AccountsFixtures
 
-  alias TimeManager.Clocks.Clock
+  alias GothamCity.Accounts.Clock
 
   @create_attrs %{
     status: true,
-    time: ~N[2023-10-22 19:24:00]
+    time: ~N[2023-10-22 17:27:00]
   }
   @update_attrs %{
     status: false,
-    time: ~N[2023-10-23 19:24:00]
+    time: ~N[2023-10-23 17:27:00]
   }
   @invalid_attrs %{status: nil, time: nil}
 
@@ -36,7 +36,7 @@ defmodule TimeManagerWeb.ClockControllerTest do
       assert %{
                "id" => ^id,
                "status" => true,
-               "time" => "2023-10-22T19:24:00"
+               "time" => "2023-10-22T17:27:00"
              } = json_response(conn, 200)["data"]
     end
 
@@ -58,7 +58,7 @@ defmodule TimeManagerWeb.ClockControllerTest do
       assert %{
                "id" => ^id,
                "status" => false,
-               "time" => "2023-10-23T19:24:00"
+               "time" => "2023-10-23T17:27:00"
              } = json_response(conn, 200)["data"]
     end
 

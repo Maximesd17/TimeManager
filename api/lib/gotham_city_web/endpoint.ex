@@ -1,4 +1,4 @@
-defmodule TimeManagerWeb.Endpoint do
+defmodule GothamCityWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :gotham_city
 
   # The session will be stored in the cookie and signed,
@@ -7,7 +7,7 @@ defmodule TimeManagerWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_gotham_city_key",
-    signing_salt: "nR20mFji",
+    signing_salt: "TED/jHTy",
     same_site: "Lax"
   ]
 
@@ -23,11 +23,10 @@ defmodule TimeManagerWeb.Endpoint do
     gzip: false,
     only: GothamCityWeb.static_paths()
   )
+
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
-    plug Phoenix.CodeReloader
-    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :gotham_city
     socket("/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket)
     plug(Phoenix.LiveReloader)
     plug(Phoenix.CodeReloader)
@@ -48,10 +47,6 @@ defmodule TimeManagerWeb.Endpoint do
     json_decoder: Phoenix.json_library()
   )
 
-  plug Plug.MethodOverride
-  plug Plug.Head
-  plug Plug.Session, @session_options
-  plug TimeManagerWeb.Router
   plug(Plug.MethodOverride)
   plug(Plug.Head)
   plug(Plug.Session, @session_options)

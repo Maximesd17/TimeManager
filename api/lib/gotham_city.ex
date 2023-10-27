@@ -1,6 +1,6 @@
-defmodule TimeManager do
+defmodule GothamCity do
   @moduledoc """
-  TimeManager keeps the contexts that define your domain
+  GothamCity keeps the contexts that define your domain
   and business logic.
 
   Contexts are also responsible for managing your data, regardless

@@ -1,11 +1,11 @@
-defmodule TimeManager.Repo.Migrations.CreateClocks do
+defmodule GothamCity.Repo.Migrations.CreateClocks do
   use Ecto.Migration
 
   def change do
     create table(:clocks) do
       add :time, :naive_datetime, null: false
       add :status, :boolean, default: true, null: false
-      add :user, references(:users, on_delete: :nothing)
+      add :user, references(:users, on_delete: :nothing), null: false
 
       timestamps(type: :utc_datetime)
     end

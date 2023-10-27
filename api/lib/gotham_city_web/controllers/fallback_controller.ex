@@ -1,16 +1,16 @@
-defmodule TimeManagerWeb.FallbackController do
+defmodule GothamCityWeb.FallbackController do
   @moduledoc """
   Translates controller action results into valid `Plug.Conn` responses.
 
   See `Phoenix.Controller.action_fallback/1` for more details.
   """
-  use TimeManagerWeb, :controller
+  use GothamCityWeb, :controller
 
   # This clause handles errors returned by Ecto's insert/update/delete.
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
     conn
     |> put_status(:unprocessable_entity)
-    |> put_view(json: TimeManagerWeb.ChangesetJSON)
+    |> put_view(json: GothamCityWeb.ChangesetJSON)
     |> render(:error, changeset: changeset)
   end
 
@@ -18,7 +18,7 @@ defmodule TimeManagerWeb.FallbackController do
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(:not_found)
-    |> put_view(html: TimeManagerWeb.ErrorHTML, json: TimeManagerWeb.ErrorJSON)
+    |> put_view(html: GothamCityWeb.ErrorHTML, json: GothamCityWeb.ErrorJSON)
     |> render(:"404")
   end
 end

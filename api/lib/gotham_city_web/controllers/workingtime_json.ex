@@ -1,5 +1,5 @@
-defmodule TimeManagerWeb.WorkingtimeJSON do
-  alias TimeManager.WorkingTime.Workingtime
+defmodule GothamCityWeb.WorkingtimeJSON do
+  alias GothamCity.Accounts.Workingtime
 
   @doc """
   Renders a list of workingtimes.

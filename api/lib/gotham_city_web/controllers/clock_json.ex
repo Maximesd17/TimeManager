@@ -1,5 +1,5 @@
-defmodule TimeManagerWeb.ClockJSON do
-  alias TimeManager.Clocks.Clock
+defmodule GothamCityWeb.ClockJSON do
+  alias GothamCity.Accounts.Clock
 
   @doc """
   Renders a list of clocks.

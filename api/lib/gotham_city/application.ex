@@ -1,4 +1,4 @@
-defmodule TimeManager.Application do
+defmodule GothamCity.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -8,21 +8,21 @@ defmodule TimeManager.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      TimeManagerWeb.Telemetry,
-      TimeManager.Repo,
+      GothamCityWeb.Telemetry,
+      GothamCity.Repo,
       {DNSCluster, query: Application.get_env(:gotham_city, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: TimeManager.PubSub},
+      {Phoenix.PubSub, name: GothamCity.PubSub},
       # Start the Finch HTTP client for sending emails
-      {Finch, name: TimeManager.Finch},
-      # Start a worker by calling: TimeManager.Worker.start_link(arg)
-      # {TimeManager.Worker, arg},
+      {Finch, name: GothamCity.Finch},
+      # Start a worker by calling: GothamCity.Worker.start_link(arg)
+      # {GothamCity.Worker, arg},
       # Start to serve requests, typically the last entry
-      TimeManagerWeb.Endpoint
+      GothamCityWeb.Endpoint
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: TimeManager.Supervisor]
+    opts = [strategy: :one_for_one, name: GothamCity.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
@@ -30,7 +30,7 @@ defmodule TimeManager.Application do
   # whenever the application is updated.
   @impl true
   def config_change(changed, _new, removed) do
-    TimeManagerWeb.Endpoint.config_change(changed, removed)
+    GothamCityWeb.Endpoint.config_change(changed, removed)
     :ok
   end
 end
