@@ -15,8 +15,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
-
+  container-job:
     name: Build and test
     runs-on: ubuntu-latest
 
@@ -47,6 +46,9 @@ jobs:
     - name: Install dependencies
       working-directory: ./api
       run: mix deps.get
+    - name: Migrating to DataBase
+      working-directory: ./api
+      run: mix ecto.migrate
     - name: Run tests
       working-directory: ./api
       run: mix test
