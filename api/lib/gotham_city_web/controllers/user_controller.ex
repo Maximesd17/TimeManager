@@ -1,18 +1,25 @@
-defmodule TimeManagerWeb.UserController do
-  use TimeManagerWeb, :controller
+defmodule GothamCityWeb.UserController do
+  use GothamCityWeb, :controller
 
-  alias TimeManager.Users
-  alias TimeManager.Users.User
+  alias GothamCity.Accounts
+  alias GothamCity.Accounts.User
 
-  action_fallback TimeManagerWeb.FallbackController
+  action_fallback(GothamCityWeb.FallbackController)
 
-  def index(conn, %{"username" => username, "email" => email}) do
-    users = Users.get_user_by_name_and_email(username, email)
-    render(conn, :show, user: users)
+  def identifier(conn, %{"username" => username, "email" => email}) do
+    user = Accounts.get_user_by_username_and_email(username, email)
+    render(conn, :show, user: user)
   end
 
   def create(conn, %{"user" => user_params}) do
-    with {:ok, %User{} = user} <- Users.create_user(user_params) do
+    if not String.match?(user_params["email"], ~r/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/) do
+      conn
+      |> put_status(:bad_request)
+      |> put_view(html: GothamCityWeb.ErrorHTML, json: GothamCityWeb.ErrorJSON)
+      |> render(:"400")
+    end
+
+    with {:ok, %User{} = user} <- Accounts.create_user(user_params) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/users/#{user}")
@@ -20,23 +27,23 @@ defmodule TimeManagerWeb.UserController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    user = Users.get_user!(id)
+  def show(conn, %{"userID" => id}) do
+    user = Accounts.get_user!(id)
     render(conn, :show, user: user)
   end
 
-  def update(conn, %{"id" => id, "user" => user_params}) do
-    user = Users.get_user!(id)
+  def update(conn, %{"userID" => id, "user" => user_params}) do
+    user = Accounts.get_user!(id)
 
-    with {:ok, %User{} = user} <- Users.update_user(user, user_params) do
+    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
       render(conn, :show, user: user)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    user = Users.get_user!(id)
+  def delete(conn, %{"userID" => id}) do
+    user = Accounts.get_user!(id)
 
-    with {:ok, %User{}} <- Users.delete_user(user) do
+    with {:ok, %User{}} <- Accounts.delete_user(user) do
       send_resp(conn, :no_content, "")
     end
   end
