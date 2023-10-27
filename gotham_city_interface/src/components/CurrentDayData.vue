@@ -39,11 +39,19 @@ function fillChartData() {
     const timeRemaining = timeWorked <= 8 ? 8 - timeWorked : 0;
     datasets.value = [];
 
-    const hoursWorked = Math.floor(timeWorked);
-    const minutesWorked = Math.round((timeWorked - hoursWorked) * 60);
+    let hoursWorked = Math.floor(timeWorked);
+    let minutesWorked = Math.round((timeWorked - hoursWorked) * 60);
+    if (minutesWorked === 60) {
+        hoursWorked++;
+        minutesWorked = 0;
+    }
 
-    const hoursRemaining = Math.floor(timeRemaining);
-    const minutesRemaining = Math.round((timeRemaining - hoursRemaining) * 60);
+    let hoursRemaining = Math.floor(timeRemaining);
+    let minutesRemaining = Math.round((timeRemaining - hoursRemaining) * 60);
+    if (minutesRemaining === 60) {
+        hoursRemaining++;
+        minutesRemaining = 0;
+    }
 
     datasets.value.push({
         data: [timeWorked, timeRemaining],

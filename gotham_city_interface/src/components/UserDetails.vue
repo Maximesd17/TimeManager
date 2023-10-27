@@ -28,14 +28,19 @@
             }`"
         >
             <h2 class="absolute top-2">Current Day Data</h2>
-            <CurrentDayData class="h-full pt-[10%]" :clock="clock" />
+            <CurrentDayData
+                v-if="isPieOpen"
+                :key="clock.status.toString()"
+                class="h-full pt-[10%]"
+                :clock="clock"
+            />
         </Card>
     </div>
 </template>
 
 <script lang="ts" setup>
 import type { Clock, User } from '@/types';
-import { ref, type PropType } from 'vue';
+import { ref, type PropType, watch } from 'vue';
 import { useApiFetch } from '@/composables/useApiFetch';
 
 import ClockComponent from '@/components/Clock.vue';
@@ -61,17 +66,27 @@ const isPieOpen = ref(props.clock?.status ?? false);
 const isPieOpening = ref(false);
 const isPieClosing = ref(false);
 
+
 async function postClock() {
     const { data } = await useApiFetch<Clock>(`/clocks/${props.user.id}`, {
         method: 'POST'
     });
-    togglePie();
+
     emits('update:clock', data.value);
 }
 
+watch(
+    () => props.clock,
+    () => {
+        setTimeout(() => togglePie(), 50);
+    },
+    {
+        deep: true
+    }
+);
 
 function togglePie() {
-    if (isPieOpen.value) {
+    if (!props.clock.status) {
         isPieClosing.value = true;
         setTimeout(() => {
             isPieOpen.value = false;

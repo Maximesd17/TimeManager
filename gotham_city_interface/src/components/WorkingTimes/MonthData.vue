@@ -60,8 +60,12 @@ function fillChartData() {
 
     const dataLabels = data.map(d => {
         if (d === 0) return '';
-        const hours = Math.floor(d);
-        const minutes = Math.round((d - hours) * 60);
+        let hours = Math.floor(d);
+        let minutes = Math.round((d - hours) * 60);
+        if (minutes === 60) {
+            hours++;
+            minutes = 0;
+        }
 
         return `Worked Time: ${padStartZero(hours)}h${padStartZero(minutes)}`;
     });
