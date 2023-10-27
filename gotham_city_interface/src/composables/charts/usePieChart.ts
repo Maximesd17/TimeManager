@@ -19,14 +19,14 @@ Chart.register(Title, Tooltip, Legend, CategoryScale, LinearScale, ArcElement, C
 export function usePieChartGenerateDefaultOptions(): ChartOptions<'pie'> {
 	return {
 		plugins: {
-			legend: { display: true, position: 'bottom', align: 'center', labels: { color: useChartColors['white'] } },
+			legend: { display: true, position: 'bottom', align: 'center', labels: { color: useChartColors['primary'] } },
 			title: { display: false },
 			tooltip: {
-				backgroundColor: useChartColors['white'],
-				titleColor: useChartColors['blue'],
-				bodyColor: useChartColors['blue'],
+				backgroundColor: useChartColors['light'],
+				titleColor: useChartColors['primary'],
+				bodyColor: useChartColors['primary'],
 				borderWidth: 1,
-				borderColor: useChartColors['blue'],
+				borderColor: useChartColors['primary'],
                 callbacks: {
                     label: (context) => {
                         // @ts-ignore
