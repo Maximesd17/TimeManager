@@ -49,6 +49,9 @@ jobs:
     - name: Migrating to DataBase
       working-directory: ./api
       run: mix ecto.migrate
+      env:
+        POSTGRES_HOST: postgres
+        POSTGRES_PORT: 5432
     - name: Run tests
       working-directory: ./api
       run: mix test
