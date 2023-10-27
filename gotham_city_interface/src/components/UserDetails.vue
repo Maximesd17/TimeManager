@@ -15,10 +15,10 @@
             />
             <br>
             <UiButton @click="emits('delete:user',{id:user.id})" variant="red" class="h-12 w-20">
-                Delete
+                    <img src='../assets/svg/delete.svg'/>
             </UiButton>
-            <UiButton type='submit' variant="primary" class="h-12 w-20">
-                Update
+            <UiButton type='submit' variant="primary" class="h-12 w-20 margin">
+                <img src='../assets/svg/edit.svg' />
             </UiButton>
         </form>
     </div>
@@ -46,5 +46,14 @@ const emits = defineEmits<{
 <style lang="scss" scoped>
 h3 {
     @apply font-bold text-lg;
+}
+
+img{
+    margin: auto;
+    display: block;
+}
+
+.margin{
+    margin-left: 10px;
 }
 </style>
