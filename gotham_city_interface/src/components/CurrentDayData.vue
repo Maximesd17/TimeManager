@@ -1,0 +1,75 @@
+<template>
+    <div>
+        <Pie class="h-full w-full" :data="data" :options="options" />
+    </div>
+</template>
+
+<script lang="ts" setup>
+import type { Clock } from '@/types';
+import { ref, type PropType, watch } from 'vue';
+import { usePieChart } from '@/composables/charts/usePieChart';
+import { getHoursDiff, padStartZero } from '@/utils/dates';
+
+const props = defineProps({
+    clock: {
+        type: Object as PropType<Clock>,
+        required: true
+    }
+});
+
+const date = new Date();
+const timeZoneOffset = date.getTimezoneOffset() / 60;
+date.setHours(date.getHours() + timeZoneOffset);
+
+const labels = ref(['Worked Time', 'Remaining Working Time'] as string[]);
+const datasets = ref(
+    [] as {
+        data: number[];
+        label?: string[];
+        backgroundColor?: string[];
+        type?: string;
+        borderColor?: string;
+    }[]
+);
+
+function fillChartData() {
+    const timeWorked = props.clock.time
+        ? getHoursDiff(props.clock.time, date)
+        : 0;
+    const timeRemaining = timeWorked <= 8 ? 8 - timeWorked : 0;
+    datasets.value = [];
+
+    const hoursWorked = Math.floor(timeWorked);
+    const minutesWorked = Math.round((timeWorked - hoursWorked) * 60);
+
+    const hoursRemaining = Math.floor(timeRemaining);
+    const minutesRemaining = Math.round((timeRemaining - hoursRemaining) * 60);
+
+    datasets.value.push({
+        data: [timeWorked, timeRemaining],
+        label: [
+            ` Worked Time: ${padStartZero(hoursWorked)}h${padStartZero(
+                minutesWorked
+            )}`,
+            ` Remaining Time: ${padStartZero(hoursRemaining)}h${padStartZero(
+                minutesRemaining
+            )}`
+        ],
+        backgroundColor: ['#4bb543', '#ff4d4d'],
+        borderColor: '#213547'
+    });
+}
+
+watch(
+    () => props.clock,
+    () => {
+        fillChartData();
+    },
+    { immediate: true, deep: true }
+);
+
+// @ts-ignore
+const { Pie, data, options } = usePieChart(labels, datasets);
+</script>
+
+<style lang="scss" scoped></style>

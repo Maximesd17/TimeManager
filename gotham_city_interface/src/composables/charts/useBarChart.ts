@@ -65,7 +65,13 @@ export function useBarChartGenerateOptions(): ChartOptions<'bar'> {
                 titleColor: useChartColors['blue'],
                 bodyColor: useChartColors['blue'],
                 borderWidth: 1,
-                borderColor: useChartColors['blue']
+                borderColor: useChartColors['blue'],
+                callbacks: {
+                    label: (context) => {
+                        // @ts-ignore
+                        return context.dataset.label[context.dataIndex];
+                    }
+                }
             },
             datalabels: {
                 display: false
