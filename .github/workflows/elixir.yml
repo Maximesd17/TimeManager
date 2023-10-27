@@ -46,12 +46,13 @@ jobs:
     - name: Install dependencies
       working-directory: ./api
       run: mix deps.get
-    - name: Migrating to DataBase
-      working-directory: ./api
-      run: mix ecto.migrate
-      env:
-        POSTGRES_HOST: postgres
-        POSTGRES_PORT: 5432
+    # - name: Migrating to DataBase
+    #   working-directory: ./api
+    #   run: mix ecto.migrate
+    #   env:
+    #     MIX_ENV: prod
+    #     POSTGRES_HOST: postgres
+    #     POSTGRES_PORT: 5432
     - name: Run tests
       working-directory: ./api
       run: mix test
