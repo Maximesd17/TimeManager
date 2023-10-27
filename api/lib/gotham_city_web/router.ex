@@ -1,33 +1,49 @@
-defmodule TimeManagerWeb.Router do
-  use TimeManagerWeb, :router
+defmodule GothamCityWeb.Router do
+  use GothamCityWeb, :router
 
-  pipeline :api do
-    plug(CORSPlug,
-      origin: "*",
-      methods: ["GET", "POST", "PUT", "DELETE"],
-      allow_headers: ["acccess-control-allow-origin", "authorization", "content-type"])
-    plug :accepts, ["json"]
+  pipeline :browser do
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:put_root_layout, html: {GothamCityWeb.Layouts, :root})
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
   end
 
-  scope "/api", TimeManagerWeb do
-    pipe_through :api
+  pipeline :api do
+    plug(:accepts, ["json"])
+  end
+
+  # scope "/", GothamCityWeb do
+  #   pipe_through :browser
+
+  #   get "/", PageController, :home
+  # end
+
+  # Other scopes may use custom stacks.
+
+  scope "/api", GothamCityWeb do
+    pipe_through(:api)
+
     scope "/users" do
-      get "/", UserController, :index
-      get "/:userID", UserController, :show
-      post "/", UserController, :create
-      put "/:userID", UserController, :update
-      delete "/:userID", UserController, :delete
+      get("/", UserController, :identifier)
+      get("/:userID", UserController, :show)
+      post("/", UserController, :create)
+      put("/:userID", UserController, :update)
+      delete("/:userID", UserController, :delete)
     end
-    scope "/clocks" do
-      get "/:userID", ClockController, :show
-      post "/:userID", ClockController, :update
-    end
+
     scope "/workingtimes" do
-      get "/:userID", WorkingtimeController, :index
-      get "/:userID/:id", WorkingtimeController, :show
-      post "/:userID", WorkingtimeController, :create
-      put "/:id", WorkingtimeController, :update
-      delete "/:id", WorkingtimeController, :delete
+      get("/:userID", WorkingtimeController, :index)
+      get("/:userID/:id", WorkingtimeController, :show)
+      post("/:userID", WorkingtimeController, :create)
+      put("/:id", WorkingtimeController, :update)
+      delete("/:id", WorkingtimeController, :delete)
+    end
+
+    scope "/clocks" do
+      get("/:userID", ClockController, :show)
+      post("/:userID", ClockController, :update)
     end
   end
 
@@ -41,10 +57,10 @@ defmodule TimeManagerWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through [:fetch_session, :protect_from_forgery]
+      pipe_through(:browser)
 
-      live_dashboard "/dashboard", metrics: TimeManagerWeb.Telemetry
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
+      live_dashboard("/dashboard", metrics: GothamCityWeb.Telemetry)
+      forward("/mailbox", Plug.Swoosh.MailboxPreview)
     end
   end
 end
