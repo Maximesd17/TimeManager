@@ -19,7 +19,7 @@
         <div class="flex gap-4 p-4 h-full" v-if="user">
             <Card class="h-full relative w-1/3">
                 <ClockComponent v-if="clock" :clock="clock" />
-                <UserDetailsComponent :user="user" />
+                <UserDetailsComponent :user="user" @update:user="updateUser" @delete:user="deleteUser"/>
             </Card>
             <Card class="h-full w-2/3">
                 <div v-if="workingTimes">
@@ -91,6 +91,34 @@ async function fetchUser(fUser: { username: string; email: string }) {
         tmpUserCreation.value = fUser;
     } else {
         user.value = data.value;
+    }
+}
+
+async function updateUser(updateUser: {id: number, username: string; email: string }) {
+    const { data, error } = await useApiFetch<User>(`/users/${updateUser.id}`, {
+        method: 'PUT',
+        data: {
+            user: {
+                username: updateUser.username,
+                email:updateUser.email
+            }
+        }
+    });
+    if (error.value) {
+        useToast.error(`Error during user update`);
+    } else {
+        useToast.success(`User updated successfully`);
+    }
+}
+
+async function deleteUser(deleteUser: {id: number}) {
+    const { data, error } = await useApiFetch<User>(`/users/${deleteUser.id}`, {
+        method: 'DELETE',
+    });
+    if (error.value) {
+        useToast.error(`Error during user delete`);
+    } else {
+        useToast.success(`User deleted successfully`);
     }
 }
 

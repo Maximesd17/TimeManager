@@ -1,19 +1,34 @@
 <template>
     <div class="w-full h-full text-center flex flex-col justify-center items-center gap-6">
-        <div>
-            <h3>Username:</h3>
-            <p>{{ user.username }}</p>
-        </div>
-        <div>
-            <h3>Email:</h3>
-            <p>{{ user.email }}</p>
-        </div>
+        <form @submit.prevent="emits('update:user', {id: user.id, username: user.username, email: user.email })">
+            <InputText
+                v-model="user.username"
+                label="Username"
+                class="w-[16rem]"
+                max-width="16rem"
+            />
+            <InputText
+                v-model="user.email"
+                label="Email"
+                class="w-[16rem]"
+                max-width="16rem"
+            />
+            <br>
+            <UiButton @click="emits('delete:user',{id:user.id})" variant="red" class="h-12 w-20">
+                Delete
+            </UiButton>
+            <UiButton type='submit' variant="primary" class="h-12 w-20">
+                Update
+            </UiButton>
+        </form>
     </div>
 </template>
 
 <script lang="ts" setup>
 import type { User } from '@/types';
 import type { PropType } from 'vue';
+import UiButton from './ui/input/Button.vue';
+import InputText from './ui/input/Text.vue';
 
 const props = defineProps({
     user: {
@@ -21,6 +36,11 @@ const props = defineProps({
         required: true
     }
 });
+
+const emits = defineEmits<{
+    (e: 'delete:user', user: { id: number;}): void;
+    (e: 'update:user', user: { id: number; username: string; email: string }): void;
+}>();
 </script>
 
 <style lang="scss" scoped>
