@@ -52,8 +52,7 @@ jobs:
       run: mix ecto.migrate
       env:
         MIX_ENV: prod
-        POSTGRES_HOST: localhost
-        POSTGRES_PORT: 5432
+        DATABASE_URL: ecto://postgres:postgres@localhost/gotham_city
     # - name: Run tests
     #   working-directory: ./api
     #   run: mix test
