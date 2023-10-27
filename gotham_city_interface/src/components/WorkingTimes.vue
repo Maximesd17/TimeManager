@@ -5,6 +5,7 @@
 <script lang="ts" setup>
 import type { WorkingTime } from '@/types';
 import { ref, type PropType, watch } from 'vue';
+
 import { useBarChart } from '@/composables/charts/useBarChart';
 import { getFormattedDaysInInterval, formatDateToHuman } from '@/utils/dates';
 
