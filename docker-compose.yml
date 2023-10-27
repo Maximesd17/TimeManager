@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13.2
+    container_name: gotham-database
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - 'pgdata:/var/lib/postgresql/data'
+  gotham_city_app:
+    build:
+      context: .
+    env_file:
+      - .env
+    ports:
+      - '4000:4000'
+    depends_on:
+      - db
+volumes:
+  pgdata:
