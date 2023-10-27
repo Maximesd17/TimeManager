@@ -52,6 +52,7 @@ jobs:
       run: mix ecto.migrate
       env:
         MIX_ENV: prod
+        SECRET_KEY_BASE: $(mix phx.gen.secret)
         DATABASE_URL: ecto://postgres:postgres@localhost/gotham_city
     # - name: Run tests
     #   working-directory: ./api
