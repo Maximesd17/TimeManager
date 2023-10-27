@@ -1,4 +1,4 @@
-defmodule TimeManagerWeb.ChangesetJSON do
+defmodule GothamCityWeb.ChangesetJSON do
   @doc """
   Renders changeset errors.
   """
@@ -13,9 +13,9 @@ defmodule TimeManagerWeb.ChangesetJSON do
     # uncommenting and adjusting the following code:
 
     # if count = opts[:count] do
-    #   Gettext.dngettext(TimeManagerWeb.Gettext, "errors", msg, msg, count, opts)
+    #   Gettext.dngettext(GothamCityWeb.Gettext, "errors", msg, msg, count, opts)
     # else
-    #   Gettext.dgettext(TimeManagerWeb.Gettext, "errors", msg, opts)
+    #   Gettext.dgettext(GothamCityWeb.Gettext, "errors", msg, opts)
     # end
 
     Enum.reduce(opts, msg, fn {key, value}, acc ->

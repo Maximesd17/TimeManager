@@ -8,8 +8,7 @@
 import Config
 
 config :gotham_city,
-  namespace: TimeManager,
-  ecto_repos: [TimeManager.Repo],
+  ecto_repos: [GothamCity.Repo],
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
@@ -18,11 +17,11 @@ config :gotham_city, GothamCityWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Phoenix.Endpoint.Cowboy2Adapter,
   render_errors: [
-    formats: [json: TimeManagerWeb.ErrorJSON],
+    formats: [html: GothamCityWeb.ErrorHTML, json: GothamCityWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: TimeManager.PubSub,
-  live_view: [signing_salt: "DLMocYmY"]
+  pubsub_server: GothamCity.PubSub,
+  live_view: [signing_salt: "MMJtu3an"]
 
 # Configures the mailer
 #
@@ -31,7 +30,29 @@ config :gotham_city, GothamCityWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :gotham_city, TimeManager.Mailer, adapter: Swoosh.Adapters.Local
+config :gotham_city, GothamCity.Mailer, adapter: Swoosh.Adapters.Local
+
+# Configure esbuild (the version is required)
+config :esbuild,
+  version: "0.17.11",
+  default: [
+    args:
+      ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+    cd: Path.expand("../assets", __DIR__),
+    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ]
+
+# Configure tailwind (the version is required)
+config :tailwind,
+  version: "3.3.2",
+  default: [
+    args: ~w(
+      --config=tailwind.config.js
+      --input=css/app.css
+      --output=../priv/static/assets/app.css
+    ),
+    cd: Path.expand("../assets", __DIR__)
+  ]
 
 # Configures Elixir's Logger
 config :logger, :console,

@@ -1,5 +1,5 @@
-defmodule TimeManagerWeb.UserJSON do
-  alias TimeManager.Users.User
+defmodule GothamCityWeb.UserJSON do
+  alias GothamCity.Accounts.User
 
   @doc """
   Renders a list of users.

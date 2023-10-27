@@ -1,10 +1,10 @@
-defmodule TimeManager.Users.User do
+defmodule GothamCity.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "users" do
-    field :email, :string
-    field :username, :string
+    field(:username, :string)
+    field(:email, :string)
 
     timestamps(type: :utc_datetime)
   end
@@ -15,4 +15,5 @@ defmodule TimeManager.Users.User do
     |> cast(attrs, [:username, :email])
     |> validate_required([:username, :email])
   end
+
 end

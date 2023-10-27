@@ -1,19 +1,19 @@
-defmodule TimeManagerWeb.WorkingtimeControllerTest do
-  use TimeManagerWeb.ConnCase
+defmodule GothamCityWeb.WorkingtimeControllerTest do
+  use GothamCityWeb.ConnCase
 
-  import TimeManager.WorkingTimeFixtures
+  import GothamCity.AccountsFixtures
 
-  alias TimeManager.WorkingTime.Workingtime
+  alias GothamCity.Accounts.Workingtime
 
   @create_attrs %{
-    end: ~N[2023-10-22 19:26:00],
-    start: ~N[2023-10-22 19:26:00]
+    start: ~N[2023-10-22 17:31:00],
+    end: ~N[2023-10-22 17:31:00]
   }
   @update_attrs %{
-    end: ~N[2023-10-23 19:26:00],
-    start: ~N[2023-10-23 19:26:00]
+    start: ~N[2023-10-23 17:31:00],
+    end: ~N[2023-10-23 17:31:00]
   }
-  @invalid_attrs %{end: nil, start: nil}
+  @invalid_attrs %{start: nil, end: nil}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -35,8 +35,8 @@ defmodule TimeManagerWeb.WorkingtimeControllerTest do
 
       assert %{
                "id" => ^id,
-               "end" => "2023-10-22T19:26:00",
-               "start" => "2023-10-22T19:26:00"
+               "end" => "2023-10-22T17:31:00",
+               "start" => "2023-10-22T17:31:00"
              } = json_response(conn, 200)["data"]
     end
 
@@ -57,8 +57,8 @@ defmodule TimeManagerWeb.WorkingtimeControllerTest do
 
       assert %{
                "id" => ^id,
-               "end" => "2023-10-23T19:26:00",
-               "start" => "2023-10-23T19:26:00"
+               "end" => "2023-10-23T17:31:00",
+               "start" => "2023-10-23T17:31:00"
              } = json_response(conn, 200)["data"]
     end
 
