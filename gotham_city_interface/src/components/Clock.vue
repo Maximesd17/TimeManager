@@ -7,7 +7,7 @@
         }"
         v-tooltip="
             clock.status
-                ? `In since ${formatDateTimeToHuman(props.clock.time)}`
+                ? `In since ${formatDateToHuman(props.clock.time)}`
                 : 'Out'
         "
     ></div>
@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import type { Clock } from '@/types';
-import { formatDateTimeToHuman } from '@/utils/dates';
+import { formatDateToHuman } from '@/utils/dates';
 import type { PropType } from 'vue';
 
 const props = defineProps({
