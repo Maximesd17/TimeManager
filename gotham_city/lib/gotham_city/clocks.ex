@@ -17,8 +17,8 @@ defmodule TimeManager.Clocks do
       [%Clock{}, ...]
 
   """
-  def list_clocks do
-    Repo.all(Clock)
+  def list_clocks(userID) do
+    Repo.all(from c in Clock, where: ilike(c.user, ^userID))
   end
 
   @doc """
@@ -101,4 +101,6 @@ defmodule TimeManager.Clocks do
   def change_clock(%Clock{} = clock, attrs \\ %{}) do
     Clock.changeset(clock, attrs)
   end
+
+  def get_clock_by_user(user), do: Repo.get_by(Clock, user: user.id)
 end
