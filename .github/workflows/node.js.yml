@@ -14,6 +14,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./web
+
     strategy:
       matrix:
         node-version: [14.x, 16.x, 18.x]
@@ -24,15 +28,10 @@ jobs:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        working-directory: ./web
     - name: running npm ci
-      working-directory: ./web
       run: npm ci
     - name: running build
-      working-directory: ./web
       run: npm run build --if-present
     - name: running tests
-      working-directory: ./web
       run: npm test
