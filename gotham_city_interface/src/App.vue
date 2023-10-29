@@ -17,15 +17,18 @@
 
     <main class="relative h-[calc(100vh-4.5rem)] w-full">
         <div class="flex gap-4 p-4 h-full" v-if="user">
-            <Card class="h-full relative w-1/3">
-                <ClockComponent v-if="clock" :clock="clock" />
-                <UserDetailsComponent :user="user" @update:user="updateUser" @delete:user="deleteUser"/>
-            </Card>
-            <Card class="h-1/2 w-2/3 relative">
-                <div v-if="workingTimes">
-                    <WorkingTimeComponent :workingTimes="workingTimes" :start="startDate" :end="endDate"/>
+            <UserDetailsComponent v-if="clock" :user="user" v-model:clock="clock" @update:user="updateUser" @delete:user="deleteUser" />
+            <div class="flex flex-col w-2/3 h-full gap-4">
+                <div v-if="workingTimes" class="h-full">
+                    <WorkingTimeComponent
+                        :workingTimes="workingTimes"
+                        :start="startDate"
+                        :end="endDate"
+                        @prevMonth="prevMonth"
+                        @nextMonth="nextMonth"
+                    />
                 </div>
-            </Card>
+            </div>
         </div>
         <div
             v-else
@@ -49,9 +52,7 @@ import { formatDateTime } from '@/utils/dates';
 
 import UserSelector from '@/components/User.vue';
 import Confirm from '@/components/ui/input/Confirm.vue';
-import Card from '@/components/ui/cards/Rectangle.vue';
-import ClockComponent from '@/components/Clock.vue';
-import WorkingTimeComponent from '@/components/WorkingTimes.vue';
+import WorkingTimeComponent from '@/components/WorkingTimes/Index.vue';
 import UserDetailsComponent from '@/components/UserDetails.vue';
 
 const user = ref(null as User | null);
@@ -68,6 +69,17 @@ startDate.setHours(0, 0, 0, 0);
 const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
 endDate.setHours(23, 59, 59, 999);
 
+function prevMonth() {
+    startDate.setMonth(startDate.getMonth() - 1);
+    endDate.setMonth(endDate.getMonth() - 1);
+    fetchWorkingTime();
+}
+
+function nextMonth() {
+    startDate.setMonth(startDate.getMonth() + 1);
+    endDate.setMonth(endDate.getMonth() + 1);
+    fetchWorkingTime();
+}
 
 async function createUser() {
     if (!tmpUserCreation.value) return;
@@ -162,7 +174,7 @@ async function fetchClock() {
             id: 0,
             user: user.value.id,
             status: false,
-            time: new Date(),
+            time: ''
         };
     } else {
         clock.value = data.value;

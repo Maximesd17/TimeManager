@@ -64,6 +64,7 @@ defineProps({
         border-radius: 0.5rem;
         overflow-y: auto;
         z-index: 1001;
+        color: white;
 
         display: flex;
         flex-direction: column;
