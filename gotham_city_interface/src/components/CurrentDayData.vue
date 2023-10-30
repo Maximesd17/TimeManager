@@ -64,7 +64,7 @@ function fillChartData() {
             )}`
         ],
         backgroundColor: ['#4bb543', '#ff4d4d'],
-        borderColor: '#213547'
+        borderColor: '#2e4250'
     });
 }
 

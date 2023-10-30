@@ -3,7 +3,7 @@
         v-if="isDeletingUser"
         width="40vw"
         height="30vh"
-        @yes="emits('delete:user')"
+        @yes="handleDelete"
         @no="isDeletingUser = false"
         variant="danger"
     >
@@ -181,6 +181,11 @@ watch(
         deep: true
     }
 );
+
+function handleDelete() {
+    emits('delete:user');
+    isDeletingUser.value = false;
+}
 
 function togglePie() {
     if (!props.clock.status) {

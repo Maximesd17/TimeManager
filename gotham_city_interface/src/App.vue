@@ -30,8 +30,8 @@
                         :workingTimes="workingTimes"
                         :start="startDate"
                         :end="endDate"
-                        @prevMonth="prevMonth"
-                        @nextMonth="nextMonth"
+                        @prevMonth="setPrevMonth"
+                        @nextMonth="setNextMonth"
                     />
                 </div>
             </div>
@@ -54,7 +54,7 @@ import { useApiFetch } from '@/composables/useApiFetch';
 import useToast from '@/composables/useToast';
 
 import type { Clock, User, WorkingTime } from '@/types';
-import { formatDateTime } from '@/utils/dates';
+import { formatDateTime, prevMonth, nextMonth, getLastDayOfMonth } from '@/utils/dates';
 
 import UserSelector from '@/components/User.vue';
 import Confirm from '@/components/ui/input/Confirm.vue';
@@ -67,23 +67,32 @@ const clock = ref(null as Clock | null);
 
 const tmpUserCreation = ref(null as { username: string; email: string } | null);
 
-const startDate = new Date();
-startDate.setDate(1);
-startDate.setMonth(startDate.getMonth() - 1);
-startDate.setHours(0, 0, 0, 0);
+const startDate = ref(new Date());
+startDate.value.setDate(1);
+startDate.value.setMonth(startDate.value.getMonth() - 1);
+startDate.value.setHours(0, 0, 0, 0);
 
-const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
-endDate.setHours(23, 59, 59, 999);
+const endDate = ref(
+    new Date(
+        startDate.value.getFullYear(),
+        startDate.value.getMonth() + 1,
+        0,
+        23,
+        59,
+        59,
+        999
+    )
+);
 
-function prevMonth() {
-    startDate.setMonth(startDate.getMonth() - 1);
-    endDate.setMonth(endDate.getMonth() - 1);
+function setPrevMonth() {
+    startDate.value = prevMonth(startDate.value);
+    endDate.value = getLastDayOfMonth(prevMonth(endDate.value));
     fetchWorkingTime();
 }
 
-function nextMonth() {
-    startDate.setMonth(startDate.getMonth() + 1);
-    endDate.setMonth(endDate.getMonth() + 1);
+function setNextMonth() {
+    startDate.value = nextMonth(startDate.value);
+    endDate.value = getLastDayOfMonth(nextMonth(endDate.value));
     fetchWorkingTime();
 }
 
@@ -141,14 +150,16 @@ async function updateUser(updateUser: { username: string; email: string }) {
     }
 }
 
-async function deleteUser(deleteUser: { id: number }) {
-    const { error } = await useApiFetch<User>(`/users/${deleteUser.id}`, {
+async function deleteUser() {
+    if (user.value == null) return;
+    const { error } = await useApiFetch<User>(`/users/${user.value.id}`, {
         method: 'DELETE'
     });
     if (error.value) {
         useToast.error(`Error during user delete`);
     } else {
         useToast.success(`User deleted successfully`);
+        user.value = null;
     }
 }
 
@@ -159,8 +170,8 @@ async function fetchWorkingTime() {
         `/workingtimes/${user.value?.id}`,
         {
             params: {
-                start: formatDateTime(startDate),
-                end: formatDateTime(endDate)
+                start: formatDateTime(startDate.value),
+                end: formatDateTime(endDate.value)
             }
         }
     );

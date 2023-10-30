@@ -78,7 +78,7 @@ function fillChartData() {
     datasets.value.push({
         data: data,
         label: dataLabels,
-        backgroundColor: '#827679'
+        backgroundColor: '#879CA4'
     });
 }
 
