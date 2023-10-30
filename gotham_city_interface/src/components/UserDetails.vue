@@ -102,7 +102,7 @@ const props = defineProps({
 
 const emits = defineEmits<{
     (e: 'delete:user', user: { id: number }): void;
-    (e: 'update:user', user: { username: string; email: string }): void;
+    (e: 'update:user', user: {id: number; username: string; email: string }): void;
     (e: 'update:clock', clock: Clock): void;
 }>();
 
