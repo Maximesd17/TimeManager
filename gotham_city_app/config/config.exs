@@ -13,6 +13,7 @@ config :gotham_city,
 
 # Configures the endpoint
 config :gotham_city, GothamCityWeb.Endpoint,
+  server: true,
   http: [port: 4000],
   url: [host: "localhost"],
   adapter: Phoenix.Endpoint.Cowboy2Adapter,
