@@ -18,4 +18,7 @@ if [[ -z `psql -Atqc "\\list $PGDATABASE"` ]]; then
   echo "Database $PGDATABASE created."
 fi
 
-exec mix phx.server
+mix release
+ _build/dev/rel/gotham_city/bin/gotham_city start
+#exec mix phx.server
+
