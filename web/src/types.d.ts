@@ -1,14 +1,14 @@
 export interface WorkingTime {
     id: number;
     user: number;
-    start: Date;
-    end: Date;
+    start: string;
+    end: string;
 }
 
 export interface Clock {
     id: number;
     user: number;
-    time: Date;
+    time: string;
     status: boolean;
 }
 

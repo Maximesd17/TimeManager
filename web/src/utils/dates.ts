@@ -3,8 +3,24 @@ export function padStartZero(number: number | string, length: number = 2) {
     return number.toString().padStart(length, '0');
 }
 
+export const monthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+];
+
 export function formatDateTime(date: Date | string): string {
     if (typeof date === 'string') date = new Date(date);
+
     const year = padStartZero(date.getFullYear());
     const month = padStartZero(date.getMonth() + 1);
     const day = padStartZero(date.getDate());
@@ -27,9 +43,13 @@ export function formatDate(date: Date | string): string {
 
 export function formatDateToHuman(
     date: Date | string,
-    withTime: boolean = true
+    withTime: boolean = true,
+    fromUtc: boolean = true
 ): string {
     if (typeof date === 'string') date = new Date(date);
+    const timeZoneOffset = date.getTimezoneOffset() / 60;
+    if (fromUtc) date.setHours(date.getHours() - timeZoneOffset);
+
     const year = padStartZero(date.getFullYear());
     const month = padStartZero(date.getMonth() + 1);
     const day = padStartZero(date.getDate());
@@ -68,4 +88,16 @@ export function getFormattedDaysInInterval(
     }
 
     return days;
+}
+
+export function getHoursDiff(
+    startDate: string | Date,
+    endDate: string | Date
+): number {
+    if (!startDate || !endDate) return 0;
+    if (typeof startDate === 'string') startDate = new Date(startDate);
+    if (typeof endDate === 'string') endDate = new Date(endDate);
+
+    const diff = endDate.getTime() - startDate.getTime();
+    return diff / (1000 * 60 * 60);
 }

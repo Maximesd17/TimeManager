@@ -16,7 +16,7 @@ const emits = defineEmits(['click']);
 defineProps({
     variant: {
         type: String,
-        default: 'primary'
+        default: 'default'
     },
     type: {
         type: String as PropType<'button' | 'submit'>,
@@ -48,23 +48,20 @@ function click() {
     }
 }
 
-.primary {
-    background-color: var(--primary);
-    color: white;
+.default {
+    background-color: var(--button);
+    color: var(--secondary);
 }
-.secondary {
-    background-color: var(--secondary);
-    color: white;
-}
+
 
 .green {
     background-color: var(--green);
-    color: white;
+    color: var(--text);
 }
 
 .red {
     background-color: var(--red);
-    color: white;
+    color: var(--text);
 }
 
 .transparent {

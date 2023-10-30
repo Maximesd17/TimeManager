@@ -6,16 +6,18 @@
         <InputText
             v-model="username"
             label="Username"
+            labelColor="var(--secondary)"
             class="w-[16rem]"
             max-width="16rem"
         />
         <InputText
             v-model="email"
             label="Email"
+            labelColor="var(--secondary)"
             class="w-[16rem]"
             max-width="16rem"
         />
-        <Button type="submit" class="h-8" variant="secondary">Search</Button>
+        <Button type="submit" class="h-8">Search</Button>
     </form>
 </template>
 
