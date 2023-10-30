@@ -30,7 +30,7 @@ export async function useApiFetch<T>(
         data: opts.data ? JSON.stringify(opts.data) : undefined
     });
     data.value = res.data.data ?? undefined;
-    error.value = !data.value ? `${res.status} (${res.statusText})` : false;
+    error.value = !data.value && res.status !== 204 ? `${res.status} (${res.statusText})` : false;
 
     return Promise.resolve({ data, error } as AsyncData<T>);
 }

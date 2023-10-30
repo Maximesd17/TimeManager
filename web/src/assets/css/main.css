@@ -5,8 +5,9 @@
 
 :root {
     font-family: Rubik, sans-serif;
-    --primary: #213547;
-    --secondary: #2e475a;
+    --primary: #2d354a;
+    --secondary: #fefefd;
+    --button: #827679;
     --darker: #1a2a38;
     --red: #ff4d4d;
     --green: #4bb543;
@@ -14,7 +15,7 @@
     font-weight: 400;
 
     color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
+    color: var(--primary);
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -28,14 +29,13 @@ body,
 #app {
     margin: 0;
     padding: 0;
-    background-color: var(--primary);
+    background-color: var(--secondary);
     overflow: hidden;
 }
 
 #app {
     height: 100vh;
     width: 100vw;
-    background-color: var(--secondary);
 }
 
 *,
