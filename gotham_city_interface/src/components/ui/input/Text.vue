@@ -6,19 +6,22 @@
             '--label-color': labelColor,
             '--focus-color': focusColor
         }"
+        :class="{
+            [`${variant}-text`]: true,
+            focus: isFocus
+        }"
     >
-        <label
-            v-if="label"
-            style="{ maxWidth }"
-            class="label"
-        >
+        <label v-if="label.length" style="{ maxWidth }" class="label">
             {{ label }}
         </label>
         <input
             class="input"
+            :class="{ [textAlign]: true, [variant]: true }"
             type="text"
             :value="modelValue"
             :style="{ maxWidth }"
+            @focus="isFocus = true"
+            @blur="isFocus = false"
             @input="handleInput"
             @keydown.enter.prevent="emits('enter')"
         />
@@ -26,6 +29,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref, type PropType } from 'vue';
+
 const emits = defineEmits(['update:modelValue', 'enter']);
 
 defineProps({
@@ -33,13 +38,18 @@ defineProps({
         type: String,
         required: true
     },
+    label: {
+        type: String,
+        default: ''
+    },
+
     maxWidth: {
         type: String,
         default: '14rem'
     },
-    label: {
-        type: String,
-        default: ''
+    textAlign: {
+        type: String as PropType<'left' | 'center' | 'right'>,
+        default: 'left'
     },
     labelColor: {
         type: String,
@@ -52,8 +62,15 @@ defineProps({
     focusColor: {
         type: String,
         default: 'var(--button)'
+    },
+
+    variant: {
+        type: String as PropType<'default' | 'userEdit'>,
+        default: 'default'
     }
 });
+
+const isFocus = ref(false);
 
 function handleInput(event: Event) {
     const target = event?.target as HTMLInputElement;
@@ -75,22 +92,79 @@ function handleInput(event: Event) {
         text-align: left;
         margin: 0;
         color: var(--label-color) !important;
-        margin-left: 4px;
+        margin-left: 2px;
     }
 
     .input {
         width: 100%;
         border: none;
-        background-color: var(--secondary);
-        outline: 2px solid var(--border-color);
-        padding: 2px 2px 2px 4px;
-        border-radius: 0.5rem;
         font-size: large;
         font-weight: 600;
-        color: var(--primary);
+        background-color: var(--secondary);
 
-        &:focus {
-            outline: 2px solid var(--focus-color) !important;
+        &.default {
+            outline: 2px solid var(--border-color);
+            padding-left: 0.25rem;
+            border-radius: 0.5rem;
+            font-size: large;
+            font-weight: 600;
+            color: var(--primary);
+
+            &:focus {
+                outline: 2px solid var(--focus-color) !important;
+            }
+        }
+
+        &.userEdit {
+            font-size: large;
+            font-weight: 500;
+            color: var(--primary);
+
+            &:focus {
+                outline: none;
+            }
+        }
+
+        &.left {
+            text-align: left;
+        }
+
+        &.center {
+            text-align: center;
+        }
+
+        &.right {
+            text-align: right;
+        }
+    }
+    &.userEdit-text {
+        position: relative;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3rem;
+            height: 2px;
+            background-color: var(--primary);
+            margin-top: 0.5rem;
+            transition: width 0.2s ease-in-out;
+        }
+
+        &.focus {
+            &::after {
+                content: '';
+                position: absolute;
+                top: 60%;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 6rem;
+                height: 2px;
+                background-color: var(--primary);
+                margin-top: 0.5rem;
+            }
         }
     }
 }

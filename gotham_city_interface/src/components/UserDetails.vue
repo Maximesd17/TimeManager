@@ -9,38 +9,55 @@
                     : 'h-full'
             "
         >
-            <div v-if='!isEditMode'>
+            <div>
                 <div>
                     <h3>Username:</h3>
-                    <p>{{ user.username }}</p>
+                    <InputText
+                        v-if="isEditMode"
+                        v-model="username"
+                        class="w-[16rem] !h-6"
+                        text-align="center"
+                        variant="userEdit"
+                        max-width="16rem"
+                    />
+                    <p v-else>{{ username }}</p>
                 </div>
                 <div>
                     <h3>Email:</h3>
-                    <p>{{ user.email }}</p>
+                    <InputText
+                        v-if="isEditMode"
+                        v-model="email"
+                        class="w-[16rem] !h-6"
+                        text-align="center"
+                        variant="userEdit"
+                        max-width="16rem"
+                    />
+                    <p v-else>{{ email }}</p>
                 </div>
-                <UiButton @click="switchEditMode">Edit</UiButton>
             </div>
-            <form v-else @submit.prevent="emits('update:user', {id: user.id, username: user.username, email: user.email })">
-                <InputText
-                    v-model="user.username"
-                    label="Username"
-                    class="w-[16rem]"
-                    max-width="16rem"
-                />
-                <InputText
-                    v-model="user.email"
-                    label="Email"
-                    class="w-[16rem]"
-                    max-width="16rem"
-                />
-                <br>
-                <UiButton @click="emits('delete:user',{id:user.id})" variant="red" class="h-12 w-20">
-                    <img src='../assets/svg/delete.svg'/>
-                </UiButton>
-                <UiButton type='submit' @click='switchEditMode' variant="default" class="h-12 w-20 margin">
-                    <img src='../assets/svg/edit.svg' />
-                </UiButton>
-            </form>
+            <UiButton class="absolute right-4 top-4" @click="switchEditMode">Edit</UiButton>
+            <!-- <template>
+                <form
+                    @submit.prevent="emits('update:user', { username, email })"
+                >
+                    <br />
+                    <UiButton
+                        @click="emits('delete:user', { id: user.id })"
+                        variant="red"
+                        class="h-12 w-20"
+                    >
+                        <img src="../assets/svg/delete.svg" />
+                    </UiButton>
+                    <UiButton
+                        type="submit"
+                        @click="switchEditMode"
+                        variant="default"
+                        class="h-12 w-20 margin"
+                    >
+                        <img src="../assets/svg/edit.svg" />
+                    </UiButton>
+                </form>
+            </template> -->
         </Card>
         <Card
             v-show="isPieOpen || isPieOpening || isPieClosing"
@@ -71,6 +88,7 @@ import ClockComponent from '@/components/Clock.vue';
 import Card from '@/components/ui/cards/Rectangle.vue';
 import CurrentDayData from './CurrentDayData.vue';
 import UiButton from '@/components/ui/input/Button.vue';
+
 const props = defineProps({
     user: {
         type: Object as PropType<User>,
@@ -83,8 +101,8 @@ const props = defineProps({
 });
 
 const emits = defineEmits<{
-    (e: 'delete:user', user: { id: number;}): void;
-    (e: 'update:user', user: { id: number; username: string; email: string }): void;
+    (e: 'delete:user', user: { id: number }): void;
+    (e: 'update:user', user: { username: string; email: string }): void;
     (e: 'update:clock', clock: Clock): void;
 }>();
 
@@ -92,6 +110,9 @@ const isPieOpen = ref(props.clock?.status ?? false);
 const isPieOpening = ref(false);
 const isPieClosing = ref(false);
 const isEditMode = ref(false);
+
+const email = ref(props.user.email);
+const username = ref(props.user.username);
 
 function switchEditMode() {
     isEditMode.value = !isEditMode.value;
@@ -109,6 +130,17 @@ watch(
     () => props.clock,
     () => {
         setTimeout(() => togglePie(), 50);
+    },
+    {
+        deep: true
+    }
+);
+
+watch(
+    () => props.user,
+    () => {
+        email.value = props.user.email;
+        username.value = props.user.username;
     },
     {
         deep: true
@@ -141,15 +173,14 @@ h2 {
     @apply font-bold text-xl;
 }
 
-img{
+img {
     margin: auto;
     display: block;
 }
 
-.margin{
+.margin {
     margin-left: 10px;
 }
-
 
 .transition {
     transition: height 400ms ease-in-out;
