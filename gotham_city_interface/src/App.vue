@@ -12,12 +12,18 @@
     <header
         class="h-[4.5rem] bg-primary rounded-b-xl grid place-content-center"
     >
-        <UserSelector class="h-full" @fetch:user="fetchUser" />
+        <UserSelector class="h-full" :user="user" @fetch:user="fetchUser" />
     </header>
 
     <main class="relative h-[calc(100vh-4.5rem)] w-full">
         <div class="flex gap-4 p-4 h-full" v-if="user">
-            <UserDetailsComponent v-if="clock" :user="user" v-model:clock="clock" @update:user="updateUser" @delete:user="deleteUser" />
+            <UserDetailsComponent
+                v-if="clock"
+                :user="user"
+                v-model:clock="clock"
+                @update:user="updateUser"
+                @delete:user="deleteUser"
+            />
             <div class="flex flex-col w-2/3 h-full gap-4">
                 <div v-if="workingTimes" class="h-full">
                     <WorkingTimeComponent
@@ -115,13 +121,15 @@ async function fetchUser(fUser: { username: string; email: string }) {
     }
 }
 
-async function updateUser(updateUser: {id: number, username: string; email: string }) {
-    const { data, error } = await useApiFetch<User>(`/users/${updateUser.id}`, {
+async function updateUser(updateUser: { username: string; email: string }) {
+    if (user.value == null) return;
+
+    const { data, error } = await useApiFetch<User>(`/users/${user.value.id}`, {
         method: 'PUT',
         data: {
             user: {
                 username: updateUser.username,
-                email:updateUser.email
+                email: updateUser.email
             }
         }
     });
@@ -129,12 +137,13 @@ async function updateUser(updateUser: {id: number, username: string; email: stri
         useToast.error(`Error during user update`);
     } else {
         useToast.success(`User updated successfully`);
+        user.value = data.value;
     }
 }
 
-async function deleteUser(deleteUser: {id: number}) {
-    const { data, error } = await useApiFetch<User>(`/users/${deleteUser.id}`, {
-        method: 'DELETE',
+async function deleteUser(deleteUser: { id: number }) {
+    const { error } = await useApiFetch<User>(`/users/${deleteUser.id}`, {
+        method: 'DELETE'
     });
     if (error.value) {
         useToast.error(`Error during user delete`);

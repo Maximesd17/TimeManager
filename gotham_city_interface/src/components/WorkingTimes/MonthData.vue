@@ -50,13 +50,17 @@ function fillChartData() {
 
     const data = dates.map(d => {
         const startDate = formatDate(d);
-        const workingTime = props.workingTimes.find(
+        const workingTimes = props.workingTimes.filter(
             wt => formatDate(wt.start) === startDate
         );
 
-        return workingTime
-            ? getHoursDiff(workingTime.start, workingTime.end)
-            : 0;
+        let duration = 0;
+
+        for (const workingTime of workingTimes) {
+            duration += getHoursDiff(workingTime.start, workingTime.end);
+        }
+
+        return duration;
     }) as number[];
 
     const dataLabels = data.map(d => {
