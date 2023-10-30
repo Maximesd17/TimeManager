@@ -13,6 +13,7 @@ config :gotham_city,
 
 # Configures the endpoint
 config :gotham_city, GothamCityWeb.Endpoint,
+  http: [port: 4000],
   url: [host: "localhost"],
   adapter: Phoenix.Endpoint.Cowboy2Adapter,
   render_errors: [
@@ -60,6 +61,11 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+config :cors_plug,
+  origin: "*",
+  max_age: 86400,
+  methods: ["GET", "POST", "PUT", "DELETE"]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -3,7 +3,7 @@ import Config
 # Configure your database
 config :gotham_city, GothamCity.Repo,
   username: "postgres",
-  password: "",
+  password: "postgres",
   hostname: "localhost",
   database: "gotham_city_dev",
   stacktrace: true,
