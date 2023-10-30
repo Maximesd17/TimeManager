@@ -27,7 +27,7 @@ config :gotham_city, GothamCityWeb.Endpoint,
        # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
        http: [ip: {0, 0, 0, 0}, port: 4000],
        check_origin: false,
-       code_reloader: true,
+       code_reloader: false,
        debug_errors: true,
        secret_key_base: "Pctw+u5euohYlM/CCZsxfKDTx/7fFJrufOgAsiDlvT1uhYDXZHgo1pD4s04v6E5g",
        watchers: [
