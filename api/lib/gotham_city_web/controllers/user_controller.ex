@@ -12,6 +12,13 @@ defmodule GothamCityWeb.UserController do
   end
 
   def create(conn, %{"user" => user_params}) do
+    if not String.match?(user_params["email"], ~r/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/) do
+      conn
+      |> put_status(:bad_request)
+      |> put_view(html: GothamCityWeb.ErrorHTML, json: GothamCityWeb.ErrorJSON)
+      |> render(:"400")
+    end
+
     with {:ok, %User{} = user} <- Accounts.create_user(user_params) do
       conn
       |> put_status(:created)

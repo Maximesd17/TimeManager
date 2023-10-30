@@ -21,13 +21,14 @@ defmodule GothamCityWeb.Router do
   # end
 
   # Other scopes may use custom stacks.
+
   scope "/api", GothamCityWeb do
     pipe_through(:api)
 
     scope "/users" do
       get("/", UserController, :identifier)
       get("/:userID", UserController, :show)
-      post("", UserController, :create)
+      post("/", UserController, :create)
       put("/:userID", UserController, :update)
       delete("/:userID", UserController, :delete)
     end
