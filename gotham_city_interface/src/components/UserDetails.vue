@@ -1,15 +1,25 @@
 <template>
+    <Confirm
+        v-if="isDeletingUser"
+        width="40vw"
+        height="30vh"
+        @yes="handleDelete"
+        @no="isDeletingUser = false"
+        variant="danger"
+    >
+        Are you sure you want to delete this user ?
+    </Confirm>
     <div class="w-1/3 h-full relative gap-4">
         <ClockComponent v-if="clock" @click="postClock" :clock="clock" />
         <Card
-            class="w-full text-center flex flex-col justify-center items-center gap-6 transition"
+            class="w-full text-center flex flex-col justify-center items-center gap-6"
             :class="
                 (isPieOpen || isPieOpening) && !isPieClosing
                     ? 'h-2/5'
                     : 'h-full'
             "
         >
-            <div>
+            <form @submit.prevent="emits('update:user', { username, email })">
                 <div>
                     <h3>Username:</h3>
                     <InputText
@@ -34,30 +44,42 @@
                     />
                     <p v-else>{{ email }}</p>
                 </div>
-            </div>
-            <UiButton class="absolute right-4 top-4" @click="switchEditMode">Edit</UiButton>
-            <!-- <template>
-                <form
-                    @submit.prevent="emits('update:user', { username, email })"
+                <UiButton
+                    v-show="isEditMode"
+                    type="submit"
+                    class="absolute translate-y-2 -translate-x-1/2"
+                    :style="{
+                        '--translateY': '0.5rem',
+                        '--translateX': '-50%'
+                    }"
+                    :class="{
+                        appear: isEditMode,
+                        disappear: isEditModeClosing
+                    }"
                 >
-                    <br />
-                    <UiButton
-                        @click="emits('delete:user', { id: user.id })"
-                        variant="red"
-                        class="h-12 w-20"
-                    >
-                        <img src="../assets/svg/delete.svg" />
-                    </UiButton>
-                    <UiButton
-                        type="submit"
-                        @click="switchEditMode"
-                        variant="default"
-                        class="h-12 w-20 margin"
-                    >
-                        <img src="../assets/svg/edit.svg" />
-                    </UiButton>
-                </form>
-            </template> -->
+                    Update
+                </UiButton>
+            </form>
+            <UiButton
+                v-if="isEditMode"
+                class="absolute right-4 top-4 h-8 w-8 !p-1.5 !bg-red"
+                :class="{
+                    'slide-in': isEditMode,
+                    'slide-out': isEditModeClosing
+                }"
+                :style="{
+                    '--translateX': `${isEditMode ? '-2.5rem' : '0'}`
+                }"
+                @click="isDeletingUser = true"
+            >
+                <img class="w-full h-full" src="../assets/svg/delete.svg" />
+            </UiButton>
+            <UiButton
+                class="absolute right-4 top-4 h-8 w-8 !p-1.5"
+                @click="switchEditMode"
+            >
+                <img class="w-full h-full" src="../assets/svg/edit.svg" />
+            </UiButton>
         </Card>
         <Card
             v-show="isPieOpen || isPieOpening || isPieClosing"
@@ -83,11 +105,13 @@
 import type { Clock, User } from '@/types';
 import { ref, type PropType, watch } from 'vue';
 import { useApiFetch } from '@/composables/useApiFetch';
+
 import InputText from '@/components/ui/input/Text.vue';
 import ClockComponent from '@/components/Clock.vue';
 import Card from '@/components/ui/cards/Rectangle.vue';
 import CurrentDayData from './CurrentDayData.vue';
 import UiButton from '@/components/ui/input/Button.vue';
+import Confirm from './ui/input/Confirm.vue';
 
 const props = defineProps({
     user: {
@@ -101,21 +125,32 @@ const props = defineProps({
 });
 
 const emits = defineEmits<{
-    (e: 'delete:user', user: { id: number }): void;
-    (e: 'update:user', user: {id: number; username: string; email: string }): void;
+    (e: 'delete:user'): void;
+    (e: 'update:user', user: { username: string; email: string }): void;
     (e: 'update:clock', clock: Clock): void;
 }>();
 
 const isPieOpen = ref(props.clock?.status ?? false);
 const isPieOpening = ref(false);
 const isPieClosing = ref(false);
+
 const isEditMode = ref(false);
+const isEditModeClosing = ref(false);
 
 const email = ref(props.user.email);
 const username = ref(props.user.username);
 
+const isDeletingUser = ref(false);
+
 function switchEditMode() {
-    isEditMode.value = !isEditMode.value;
+    isEditModeClosing.value = true;
+    setTimeout(
+        () => {
+            isEditModeClosing.value = false;
+            isEditMode.value = !isEditMode.value;
+        },
+        isEditMode.value ? 200 : 0
+    );
 }
 
 async function postClock() {
@@ -146,6 +181,11 @@ watch(
         deep: true
     }
 );
+
+function handleDelete() {
+    emits('delete:user');
+    isDeletingUser.value = false;
+}
 
 function togglePie() {
     if (!props.clock.status) {
@@ -182,7 +222,61 @@ img {
     margin-left: 10px;
 }
 
+.slide-in {
+    animation: slide-open 0.2s ease-in-out;
+    transform: translateX(-2.5rem);
+}
+
+.slide-out {
+    animation: slide-close 0.2s;
+    transform: translateX(0);
+}
+
 .transition {
-    transition: height 400ms ease-in-out;
+    transition: height 400ms;
+}
+
+@keyframes slide-open {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-2.5rem);
+    }
+}
+
+@keyframes slide-close {
+    0% {
+        transform: translateX(-2.5rem);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.appear {
+    animation: appear 0.2s;
+}
+
+.disappear {
+    animation: disappear 0.2s;
+}
+
+@keyframes appear {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes disappear {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 </style>

@@ -1,6 +1,6 @@
 export const useChartColors = {
-	primary: '#2d354a',
-	light: '#fefefd',
-	button: '#827679',
+	primary: '#2e4250',
+	light: '#EBEDE7',
+	button: '#879CA4',
 	hidden: '#00000000'
 };

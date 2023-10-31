@@ -12,20 +12,26 @@
     <header
         class="h-[4.5rem] bg-primary rounded-b-xl grid place-content-center"
     >
-        <UserSelector class="h-full" @fetch:user="fetchUser" />
+        <UserSelector class="h-full" :user="user" @fetch:user="fetchUser" />
     </header>
 
     <main class="relative h-[calc(100vh-4.5rem)] w-full">
         <div class="flex gap-4 p-4 h-full" v-if="user">
-            <UserDetailsComponent v-if="clock" :user="user" v-model:clock="clock" @update:user="updateUser" @delete:user="deleteUser" />
+            <UserDetailsComponent
+                v-if="clock"
+                :user="user"
+                v-model:clock="clock"
+                @update:user="updateUser"
+                @delete:user="deleteUser"
+            />
             <div class="flex flex-col w-2/3 h-full gap-4">
                 <div v-if="workingTimes" class="h-full">
                     <WorkingTimeComponent
                         :workingTimes="workingTimes"
                         :start="startDate"
                         :end="endDate"
-                        @prevMonth="prevMonth"
-                        @nextMonth="nextMonth"
+                        @prevMonth="setPrevMonth"
+                        @nextMonth="setNextMonth"
                     />
                 </div>
             </div>
@@ -48,7 +54,7 @@ import { useApiFetch } from '@/composables/useApiFetch';
 import useToast from '@/composables/useToast';
 
 import type { Clock, User, WorkingTime } from '@/types';
-import { formatDateTime } from '@/utils/dates';
+import { formatDateTime, prevMonth, nextMonth, getLastDayOfMonth } from '@/utils/dates';
 
 import UserSelector from '@/components/User.vue';
 import Confirm from '@/components/ui/input/Confirm.vue';
@@ -61,23 +67,32 @@ const clock = ref(null as Clock | null);
 
 const tmpUserCreation = ref(null as { username: string; email: string } | null);
 
-const startDate = new Date();
-startDate.setDate(1);
-startDate.setMonth(startDate.getMonth() - 1);
-startDate.setHours(0, 0, 0, 0);
+const startDate = ref(new Date());
+startDate.value.setDate(1);
+startDate.value.setMonth(startDate.value.getMonth() - 1);
+startDate.value.setHours(0, 0, 0, 0);
 
-const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
-endDate.setHours(23, 59, 59, 999);
+const endDate = ref(
+    new Date(
+        startDate.value.getFullYear(),
+        startDate.value.getMonth() + 1,
+        0,
+        23,
+        59,
+        59,
+        999
+    )
+);
 
-function prevMonth() {
-    startDate.setMonth(startDate.getMonth() - 1);
-    endDate.setMonth(endDate.getMonth() - 1);
+function setPrevMonth() {
+    startDate.value = prevMonth(startDate.value);
+    endDate.value = getLastDayOfMonth(prevMonth(endDate.value));
     fetchWorkingTime();
 }
 
-function nextMonth() {
-    startDate.setMonth(startDate.getMonth() + 1);
-    endDate.setMonth(endDate.getMonth() + 1);
+function setNextMonth() {
+    startDate.value = nextMonth(startDate.value);
+    endDate.value = getLastDayOfMonth(nextMonth(endDate.value));
     fetchWorkingTime();
 }
 
@@ -115,13 +130,15 @@ async function fetchUser(fUser: { username: string; email: string }) {
     }
 }
 
-async function updateUser(updateUser: {id: number, username: string; email: string }) {
-    const { data, error } = await useApiFetch<User>(`/users/${updateUser.id}`, {
+async function updateUser(updateUser: { username: string; email: string }) {
+    if (user.value == null) return;
+
+    const { data, error } = await useApiFetch<User>(`/users/${user.value.id}`, {
         method: 'PUT',
         data: {
             user: {
                 username: updateUser.username,
-                email:updateUser.email
+                email: updateUser.email
             }
         }
     });
@@ -129,17 +146,20 @@ async function updateUser(updateUser: {id: number, username: string; email: stri
         useToast.error(`Error during user update`);
     } else {
         useToast.success(`User updated successfully`);
+        user.value = data.value;
     }
 }
 
-async function deleteUser(deleteUser: {id: number}) {
-    const { data, error } = await useApiFetch<User>(`/users/${deleteUser.id}`, {
-        method: 'DELETE',
+async function deleteUser() {
+    if (user.value == null) return;
+    const { error } = await useApiFetch<User>(`/users/${user.value.id}`, {
+        method: 'DELETE'
     });
     if (error.value) {
         useToast.error(`Error during user delete`);
     } else {
         useToast.success(`User deleted successfully`);
+        user.value = null;
     }
 }
 
@@ -150,8 +170,8 @@ async function fetchWorkingTime() {
         `/workingtimes/${user.value?.id}`,
         {
             params: {
-                start: formatDateTime(startDate),
-                end: formatDateTime(endDate)
+                start: formatDateTime(startDate.value),
+                end: formatDateTime(endDate.value)
             }
         }
     );

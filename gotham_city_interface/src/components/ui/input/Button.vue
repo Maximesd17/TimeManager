@@ -31,6 +31,7 @@ function click() {
 <style lang="scss" scoped>
 .button {
     border: none;
+    outline: none;
     padding: 0 1rem;
     text-align: center;
     text-decoration: none;
@@ -41,7 +42,7 @@ function click() {
     transition: all 0.1s ease-in-out;
     font-weight: 800;
     &:hover {
-        transform: scale(1.05);
+        transform: translateX(var(--translateX, 0)) translateY(var(--translateY, 0)) scale(1.05, 1.05);
     }
     &:active {
         box-shadow: inset -1px 2px 5px #000;
@@ -53,14 +54,20 @@ function click() {
     color: var(--secondary);
 }
 
-
-.green {
-    background-color: var(--green);
+.defaultBorder {
+    background-color: transparent;
+    border: 2px solid var(--button);
     color: var(--text);
 }
 
 .red {
     background-color: var(--red);
+    color: var(--text);
+}
+
+.redBorder {
+    background-color: transparent;
+    border: 2px solid var(--red);
     color: var(--text);
 }
 

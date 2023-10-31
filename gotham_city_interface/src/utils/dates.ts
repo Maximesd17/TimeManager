@@ -101,3 +101,23 @@ export function getHoursDiff(
     const diff = endDate.getTime() - startDate.getTime();
     return diff / (1000 * 60 * 60);
 }
+
+export function prevMonth(startDate: Date | string) {
+    if (typeof startDate === 'string') startDate = new Date(startDate);
+    const year = startDate.getFullYear();
+    const month = startDate.getMonth();
+    return new Date(year, month - 1, 1);
+}
+
+export function nextMonth(startDate: Date | string) {
+    if (typeof startDate === 'string') startDate = new Date(startDate);
+    const year = startDate.getFullYear();
+    const month = startDate.getMonth();
+    return new Date(year, month + 1, 1);
+}
+
+export function getLastDayOfMonth(date: Date) {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    return new Date(year, month + 1, 0);
+}
