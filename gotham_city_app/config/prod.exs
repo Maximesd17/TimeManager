@@ -14,10 +14,11 @@ config :gotham_city, GothamCityWeb.Endpoint,
 
 # Configure your database connection
 config :gotham_city, GothamCity.Repo,
-       username: "postgres",
-       password: "postgres",
-       database: "gotham_city_dev",
-       hostname: "localhost",
+       username: System.get_env("PGUSER", "postgres"),
+       password: System.get_env("PGPASSWORD", "root"),
+       hostname: System.get_env("PGHOST", "db"),
+       database: System.get_env("PGDATABASE", "gotham_city"),
+       port: String.to_integer(System.get_env("PGPORT", "5432")),
        stacktrace: true,
        show_sensitive_data_on_connection_error: true,
        pool_size: 10
