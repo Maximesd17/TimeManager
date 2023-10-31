@@ -14,8 +14,9 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - 'pgdata:/var/lib/postgresql/data'
-  gotham_city_app:
+  api:
     build:
+      # a changer une fois merged (./api)
       context: ./gotham_city_app
     env_file:
       - gotham_city.env
@@ -23,9 +24,10 @@ services:
       - '4000:4000'
     depends_on:
       - db
-  gotham_city_interfaces:
+  web:
     build:
-      context: ./gotham_city_interface
+      # a changer une fois merged (./web)
+      context: ./gotham_city_interface      
     ports:
       - '8080:8080'
 volumes:
