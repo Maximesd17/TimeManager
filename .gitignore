@@ -3,3 +3,4 @@
 *#
 .vscode
 .elixir_ls
+.env
