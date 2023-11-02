@@ -3,6 +3,7 @@ defmodule GothamCityWeb.UserController do
 
   alias GothamCity.Accounts
   alias GothamCity.Accounts.User
+  alias GothamCity.Token
 
   action_fallback(GothamCityWeb.FallbackController)
 
@@ -20,6 +21,13 @@ defmodule GothamCityWeb.UserController do
     end
 
     with {:ok, %User{} = user} <- Accounts.create_user(user_params) do
+      signer = Joken.Signer.create("HS256", "secret")
+
+      extra_claims = %{user_id: user.id}
+      {:ok, token, _claims} = Token.generate_and_sign(extra_claims, signer)
+      IO.inspect("#token #{token}")
+#      token = "some token"
+
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/users/#{user}")
