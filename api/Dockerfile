@@ -1,4 +1,4 @@
-FROM elixir:latest
+FROM elixir:1.14
 
 ADD .. /app
 # Install debian packages

@@ -3,7 +3,7 @@ version: '3.8'
 services:
   db:
     image: postgres:13.2
-    container_name: gotham-database
+    container_name: db
     restart: always
     ports:
       - "5432:5432"
@@ -14,19 +14,25 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - 'pgdata:/var/lib/postgresql/data'
+    networks:
+      - timemanager
   gotham_city_app:
     build:
-      context: ./gotham_city_app
+      context: ./api
     env_file:
       - .env
     ports:
       - '4000:4000'
     depends_on:
       - db
+    networks:
+      - timemanager
   gotham_city_interfaces:
     build:
-      context: ./gotham_city_interface
+      context: ./web
     ports:
       - '8080:8080'
 volumes:
   pgdata:
+networks:
+  timemanager:
