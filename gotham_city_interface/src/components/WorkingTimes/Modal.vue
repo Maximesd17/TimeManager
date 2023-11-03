@@ -133,7 +133,7 @@ function toggleClickedLine(index: number) {
     let timeout = 0;
 
     if (clickedLine.value !== null) {
-        timeout = 500;
+        timeout = 300;
         const row = document.querySelector(`.tmp-row`) as HTMLElement;
         row.classList.remove('grow-in');
         row.classList.add('grow-out');
