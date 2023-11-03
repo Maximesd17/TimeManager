@@ -47,7 +47,10 @@ defmodule GothamCityWeb.UserController do
   def show(conn, %{"userID" => id}) do
     signer = Joken.Signer.create("HS256", "secret")
     user = Accounts.get_user!(id)
-    token = get_req_header(conn, "authorization")
+    tokenList = get_req_header(conn, "authorization")
+    token = Enum.join(tokenList)
+    {:ok, claims} = Token.verify_and_validate(token,signer)
+
     IO.inspect(token)
     render(conn, :show, user: user)
   end
