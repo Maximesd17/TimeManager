@@ -45,7 +45,10 @@ defmodule GothamCityWeb.UserController do
   end
 
   def show(conn, %{"userID" => id}) do
+    signer = Joken.Signer.create("HS256", "secret")
     user = Accounts.get_user!(id)
+    token = get_req_header(conn, "authorization")
+    IO.inspect(token)
     render(conn, :show, user: user)
   end
 
