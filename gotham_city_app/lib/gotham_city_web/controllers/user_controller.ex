@@ -33,7 +33,8 @@ defmodule GothamCityWeb.UserController do
           user: %{
             id: user.id,
             username: user.username,
-            email: user.email
+            email: user.email,
+            roles: user.roles
           }
         }
 

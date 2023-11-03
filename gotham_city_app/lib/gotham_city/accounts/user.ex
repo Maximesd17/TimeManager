@@ -6,6 +6,7 @@ defmodule GothamCity.Accounts.User do
     field(:username, :string)
     field(:email, :string)
     field(:password, :string)
+    field(:roles, {:array, :string})
 
     timestamps(type: :utc_datetime)
   end

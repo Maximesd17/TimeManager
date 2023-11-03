@@ -5,7 +5,8 @@ defmodule GothamCity.Repo.Migrations.CreateUsers do
     create table(:users) do
       add :username, :string, null: false
       add :email, :string, null: false
-      add :password, :string, null: true
+      add :password, :string, null: false
+      add :roles, {:array, :string}, default: []
 
       timestamps(type: :utc_datetime)
     end
