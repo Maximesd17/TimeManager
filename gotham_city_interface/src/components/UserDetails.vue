@@ -1,21 +1,21 @@
 <template>
-    <Confirm
-        v-if="isDeletingUser"
-        width="40vw"
-        height="30vh"
-        @yes="handleDelete"
-        @no="isDeletingUser = false"
-        variant="danger"
-    >
-        Are you sure you want to delete this user ?
-    </Confirm>
-    <div class="w-1/3 h-full relative gap-4">
+    <div class="h-fit sm:h-full relative">
+        <Confirm
+            v-if="isDeletingUser"
+            width="40vw"
+            height="30vh"
+            @yes="handleDelete"
+            @no="isDeletingUser = false"
+            variant="danger"
+        >
+            Are you sure you want to delete this user ?
+        </Confirm>
         <ClockComponent v-if="clock" @click="postClock" :clock="clock" />
         <Card
-            class="w-full text-center flex flex-col justify-center items-center gap-6"
+            class="w-full text-center flex flex-col justify-center items-center gap-6 collapse-open"
             :class="
                 (isPieOpen || isPieOpening) && !isPieClosing
-                    ? 'h-2/5'
+                    ? 'h-auto sm:h-2/5'
                     : 'h-full'
             "
         >
@@ -62,7 +62,7 @@
             </form>
             <UiButton
                 v-if="isEditMode"
-                class="absolute right-4 top-4 h-8 w-8 !p-1.5 !bg-red"
+                class="absolute right-2 top-2 h-8 w-8 !p-1.5 !bg-red"
                 :class="{
                     'slide-in': isEditMode,
                     'slide-out': isEditModeClosing
@@ -75,26 +75,26 @@
                 <img class="w-full h-full" src="../assets/svg/delete.svg" />
             </UiButton>
             <UiButton
-                class="absolute right-4 top-4 h-8 w-8 !p-1.5"
-                @click="switchEditMode"
+                class="absolute right-2 top-2 h-8 w-8 !p-1.5"
+                @click="toggleEditMode"
             >
                 <img class="w-full h-full" src="../assets/svg/edit.svg" />
             </UiButton>
         </Card>
         <Card
-            v-show="isPieOpen || isPieOpening || isPieClosing"
-            class="w-full text-center flex flex-col justify-end items-center gap-6 transition mt-4 relative"
+            v-if="isPieOpen || isPieOpening || isPieClosing"
+            class="w-full text-center flex flex-col justify-end items-center gap-6 collapse-open mt-4 relative"
             :class="`${
                 (isPieOpen || isPieOpening) && !isPieClosing
-                    ? 'h-[calc(60%-1rem)]'
+                    ? 'h-[20rem] sm:h-[calc(60%-1rem)]'
                     : 'h-0'
             }`"
         >
             <h2 class="absolute top-2">Current Day Data</h2>
             <CurrentDayData
-                v-if="isPieOpen"
+                v-if="isPieOpen || !(isPieClosing && layout === 'mobile')"
                 :key="clock.status.toString()"
-                class="h-full pt-[10%]"
+                class="h-full pt-[2.5rem] mt-auto"
                 :clock="clock"
             />
         </Card>
@@ -105,6 +105,8 @@
 import type { Clock, User } from '@/types';
 import { ref, type PropType, watch } from 'vue';
 import { useApiFetch } from '@/composables/useApiFetch';
+import { useScreenStore } from '@/store/screen';
+import { storeToRefs } from 'pinia';
 
 import InputText from '@/components/ui/input/Text.vue';
 import ClockComponent from '@/components/Clock.vue';
@@ -130,6 +132,9 @@ const emits = defineEmits<{
     (e: 'update:clock', clock: Clock): void;
 }>();
 
+const screenStore = useScreenStore();
+const { layout } = storeToRefs(screenStore);
+
 const isPieOpen = ref(props.clock?.status ?? false);
 const isPieOpening = ref(false);
 const isPieClosing = ref(false);
@@ -142,7 +147,7 @@ const username = ref(props.user.username);
 
 const isDeletingUser = ref(false);
 
-function switchEditMode() {
+function toggleEditMode() {
     isEditModeClosing.value = true;
     setTimeout(
         () => {
@@ -188,10 +193,10 @@ function handleDelete() {
 }
 
 function togglePie() {
-    if (!props.clock.status) {
+    if (!props.clock?.status) {
         isPieClosing.value = true;
+        isPieOpen.value = false;
         setTimeout(() => {
-            isPieOpen.value = false;
             isPieClosing.value = false;
         }, 400);
     } else {
@@ -232,8 +237,8 @@ img {
     transform: translateX(0);
 }
 
-.transition {
-    transition: height 400ms;
+.collapse-open {
+    transition: height 400ms ease-in-out;
 }
 
 @keyframes slide-open {

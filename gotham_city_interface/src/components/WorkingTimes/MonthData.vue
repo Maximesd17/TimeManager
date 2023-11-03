@@ -1,11 +1,10 @@
 <template>
-    <Bar class="h-full w-full" :data="data" :options="options" />
+    <Bar class="min-h-full w-fit" :data="data" :options="options" />
 </template>
 
 <script lang="ts" setup>
 import type { WorkingTime } from '@/types';
 import { ref, type PropType, watch } from 'vue';
-
 import { useBarChart } from '@/composables/charts/useBarChart';
 import {
     getFormattedDaysInInterval,
@@ -41,6 +40,14 @@ const datasets = ref(
         type?: string;
         borderColor?: string;
     }[]
+);
+
+watch(
+    () => [props.workingTimes, props.start, props.end],
+    () => {
+        fillChartData();
+    },
+    { immediate: true, deep: true }
 );
 
 function fillChartData() {
@@ -81,14 +88,6 @@ function fillChartData() {
         backgroundColor: '#879CA4'
     });
 }
-
-watch(
-    () => [props.workingTimes, props.start, props.end],
-    () => {
-        fillChartData();
-    },
-    { immediate: true, deep: true }
-);
 
 // @ts-ignore
 const { Bar, data, options } = useBarChart(labels, datasets);

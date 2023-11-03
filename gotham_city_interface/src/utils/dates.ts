@@ -3,6 +3,8 @@ export function padStartZero(number: number | string, length: number = 2) {
     return number.toString().padStart(length, '0');
 }
 
+export const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
 export const monthNames = [
     'January',
     'February',
@@ -46,7 +48,8 @@ export function formatDateToHuman(
     withTime: boolean = true,
     fromUtc: boolean = true
 ): string {
-    if (typeof date === 'string') date = new Date(date);
+    date = new Date(date);
+    if (!withTime) date.setHours(0, 0, 0, 0);
     const timeZoneOffset = date.getTimezoneOffset() / 60;
     if (fromUtc) date.setHours(date.getHours() - timeZoneOffset);
 
@@ -119,5 +122,5 @@ export function nextMonth(startDate: Date | string) {
 export function getLastDayOfMonth(date: Date) {
     const year = date.getFullYear();
     const month = date.getMonth();
-    return new Date(year, month + 1, 0);
+    return new Date(year, month + 1, 0, 23, 59, 59, 999);
 }
