@@ -25,13 +25,22 @@ defmodule GothamCityWeb.UserController do
 
       extra_claims = %{user_id: user.id}
       {:ok, token, _claims} = Token.generate_and_sign(extra_claims, signer)
+      {:ok, claims} = Token.verify_and_validate(token,signer)
       IO.inspect("#token #{token}")
-#      token = "some token"
+      response =
+        %{
+          token: token,
+          user: %{
+            id: user.id,
+            username: user.username,
+            email: user.email
+          }
+        }
 
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/users/#{user}")
-      |> render(:show, user: user)
+      |> json(response)
     end
   end
 
