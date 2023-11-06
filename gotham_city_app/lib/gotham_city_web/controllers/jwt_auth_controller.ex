@@ -1,4 +1,5 @@
 defmodule GothamCityWeb.JwtAuthPlug do
+  alias GothamCity.Accounts
   alias GothamCity.Token
   import Plug.Conn
 
@@ -7,7 +8,8 @@ defmodule GothamCityWeb.JwtAuthPlug do
   def call(conn, _opts) do
     token = get_token_from_header(conn)
     signer = Joken.Signer.create("HS256", "secret")
-    IO.inspect(token)
+    {:ok, claims} = Token.verify_and_validate(token, signer)
+    user = is_user_exist(claims)
     case Token.verify_and_validate(token, signer) do
       {:ok, _claims} ->
         conn
@@ -21,5 +23,10 @@ defmodule GothamCityWeb.JwtAuthPlug do
   defp get_token_from_header(conn) do
     tokenList = get_req_header(conn, "authorization")
     Enum.join(tokenList, " ")
+  end
+
+  def is_user_exist(claims) do
+    user_id = Map.get(claims, "user_id")
+    Accounts.get_user!(user_id)
   end
 end
