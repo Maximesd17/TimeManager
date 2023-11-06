@@ -25,7 +25,7 @@ defmodule GothamCityWeb.UserController do
 
       extra_claims = %{user_id: user.id}
       {:ok, token, _claims} = Token.generate_and_sign(extra_claims, signer)
-      {:ok, claims} = Token.verify_and_validate(token,signer)
+      {:ok, claims} = Token.verify_and_validate(token, signer)
       IO.inspect("#token #{token}")
       response =
         %{
@@ -46,13 +46,7 @@ defmodule GothamCityWeb.UserController do
   end
 
   def show(conn, %{"userID" => id}) do
-    signer = Joken.Signer.create("HS256", "secret")
     user = Accounts.get_user!(id)
-    tokenList = get_req_header(conn, "authorization")
-    token = Enum.join(tokenList)
-    {:ok, claims} = Token.verify_and_validate(token,signer)
-
-    IO.inspect(token)
     render(conn, :show, user: user)
   end
 

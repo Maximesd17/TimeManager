@@ -14,23 +14,25 @@ defmodule GothamCityWeb.Router do
     plug(:accepts, ["json"])
   end
 
-  # scope "/", GothamCityWeb do
-  #   pipe_through :browser
-
-  #   get "/", PageController, :home
-  # end
-
-  # Other scopes may use custom stacks.
+  pipeline :jwt do
+    plug GothamCityWeb.JwtAuthPlug
+  end
 
   scope "/api", GothamCityWeb do
     pipe_through(:api)
 
+    #secured users route
     scope "/users" do
+      pipe_through(:jwt)
       get("/", UserController, :identifier)
       get("/:userID", UserController, :show)
-      post("/", UserController, :create)
       put("/:userID", UserController, :update)
       delete("/:userID", UserController, :delete)
+    end
+
+    scope "/users" do
+      post("/", UserController, :create)
+      post
     end
 
     scope "/workingtimes" do
