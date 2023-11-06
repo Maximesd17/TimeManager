@@ -22,9 +22,18 @@ defmodule GothamCityWeb.UserController do
 
     with {:ok, %User{} = user} <- Accounts.create_user(user_params) do
       signer = Joken.Signer.create("HS256", "secret")
+      current_time = System.system_time(:second)
+      expiration_time = current_time + 3600  # 3600 seconds = 1 hour
+
+      # Create the payload with the "exp" claim
+      payload = %{
+        "sub" => user.id,  # Your user ID
+        "exp" => expiration_time
+      }
+
 
       extra_claims = %{user_id: user.id}
-      {:ok, token, _claims} = Token.generate_and_sign(extra_claims, signer)
+      {:ok, token, _claims} = Token.generate_and_sign(extra_claims, signer, payload)
       {:ok, claims} = Token.verify_and_validate(token, signer)
       IO.inspect("#token #{token}")
       response =

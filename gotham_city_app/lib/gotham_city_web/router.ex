@@ -32,7 +32,7 @@ defmodule GothamCityWeb.Router do
 
     scope "/users" do
       post("/", UserController, :create)
-      post
+      #post("/", UserController, :login)
     end
 
     scope "/workingtimes" do
