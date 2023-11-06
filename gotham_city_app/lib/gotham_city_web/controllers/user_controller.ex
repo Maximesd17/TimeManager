@@ -29,7 +29,8 @@ defmodule GothamCityWeb.UserController do
 
       {:ok, token, _claims} = Token.generate_and_sign(extra_claims, signer)
       {:ok, claims} = Token.verify_and_validate(token, signer)
-      IO.inspect("#token #{token}")
+      token = %{"refreshToken" => token}
+      userUpdated = Accounts.update_user(user, token)
       response =
         %{
           token: token,

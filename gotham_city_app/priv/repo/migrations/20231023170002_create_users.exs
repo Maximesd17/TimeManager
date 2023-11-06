@@ -7,6 +7,7 @@ defmodule GothamCity.Repo.Migrations.CreateUsers do
       add :email, :string, null: false
       add :password, :string, null: false
       add :roles, {:array, :string}, default: []
+      add :refreshToken, :text
 
       timestamps(type: :utc_datetime)
     end
