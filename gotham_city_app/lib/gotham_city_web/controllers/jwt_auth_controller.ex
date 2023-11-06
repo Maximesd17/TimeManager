@@ -8,11 +8,20 @@ defmodule GothamCityWeb.JwtAuthPlug do
   def call(conn, _opts) do
     token = get_token_from_header(conn)
     signer = Joken.Signer.create("HS256", "secret")
-    {:ok, claims} = Token.verify_and_validate(token, signer)
-    user = is_user_exist(claims)
+
     case Token.verify_and_validate(token, signer) do
-      {:ok, _claims} ->
-        conn
+      {:ok, claims} ->
+        user = is_user_exist(claims)
+        user_id = Map.get(claims, "user_id")
+
+        case user do
+          user_id ->
+            conn
+          {:error, message} ->
+            conn
+            |> put_status(:unauthorized)
+            |> Plug.Conn.send_resp(401, Jason.encode!(message))
+        end
       {:error, message} ->
         conn
         |> put_status(:unauthorized)
