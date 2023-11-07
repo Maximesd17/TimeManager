@@ -24,14 +24,27 @@ defmodule GothamCityWeb.UserController do
 
       _ ->
         password_in_db = user.password
+
+        signer = Joken.Signer.create("HS256", "secret")
         refreshToken = user.refreshToken
+
         response = user_response_format(user)
         case Bcrypt.verify_pass(password, password_in_db) do
           true ->
-            conn
+            case Token.verify_and_validate(refreshToken, signer) do
+              {:ok, claims} ->
+                conn
+                |> put_status(:ok)
+                |> put_resp_content_type("text/plain")
+                |> send_resp(200, "Put token to header")
+                |> put_resp_header("authorization", "#{refreshToken}")
+              {:error, message} ->
+                conn
+                |> put_status(:unauthorized)
+                |> Plug.Conn.send_resp(401, Jason.encode!(message))
+            end
             |> put_status(:ok)
             |> put_resp_content_type("text/plain")
-            |> put_resp_header("authorization", "#{refreshToken}")
             |> json(response)
 
           false ->
