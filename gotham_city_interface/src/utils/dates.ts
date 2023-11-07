@@ -1,9 +1,19 @@
+import moment, { type Moment } from 'moment';
+
 export function padStartZero(number: number | string, length: number = 2) {
     if (typeof number === 'string') return number.padStart(length, '0');
     return number.toString().padStart(length, '0');
 }
 
-export const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+export const dayNames = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+];
 
 export const monthNames = [
     'January',
@@ -20,50 +30,44 @@ export const monthNames = [
     'December'
 ];
 
-export function formatDateTime(date: Date | string): string {
+export function newNaiveDateTime(date?: Date | string): Date {
+    if (!date) date = new Date();
     if (typeof date === 'string') date = new Date(date);
-
-    const year = padStartZero(date.getFullYear());
-    const month = padStartZero(date.getMonth() + 1);
-    const day = padStartZero(date.getDate());
-
-    const hours = padStartZero(date.getHours());
-    const minutes = padStartZero(date.getMinutes());
-    const seconds = padStartZero(date.getSeconds());
-
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    return new Date(date.getTime());
 }
 
-export function formatDate(date: Date | string): string {
+export function formatDateTime(date: Date | string | Moment): string {
     if (typeof date === 'string') date = new Date(date);
-    const year = padStartZero(date.getFullYear());
-    const month = padStartZero(date.getMonth() + 1);
-    const day = padStartZero(date.getDate());
+    if (date instanceof Date) date = moment(date);
+    return date.format('YYYY-MM-DD HH:mm:ss');
+}
 
-    return `${year}-${month}-${day}`;
+export function formatDate(date: Date | string | Moment): string {
+    if (typeof date === 'string') date = new Date(date);
+    if (date instanceof Date) date = moment(date);
+    return date.format('YYYY-MM-DD');
+}
+
+export function formatTime(date: Date | string | Moment): string {
+    if (typeof date === 'string') date = new Date(date);
+    if (date instanceof Date) date = moment(date);
+    return date.format('HH:mm:ss');
 }
 
 export function formatDateToHuman(
-    date: Date | string,
-    withTime: boolean = true,
-    fromUtc: boolean = true
+    date: Date | string | Moment,
+    withTime: boolean = true
 ): string {
-    date = new Date(date);
-    if (!withTime) date.setHours(0, 0, 0, 0);
-    const timeZoneOffset = date.getTimezoneOffset() / 60;
-    if (fromUtc) date.setHours(date.getHours() - timeZoneOffset);
+    if (typeof date === 'string') date = new Date(date);
+    if (date instanceof Date) date = moment(date);
+    if (withTime) return date.format('DD/MM/YYYY HH:mm:ss');
+    return date.format('DD/MM/YYYY');
+}
 
-    const year = padStartZero(date.getFullYear());
-    const month = padStartZero(date.getMonth() + 1);
-    const day = padStartZero(date.getDate());
-
-    const hours = padStartZero(date.getHours());
-    const minutes = padStartZero(date.getMinutes());
-    const seconds = padStartZero(date.getSeconds());
-
-    return withTime
-        ? `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`
-        : `${day}/${month}/${year}`;
+export function formatTimeToHuman(date: Date | string | Moment): string {
+    if (typeof date === 'string') date = new Date(date);
+    if (date instanceof Date) date = moment(date);
+    return date.format('HH:mm:ss');
 }
 
 export function getFormattedDaysInInterval(
@@ -98,22 +102,22 @@ export function getHoursDiff(
     endDate: string | Date
 ): number {
     if (!startDate || !endDate) return 0;
-    if (typeof startDate === 'string') startDate = new Date(startDate);
-    if (typeof endDate === 'string') endDate = new Date(endDate);
+    if (typeof startDate === 'string') startDate = newNaiveDateTime(startDate);
+    if (typeof endDate === 'string') endDate = newNaiveDateTime(endDate);
 
     const diff = endDate.getTime() - startDate.getTime();
     return diff / (1000 * 60 * 60);
 }
 
 export function prevMonth(startDate: Date | string) {
-    if (typeof startDate === 'string') startDate = new Date(startDate);
+    if (typeof startDate === 'string') startDate = newNaiveDateTime(startDate);
     const year = startDate.getFullYear();
     const month = startDate.getMonth();
     return new Date(year, month - 1, 1);
 }
 
 export function nextMonth(startDate: Date | string) {
-    if (typeof startDate === 'string') startDate = new Date(startDate);
+    if (typeof startDate === 'string') startDate = newNaiveDateTime(startDate);
     const year = startDate.getFullYear();
     const month = startDate.getMonth();
     return new Date(year, month + 1, 1);

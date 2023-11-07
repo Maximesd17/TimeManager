@@ -12,7 +12,7 @@
         </Confirm>
         <ClockComponent v-if="clock" @click="postClock" :clock="clock" />
         <Card
-            class="w-full text-center flex flex-col justify-center items-center gap-6 collapse-open"
+            class="w-full text-center flex flex-col justify-center items-center gap-6 collapse-open min-h-[13rem]"
             :class="
                 (isPieOpen || isPieOpening) && !isPieClosing
                     ? 'h-auto sm:h-2/5'

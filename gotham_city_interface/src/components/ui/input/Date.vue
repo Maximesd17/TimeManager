@@ -1,13 +1,17 @@
 <template>
-    <VDropdown class="date-input">
-        <div class="main">
-            {{ formatDateToHuman(selected, false) }}
+    <VDropdown class="date-input" :shown="isOpen">
+        <div class="main" @click="isOpen = true">
+            {{ formatDateToHuman(date, false) }}
         </div>
         <template #popper>
             <DateSelector
-                :date="selected"
-                :selected="selected"
-                @update:selected="emits('update:selected', $event)"
+                :month="date"
+                :date="date"
+                @update:date="
+                    emits('update:date', $event);
+                    isOpen = false;
+                "
+                @cancel="isOpen = false"
             />
         </template>
     </VDropdown>
@@ -16,17 +20,19 @@
 <script lang="ts" setup>
 import DateSelector from '@/components/ui/input/DateSelector.vue';
 import { formatDateToHuman } from '@/utils/dates';
-import { watch } from 'vue';
+import { ref } from 'vue';
 
-const props = defineProps({
-    selected: {
+defineProps({
+    date: {
         type: Date,
         required: true
     }
 });
 
+const isOpen = ref(false);
+
 const emits = defineEmits<{
-    (e: 'update:selected', date: Date): void;
+    (e: 'update:date', date: Date): void;
     (e: 'cancel'): void;
 }>();
 </script>
