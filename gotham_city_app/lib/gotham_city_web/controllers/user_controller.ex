@@ -26,6 +26,9 @@ defmodule GothamCityWeb.UserController do
         password_in_db = user.password
 
         signer = Joken.Signer.create("HS256", "secret")
+        current_time = System.system_time(:second)
+        expiration_time = current_time + 60 * 60 * 24 * 30  # 30 days
+
         refreshToken = user.refreshToken
 
         response = user_response_format(user)
@@ -36,12 +39,16 @@ defmodule GothamCityWeb.UserController do
                 conn
                 |> put_status(:ok)
                 |> put_resp_content_type("text/plain")
-                |> send_resp(200, "Put token to header")
+                |> send_resp(200, "Put actual token to header")
                 |> put_resp_header("authorization", "#{refreshToken}")
               {:error, message} ->
                 conn
-                |> put_status(:unauthorized)
-                |> Plug.Conn.send_resp(401, Jason.encode!(message))
+                extra_claims = %{user_id: user.id}
+                {:ok, token, _claims} = Token.generate_and_sign(extra_claims, signer)
+                |> put_status(:ok)
+                |> put_resp_content_type("text/plain")
+                |> send_resp(200, "Put new token to header")
+                |> put_resp_header("authorization", "#{refreshToken}")
             end
             |> put_status(:ok)
             |> put_resp_content_type("text/plain")
