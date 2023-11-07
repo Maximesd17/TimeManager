@@ -41,6 +41,27 @@ defmodule GothamCityWeb.UserController do
     end
   end
 
+
+  def login_with_token(conn, _params) do
+    tokenList = get_req_header(conn, "authorization")
+    token = Enum.join(tokenList, " ")
+    signer = Joken.Signer.create("HS256", "secret")
+    case Token.verify_and_validate(token, signer) do
+      {:ok, claims} ->
+        user_id = Map.get(claims, "user_id")
+        user = Accounts.get_user!(user_id)
+        conn
+        |> put_status(:ok)
+        |> put_resp_content_type("text/plain")
+        |> put_resp_header("authorization", "#{token}")
+        |> send_resp(200, "Login successful")
+      {:error, _} ->
+        conn
+        |> put_status(:unauthorized)
+        |> json(%{error: "Authentification échouée"})
+    end
+  end
+
   def create(conn, %{"user" => user_params}) do
     if not String.match?(user_params["email"], ~r/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/) do
       conn
