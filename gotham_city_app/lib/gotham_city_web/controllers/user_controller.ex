@@ -83,7 +83,6 @@ defmodule GothamCityWeb.UserController do
       Accounts.update_user(user, tokenUser)
       response =
         %{
-          token: token,
           user: %{
             id: user.id,
             username: user.username,
@@ -95,6 +94,7 @@ defmodule GothamCityWeb.UserController do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/users/#{user}")
+      |> put_resp_header("authorization", "#{token}")
       |> json(response)
     end
   end
