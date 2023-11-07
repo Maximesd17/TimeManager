@@ -24,7 +24,7 @@ defmodule GothamCityWeb.Router do
     #secured users route
     scope "/users" do
       pipe_through(:jwt)
-      get("/", UserController, :identifier)
+#      get("/", UserController, :identifier)
       get("/:userID", UserController, :show)
       put("/:userID", UserController, :update)
       delete("/:userID", UserController, :delete)
@@ -32,7 +32,10 @@ defmodule GothamCityWeb.Router do
 
     scope "/users" do
       post("/", UserController, :create)
-      #post("/", UserController, :login)
+
+      scope "/login" do
+        post("/", UserController, :login)
+      end
     end
 
     scope "/workingtimes" do

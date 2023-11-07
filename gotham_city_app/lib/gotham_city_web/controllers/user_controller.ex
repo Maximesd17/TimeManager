@@ -12,6 +12,35 @@ defmodule GothamCityWeb.UserController do
     render(conn, :show, user: user)
   end
 
+  def login(conn, %{"email" => email, "password" => password}) do
+    user = Accounts.get_user_by_email(email)
+
+    case user do
+      nil ->
+        conn
+        |> put_status(:unauthorized)
+        |> put_resp_content_type("text/plain")
+        |> send_resp(401, "User not found")
+
+      _ ->
+        password_in_db = user.password
+        refreshToken = user.refreshToken
+        case Bcrypt.verify_pass(password, password_in_db) do
+          true ->
+            conn
+            |> put_status(:ok)
+            |> put_resp_content_type("text/plain")
+            |> send_resp(200, "Login successful")
+
+          false ->
+            conn
+            |> put_status(:unauthorized)
+            |> put_resp_content_type("text/plain")
+            |> send_resp(401, "Invalid username or password")
+        end
+    end
+  end
+
   def create(conn, %{"user" => user_params}) do
     if not String.match?(user_params["email"], ~r/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/) do
       conn
