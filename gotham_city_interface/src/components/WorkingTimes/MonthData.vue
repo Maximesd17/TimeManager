@@ -1,5 +1,5 @@
 <template>
-    <Bar class="min-h-full w-fit" :data="data" :options="options" />
+    <Bar class="h-full w-full" :data="data" :options="options" />
 </template>
 
 <script lang="ts" setup>

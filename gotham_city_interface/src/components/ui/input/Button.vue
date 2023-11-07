@@ -3,7 +3,7 @@
         class="button select-none"
         @click="click"
         :type="type"
-        :class="{ [variant]: Boolean(variant) }"
+        :class="{ [variant]: Boolean(variant), disabled }"
     >
         <slot />
     </button>
@@ -21,6 +21,10 @@ defineProps({
     type: {
         type: String as PropType<'button' | 'submit'>,
         default: 'button'
+    },
+    disabled: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -32,6 +36,7 @@ function click() {
 .button {
     border: none;
     outline: none;
+
     padding: 0 1rem;
     text-align: center;
     text-decoration: none;
@@ -41,11 +46,26 @@ function click() {
     cursor: pointer;
     transition: all 0.1s ease-in-out;
     font-weight: 800;
-    &:hover {
-        transform: translateX(var(--translateX, 0)) translateY(var(--translateY, 0)) scale(1.05, 1.05);
+
+    &:not(.disabled) {
+        &:hover {
+            transform: translateX(var(--translateX, 0))
+                translateY(var(--translateY, 0)) scale(1.05, 1.05);
+        }
+        &:active {
+            box-shadow: inset -1px 2px 5px #000;
+        }
     }
-    &:active {
-        box-shadow: inset -1px 2px 5px #000;
+
+    &.disabled {
+        cursor: not-allowed;
+        position: relative;
+        &::after {
+            @apply absolute inset-0 h-full w-full rounded-full;
+            content: '';
+
+            background: rgba(0 0 0 / 0.5);
+        }
     }
 }
 

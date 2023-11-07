@@ -14,7 +14,7 @@ defmodule GothamCityWeb.ClockController do
 
   def update(conn, %{"userID" => user_id}) do
     user = Accounts.get_user!(user_id)
-    now = NaiveDateTime.utc_now()
+    now = NaiveDateTime.local_now()
     clock = Accounts.get_clock_by_user(user)
 
     if clock do

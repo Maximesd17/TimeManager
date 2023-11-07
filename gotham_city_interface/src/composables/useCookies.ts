@@ -1,3 +1,4 @@
+import { newNaiveDateTime } from '@/utils/dates'
 import { ref } from 'vue'
 
 interface Cookies {
@@ -8,7 +9,7 @@ export default function useCookies() {
     const cookies = ref<Cookies>({})
 
     function setCookie(name: string, value: string, days: number) {
-        const date = new Date()
+        const date = newNaiveDateTime()
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
         const expires = '; expires=' + date.toUTCString()
         document.cookie = name + '=' + value + expires + '; path=/'

@@ -8,8 +8,8 @@
                 <img src="@/assets/svg/arrowLeft.svg" class="w-full h-full" />
             </div>
             <h3 class="w-40 text-center">
-                {{ monthNames[month.getMonth()] }}
-                {{ month.getFullYear() }}
+                {{ monthNames[date.getMonth()] }}
+                {{ date.getFullYear() }}
             </h3>
             <div
                 class="w-4 h-4 ml-1 rotate-180 flex items-center cursor-pointer"
@@ -26,13 +26,26 @@
             </template>
 
             <template v-for="date in datesArray" :key="date.toString()">
-                <p
+                <div
                     class="date"
-                    :class="{ 'font-bold': date.isCurrentMonth }"
-                    @click="updateDate(date.date)"
+                    :class="{
+                        inRange: inRange(date.date),
+                        'rounded-l-full': isLeftRounded(date.date),
+                        'rounded-r-full': isRightRounded(date.date)
+                    }"
                 >
-                    {{ date.date.getDate() }}
-                </p>
+                    <p
+                        class="w-full h-full p-0.5"
+                        :class="{
+                            'font-bold': date.isCurrentMonth,
+                            selected: isDate(date.date)
+                        }"
+                        @click="updateDate(date.date)"
+                        @mouseenter="hoveredDate = date.date"
+                    >
+                        {{ date.date.getDate() }}
+                    </p>
+                </div>
             </template>
         </div>
     </div>
@@ -47,15 +60,16 @@ import {
     getFormattedDaysInInterval,
     monthNames,
     prevMonth,
-    nextMonth
+    nextMonth,
+    newNaiveDateTime
 } from '@/utils/dates';
 
 const props = defineProps({
-    month: {
-        type: Date,
+    start: {
+        type: Date as PropType<Date | null>,
         required: true
     },
-    date: {
+    end: {
         type: Date as PropType<Date | null>,
         required: true
     }
@@ -63,15 +77,66 @@ const props = defineProps({
 
 const emits = defineEmits<{
     (e: 'cancel'): void;
-    (e: 'update:date', date: Date): void;
+    (e: 'update:start', date: Date): void;
+    (e: 'update:end', date: Date): void;
 }>();
 
-const date = ref(new Date(props.month));
+const hoveredDate = ref<Date | null>(null);
+
+const date = ref(newNaiveDateTime(props.start ?? undefined));
 date.value.setDate(1);
 date.value.setHours(0, 0, 0, 0);
 
+const start = ref(props.start ? newNaiveDateTime(props.start) : null);
+const end = ref(props.end ? newNaiveDateTime(props.end) : null);
+
 const dateSelector = ref();
 const datesArray = ref([] as { date: Date; isCurrentMonth: boolean }[]);
+
+function inRange(target: Date) {
+    if (start.value && !end.value && hoveredDate.value) {
+        return (
+            target.getTime() >= start.value.getTime() &&
+            hoveredDate.value.getTime() > start.value.getTime() &&
+            target.getTime() <= hoveredDate.value.getTime()
+        );
+    }
+    if (start.value && end.value) {
+        return (
+            target.getTime() >= start.value.getTime() &&
+            target.getTime() <= end.value.getTime()
+        );
+    }
+    return false;
+}
+
+function isDate(target: Date) {
+    if (start.value && end.value)
+        return (
+            start.value?.toDateString() === target.toDateString() ||
+            end.value?.toDateString() === target.toDateString()
+        );
+    return (
+        start.value?.toDateString() === target.toDateString() ||
+        hoveredDate.value?.toDateString() === target.toDateString() ||
+        end.value?.toDateString() === target.toDateString()
+    );
+}
+
+function isLeftRounded(target: Date) {
+    if (target.getDay() === 1) return true;
+    return start.value?.toDateString() === target.toDateString();
+}
+
+function isRightRounded(target: Date) {
+    if (target.getDay() === 0) return true;
+
+    return (
+        end.value?.toDateString() === target.toDateString() ||
+        (hoveredDate.value?.toDateString() === target.toDateString() &&
+            !end.value)
+    );
+}
 
 function setPrevMonth() {
     date.value = prevMonth(date.value);
@@ -120,15 +185,29 @@ function generateDateArray() {
 }
 
 function updateDate(date: Date) {
-    const d = new Date(date);
+    if (!end.value && start.value) {
+        updateEnd(date);
+        return;
+    }
+    updateStart(date);
+}
 
-    d.setHours(
-        props.month.getHours(),
-        props.month.getMinutes(),
-        props.month.getSeconds(),
-        props.month.getMilliseconds()
-    );
-    emits('update:date', d);
+function updateStart(date: Date) {
+    const d = newNaiveDateTime(date);
+
+    if (end.value && d > end.value) {
+        end.value = d;
+    }
+    start.value = d;
+}
+
+function updateEnd(date: Date) {
+    const d = newNaiveDateTime(date);
+
+    if (start.value && d < start.value) {
+        start.value = d;
+    }
+    end.value = d;
 }
 
 function cancel() {
@@ -153,10 +232,19 @@ useClickOutside(dateSelector, cancel, ['.dateSelectorButton']);
     .date {
         @apply cursor-pointer w-full h-full text-center;
 
-        &:hover {
+        .selected {
             @apply rounded-full bg-white;
-
+            color: var(--primary);
             outline: var(--primary) 1px solid;
+            outline-offset: -1px;
+            &:first-child {
+                @apply rounded-l-full;
+            }
+        }
+
+        &.inRange {
+            background-color: var(--primary);
+            color: var(--secondary);
         }
     }
 }

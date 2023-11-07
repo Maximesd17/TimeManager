@@ -29,6 +29,7 @@
                 <div v-if="workingTimes" class="h-full">
                     <WorkingTimeComponent
                         v-model:workingTimes="workingTimes"
+                        :userId="user.id"
                         :start="startDate"
                         :end="endDate"
                         @prevMonth="setPrevMonth"
@@ -54,12 +55,20 @@ import { ref, watch } from 'vue';
 import { useApiFetch } from '@/composables/useApiFetch';
 import useToast from '@/composables/useToast';
 
-import type { Clock, User, WorkingTime } from '@/types';
+import type {
+APIClock,
+    APIUser,
+    APIWorkingTime,
+    Clock,
+    User,
+    WorkingTime
+} from '@/types';
 import {
     formatDateTime,
     prevMonth,
     nextMonth,
-    getLastDayOfMonth
+    getLastDayOfMonth,
+    newNaiveDateTime
 } from '@/utils/dates';
 
 import UserSelector from '@/components/User.vue';
@@ -73,7 +82,7 @@ const clock = ref(null as Clock | null);
 
 const tmpUserCreation = ref(null as { username: string; email: string } | null);
 
-const startDate = ref(new Date());
+const startDate = ref(newNaiveDateTime());
 startDate.value.setDate(1);
 startDate.value.setMonth(startDate.value.getMonth() - 1);
 startDate.value.setHours(0, 0, 0, 0);
@@ -104,7 +113,7 @@ function setNextMonth() {
 
 async function createUser() {
     if (!tmpUserCreation.value) return;
-    const { data, error } = await useApiFetch<User>('/users', {
+    const { data, error } = await useApiFetch<APIUser>('/users', {
         method: 'POST',
         data: {
             user: {
@@ -123,7 +132,7 @@ async function createUser() {
 }
 
 async function fetchUser(fUser: { username: string; email: string }) {
-    const { data, error } = await useApiFetch<User>('/users', {
+    const { data, error } = await useApiFetch<APIUser>('/users', {
         params: {
             username: fUser.username,
             email: fUser.email
@@ -140,15 +149,18 @@ async function fetchUser(fUser: { username: string; email: string }) {
 async function updateUser(updateUser: { username: string; email: string }) {
     if (user.value == null) return;
 
-    const { data, error } = await useApiFetch<User>(`/users/${user.value.id}`, {
-        method: 'PUT',
-        data: {
-            user: {
-                username: updateUser.username,
-                email: updateUser.email
+    const { data, error } = await useApiFetch<APIUser>(
+        `/users/${user.value.id}`,
+        {
+            method: 'PUT',
+            data: {
+                user: {
+                    username: updateUser.username,
+                    email: updateUser.email
+                }
             }
         }
-    });
+    );
     if (error.value) {
         useToast.error(`Error during user update`);
     } else {
@@ -159,7 +171,7 @@ async function updateUser(updateUser: { username: string; email: string }) {
 
 async function deleteUser() {
     if (user.value == null) return;
-    const { error } = await useApiFetch<User>(`/users/${user.value.id}`, {
+    const { error } = await useApiFetch<APIUser>(`/users/${user.value.id}`, {
         method: 'DELETE'
     });
     if (error.value) {
@@ -173,7 +185,7 @@ async function deleteUser() {
 async function fetchWorkingTime() {
     if (!user.value?.id) return;
 
-    const { data, error } = await useApiFetch<WorkingTime[]>(
+    const { data, error } = await useApiFetch<APIWorkingTime[]>(
         `/workingtimes/${user.value?.id}`,
         {
             params: {
@@ -186,13 +198,19 @@ async function fetchWorkingTime() {
     if (error.value) {
         useToast.error(`Error during working time fetching`);
     } else {
-        workingTimes.value = data.value;
+        workingTimes.value = data.value
+            .map(wt => ({
+                ...wt,
+                start: newNaiveDateTime(wt.start),
+                end: newNaiveDateTime(wt.end)
+            }))
+            .sort((a, b) => a.id - b.id);
     }
 }
 
 async function fetchClock() {
     if (!user.value?.id) return;
-    const { data, error } = await useApiFetch<Clock>(
+    const { data, error } = await useApiFetch<APIClock>(
         `/clocks/${user.value?.id}`
     );
 
@@ -201,10 +219,11 @@ async function fetchClock() {
             id: 0,
             user: user.value.id,
             status: false,
-            time: ''
+            time: newNaiveDateTime()
         };
     } else {
-        clock.value = data.value;
+        const res = {...data.value, time: newNaiveDateTime(data.value.time)};
+        clock.value = res;
     }
 }
 
@@ -216,7 +235,6 @@ watch(
     },
     { immediate: true, deep: true }
 );
-
 </script>
 
 <style lang="scss" scoped></style>
