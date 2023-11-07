@@ -25,12 +25,14 @@ defmodule GothamCityWeb.UserController do
       _ ->
         password_in_db = user.password
         refreshToken = user.refreshToken
+        response = user_response_format(user)
         case Bcrypt.verify_pass(password, password_in_db) do
           true ->
             conn
             |> put_status(:ok)
             |> put_resp_content_type("text/plain")
-            |> send_resp(200, "Login successful")
+            |> put_resp_header("authorization", "#{refreshToken}")
+            |> json(response)
 
           false ->
             conn
@@ -50,11 +52,12 @@ defmodule GothamCityWeb.UserController do
       {:ok, claims} ->
         user_id = Map.get(claims, "user_id")
         user = Accounts.get_user!(user_id)
+        response = user_response_format(user)
         conn
         |> put_status(:ok)
         |> put_resp_content_type("text/plain")
         |> put_resp_header("authorization", "#{token}")
-        |> send_resp(200, "Login successful")
+        |> json(response)
       {:error, _} ->
         conn
         |> put_status(:unauthorized)
@@ -81,16 +84,7 @@ defmodule GothamCityWeb.UserController do
       {:ok, claims} = Token.verify_and_validate(token, signer)
       tokenUser = %{"refreshToken" => token}
       Accounts.update_user(user, tokenUser)
-      response =
-        %{
-          user: %{
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            roles: user.roles
-          }
-        }
-
+      response = user_response_format(user)
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/users/#{user}")
@@ -118,5 +112,16 @@ defmodule GothamCityWeb.UserController do
     with {:ok, %User{}} <- Accounts.delete_user(user) do
       send_resp(conn, :no_content, "")
     end
+  end
+
+  def user_response_format(user) do
+      %{
+        data: %{
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          roles: user.roles
+        }
+      }
   end
 end
