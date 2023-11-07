@@ -100,7 +100,7 @@ function handleInput(event: Event) {
         border: none;
         font-size: large;
         font-weight: 600;
-        background-color: var(--secondary);
+        background-color: white;
 
         &.default {
             outline: 2px solid var(--border-color);
@@ -119,6 +119,7 @@ function handleInput(event: Event) {
             font-size: large;
             font-weight: 500;
             color: var(--primary);
+            background-color: var(--secondary);
 
             &:focus {
                 outline: none;

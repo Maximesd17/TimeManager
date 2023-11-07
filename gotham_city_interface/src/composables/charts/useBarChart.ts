@@ -15,6 +15,9 @@ import {
 import { useChartColors } from './useChartColors';
 import { computed, type Ref } from 'vue';
 
+import { useScreenStore } from '@/store/screen';
+import { storeToRefs } from 'pinia';
+
 Chart.register(
     Title,
     Tooltip,
@@ -27,6 +30,7 @@ Chart.register(
 );
 
 export function useBarChartGenerateOptions(): ChartOptions<'bar'> {
+    const { layout } = storeToRefs(useScreenStore());
     return {
         scales: {
             x: {
@@ -67,11 +71,12 @@ export function useBarChartGenerateOptions(): ChartOptions<'bar'> {
                 borderWidth: 1,
                 borderColor: useChartColors['button'],
                 callbacks: {
-                    label: (context) => {
+                    label: context => {
                         // @ts-ignore
                         return context.dataset.label[context.dataIndex];
                     }
-                }
+                },
+                mode: 'index'
             },
             // @ts-ignore
             datalabels: {

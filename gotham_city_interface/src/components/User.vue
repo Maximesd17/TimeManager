@@ -18,6 +18,7 @@
             max-width="16rem"
         />
         <Button type="submit" class="h-8">Search</Button>
+        <Button @click="disconnect" class="h-8">disconnect</Button>
     </form>
 </template>
 
@@ -27,6 +28,7 @@ import { ref, watch, type PropType } from 'vue';
 import InputText from '@/components/ui/input/Text.vue';
 import Button from '@/components/ui/input/Button.vue';
 import type { User } from '@/types';
+import useCookies from '@/composables/useCookies';
 
 const props = defineProps({
     user: {
@@ -41,6 +43,11 @@ const email = ref(props.user?.email ?? '');
 const emits = defineEmits<{
     (e: 'fetch:user', user: { username: string; email: string }): void;
 }>();
+
+function disconnect() {
+    useCookies().revokeCookie('token');
+    document.location.reload();
+}
 
 watch(
     () => props.user,
