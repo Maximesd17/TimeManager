@@ -59,11 +59,6 @@ watch(
     { deep: true }
 );
 
-setTimeout(() => {
-    username.value = 'hollitizz';
-    email.value = 'valentin.caure@epitech.eu';
-    emits('fetch:user', { username: username.value, email: email.value });
-}, 500);
 </script>
 
 <style lang="scss" scoped></style>

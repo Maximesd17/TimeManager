@@ -14,7 +14,7 @@ const routes = [
         meta: {
             middleware: noauthenticated,
             layout: 'empty',
-            title: 'Login',
+            title: 'Login - Time manager',
             description: 'Login'
         }
     },
@@ -25,7 +25,7 @@ const routes = [
         meta: {
             middleware: authenticated,
             layout: 'default',
-            title: 'Dashboard',
+            title: 'Dashboard - Time manager',
             description: 'Dashboard'
         }
     }
@@ -62,6 +62,7 @@ router.beforeEach((to, from, next) => {
         router
     };
 
+    document.title = to.meta.title as string || 'Time manager';
     return middleware[0]({
         ...context,
         next: nextFactory(context, middleware, 1)

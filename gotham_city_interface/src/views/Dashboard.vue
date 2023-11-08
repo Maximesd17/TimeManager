@@ -9,12 +9,6 @@
         This user doesn't exist, do you want to create it ?
     </Confirm>
 
-    <header
-        class="h-[4.5rem] bg-primary rounded-b-xl grid place-content-center"
-    >
-        <UserSelector class="h-full" :user="user" @fetch:user="fetchUser" />
-    </header>
-
     <main class="relative h-[calc(100vh-4.5rem)] w-full max-sm:overflow-auto">
         <div class="flex gap-4 p-4 h-full max-sm:flex-wrap" v-if="user">
             <UserDetailsComponent
