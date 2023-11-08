@@ -5,7 +5,6 @@
         </div>
         <template #popper>
             <DateSelector
-                :month="date"
                 :date="date"
                 @update:date="
                     emits('update:date', $event);

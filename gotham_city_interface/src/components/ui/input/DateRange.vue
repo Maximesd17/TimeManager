@@ -35,7 +35,7 @@
                     }"
                 >
                     <p
-                        class="w-full h-full p-0.5"
+                        class="w-full h-full p-0.5 select-none"
                         :class="{
                             'font-bold': date.isCurrentMonth,
                             selected: isDate(date.date)
@@ -72,18 +72,21 @@ const props = defineProps({
     end: {
         type: Date as PropType<Date | null>,
         required: true
+    },
+    month: {
+        type: Date as PropType<Date | null>,
+        default: null
     }
 });
 
 const emits = defineEmits<{
     (e: 'cancel'): void;
-    (e: 'update:start', date: Date): void;
-    (e: 'update:end', date: Date): void;
+    (e: 'update:interval', interval: { start: Date; end: Date }): void;
 }>();
 
 const hoveredDate = ref<Date | null>(null);
 
-const date = ref(newNaiveDateTime(props.start ?? undefined));
+const date = ref(newNaiveDateTime(props.month ?? undefined));
 date.value.setDate(1);
 date.value.setHours(0, 0, 0, 0);
 
@@ -96,9 +99,19 @@ const datesArray = ref([] as { date: Date; isCurrentMonth: boolean }[]);
 function inRange(target: Date) {
     if (start.value && !end.value && hoveredDate.value) {
         return (
-            target.getTime() >= start.value.getTime() &&
-            hoveredDate.value.getTime() > start.value.getTime() &&
-            target.getTime() <= hoveredDate.value.getTime()
+            (target.getTime() >= start.value.getTime() &&
+                hoveredDate.value.getTime() > start.value.getTime() &&
+                target.getTime() <= hoveredDate.value.getTime()) ||
+            (target.getTime() <= start.value.getTime() &&
+                hoveredDate.value.getTime() < start.value.getTime() &&
+                target.getTime() >= hoveredDate.value.getTime())
+        );
+    }
+    if (!start.value && end.value && hoveredDate.value) {
+        return (
+            target.getTime() <= end.value.getTime() &&
+            hoveredDate.value.getTime() < end.value.getTime() &&
+            target.getTime() >= hoveredDate.value.getTime()
         );
     }
     if (start.value && end.value) {
@@ -125,12 +138,26 @@ function isDate(target: Date) {
 
 function isLeftRounded(target: Date) {
     if (target.getDay() === 1) return true;
+    if (
+        start.value &&
+        hoveredDate.value &&
+        start.value.getTime() > hoveredDate.value.getTime() &&
+        !end.value
+    ) {
+        return hoveredDate.value?.toDateString() === target.toDateString();
+    }
     return start.value?.toDateString() === target.toDateString();
 }
 
 function isRightRounded(target: Date) {
     if (target.getDay() === 0) return true;
-
+    if (
+        start.value &&
+        hoveredDate.value &&
+        start.value.getTime() > hoveredDate.value.getTime() &&
+        !end.value
+    )
+        return start.value.toDateString() === target.toDateString();
     return (
         end.value?.toDateString() === target.toDateString() ||
         (hoveredDate.value?.toDateString() === target.toDateString() &&
@@ -185,11 +212,28 @@ function generateDateArray() {
 }
 
 function updateDate(date: Date) {
-    if (!end.value && start.value) {
-        updateEnd(date);
+    if (!start.value) {
+        updateStart(date);
+    } else if (!end.value) {
+        if (start.value.getTime() > date.getTime()) {
+            updateEnd(start.value);
+            updateStart(date);
+        } else updateEnd(date);
+    } else {
+        if (date.toDateString() === start.value.toDateString()) {
+            updateStart(end.value);
+            end.value = null;
+        } else if (date.toDateString() === end.value.toDateString()) {
+            end.value = null;
+        } else {
+            updateStart(date);
+            end.value = null;
+        }
         return;
     }
-    updateStart(date);
+    if (end.value && start.value) {
+        emits('update:interval', { start: start.value, end: end.value });
+    }
 }
 
 function updateStart(date: Date) {
@@ -197,8 +241,10 @@ function updateStart(date: Date) {
 
     if (end.value && d > end.value) {
         end.value = d;
+        end.value.setHours(23, 59, 59, 999);
     }
     start.value = d;
+    start.value.setHours(0, 0, 0, 0);
 }
 
 function updateEnd(date: Date) {
@@ -206,8 +252,10 @@ function updateEnd(date: Date) {
 
     if (start.value && d < start.value) {
         start.value = d;
+        start.value.setHours(0, 0, 0, 0);
     }
     end.value = d;
+    end.value.setHours(23, 59, 59, 999);
 }
 
 function cancel() {

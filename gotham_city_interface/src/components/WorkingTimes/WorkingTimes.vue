@@ -1,17 +1,16 @@
 <template>
     <div class="h-full flex flex-col gap-4">
         <Modal
-            v-if="selectedDate"
-            :date="selectedDate"
-            :workingTimes="workingTimes"
+            v-if="interval"
+            v-model:interval="interval"
             :user-id="userId"
-            @update:workingTimes="emits('update:workingTimes', $event)"
-            @close="selectedDate = null"
+            @close="interval = null"
         />
         <Card class="w-full h-full trans relative">
             <DateRange
                 v-if="dateSelectorIsOpen"
                 class="absolute translate-x-4 translate-y-4"
+                @update:interval="interval = $event"
                 @cancel="dateSelectorIsOpen = false"
                 :start="null"
                 :end="null"
@@ -102,12 +101,12 @@ const emits = defineEmits<{
     (e: 'nextMonth'): void;
 }>();
 
-const selectedDate = ref(null as Date | null);
+const interval = ref(null as { start: Date; end: Date } | null);
 
 const dateSelectorIsOpen = ref(false);
 
 watch(
-    () => selectedDate.value,
+    () => interval.value,
     () => {
         dateSelectorIsOpen.value = false;
     }

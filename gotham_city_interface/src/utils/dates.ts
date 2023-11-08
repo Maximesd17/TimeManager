@@ -58,6 +58,7 @@ export function formatDateToHuman(
     date: Date | string | Moment,
     withTime: boolean = true
 ): string {
+    if (!date) date = newNaiveDateTime();
     if (typeof date === 'string') date = new Date(date);
     if (date instanceof Date) date = moment(date);
     if (withTime) return date.format('DD/MM/YYYY HH:mm:ss');
