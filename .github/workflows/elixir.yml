@@ -68,7 +68,11 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         port: ${{ secrets.SSH_PORT }}
         script: |
-          git clone ${{ github.server_url }}/${{ github.repository }} timeManager
+          if [ ! -d "timeManager" ]; then
+            git clone ${{ github.server_url }}/${{ github.repository }} timeManager
+          else
+              echo "Repo already exists in server..."
+          fi
           cd timeManager
           git pull
           docker compose up -d --build
