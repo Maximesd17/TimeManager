@@ -3,7 +3,7 @@ import Config
 # Configure your database
 config :gotham_city, GothamCity.Repo,
   username: System.get_env("PGUSER", "postgres"),
-  password: System.get_env("PGPASSWORD", "root"),
+  password: System.get_env("PGPASSWORD", "postgres"),
   hostname: System.get_env("PGHOST", "localhost"),
   database: System.get_env("PGDATABASE", "gotham_city_dev"),
   port: String.to_integer(System.get_env("PGPORT", "5432")),
