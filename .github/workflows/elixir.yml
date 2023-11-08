@@ -76,5 +76,6 @@ jobs:
               echo "Repo already exists in server..."
           fi
           cd timeManager
+          git checkout $branch_name
           git pull
           docker compose up -d --build
