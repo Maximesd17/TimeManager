@@ -1,0 +1,36 @@
+# This workflow should be run ONLY AND ONLY IF
+# both elixir and nodejs workflows run correctly !
+# Checking only Elixir CI as this last one checks for NodeJS
+
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [ "Elixir CI" ]
+    branches:
+      - main
+    types:
+      - completed
+
+jobs:
+  runner-job:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    # needs: [ "Elixir_CI" ]
+    steps:
+      - name: Build docker image and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_KEY }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            if [ ! -d "timeManager" ]; then
+                git clone ${{ github.server_url }}/${{ github.repository }} timeManager
+            else
+                echo "Repo already exists in server..."
+            fi
+            cd timeManager
+            git pull
+            docker compose up -d --build

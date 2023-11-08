@@ -6,16 +6,18 @@
 name: Elixir CI
 
 on:
-  push:
+  workflow_run: 
+    workflows: [ "Node.js CI" ]
     branches: [ "main", "dev", "**/dev" ]
-  pull_request:
-    branches: [ "main" ]
+    types:
+      - completed
 
 permissions:
   contents: read
 
 jobs:
   runner-job:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     defaults:
@@ -60,22 +62,4 @@ jobs:
       run: mix ecto.create
     - name: Migrating to DataBase
       run: mix ecto.migrate
-    - name: Build docker image
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        key: ${{ secrets.SSH_KEY }}
-        username: ${{ secrets.SSH_USER }}
-        port: ${{ secrets.SSH_PORT }}
-        script: |
-          branch_name=${{ github.ref_name }}
-          echo "Branch name is $branch_name"
-          if [ ! -d "timeManager" ]; then
-              git clone ${{ github.server_url }}/${{ github.repository }} timeManager
-          else
-              echo "Repo already exists in server..."
-          fi
-          cd timeManager
-          git checkout $branch_name
-          git pull
-          docker compose up -d --build
+    
