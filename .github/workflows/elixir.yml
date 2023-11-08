@@ -65,7 +65,7 @@ jobs:
       with:
         host: ${{ secrets.SSH_HOST }}
         key: ${{ secrets.SSH_KEY }}
-        user: ${{ secrets.SSH_USER }}
+        username: ${{ secrets.SSH_USER }}
         port: ${{ secrets.SSH_PORT }}
         script: |
           git clone ${{ github.server_url }}/${{ github.repository }} timeManager
