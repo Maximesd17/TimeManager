@@ -12,6 +12,10 @@ defmodule GothamCityWeb.UserController do
     render(conn, :show, user: user)
   end
 
+  def me(conn) do
+    IO.inspect(conn)
+  end
+
   def login(conn, %{"email" => email, "password" => password}) do
     user = Accounts.get_user_by_email(email)
 
@@ -30,8 +34,7 @@ defmodule GothamCityWeb.UserController do
         expiration_time = current_time + 60 * 60 * 24 * 30  # 30 days
 
         refreshToken = user.refreshToken
-
-        response = user_response_format(user)
+        response = token_response_format(refreshToken)
         case Bcrypt.verify_pass(password, password_in_db) do
           true ->
             case Token.verify_and_validate(refreshToken, signer) do
@@ -39,17 +42,17 @@ defmodule GothamCityWeb.UserController do
                 conn
                 |> put_status(:ok)
                 |> put_resp_content_type("text/plain")
-                |> put_resp_header("authorization", "#{refreshToken}")
                 |> json(response)
               {:error, message} ->
                 extra_claims = %{user_id: user.id, exp: expiration_time}
                 {:ok, token, _claims} = Token.generate_and_sign(extra_claims, signer)
+
                 newToken = %{"refreshToken" => token}
+                response = token_response_format(token)
                 Accounts.update_user(user, newToken)
                 conn
                   |> put_status(:ok)
                   |> put_resp_content_type("text/plain")
-                  |> put_resp_header("authorization", "#{token}")
                   |> json(response)
             end
             |> put_status(:ok)
@@ -65,27 +68,6 @@ defmodule GothamCityWeb.UserController do
     end
   end
 
-
-  def login_with_token(conn, _params) do
-    tokenList = get_req_header(conn, "authorization")
-    token = Enum.join(tokenList, " ")
-    signer = Joken.Signer.create("HS256", "secret")
-    case Token.verify_and_validate(token, signer) do
-      {:ok, claims} ->
-        user_id = Map.get(claims, "user_id")
-        user = Accounts.get_user!(user_id)
-        response = user_response_format(user)
-        conn
-        |> put_status(:ok)
-        |> put_resp_content_type("text/plain")
-        |> put_resp_header("authorization", "#{token}")
-        |> json(response)
-      {:error, _} ->
-        conn
-        |> put_status(:unauthorized)
-        |> json(%{error: "Authentification échouée"})
-    end
-  end
 
   def create(conn, %{"user" => user_params}) do
     if not String.match?(user_params["email"], ~r/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/) do
@@ -106,11 +88,10 @@ defmodule GothamCityWeb.UserController do
       {:ok, claims} = Token.verify_and_validate(token, signer)
       tokenUser = %{"refreshToken" => token}
       Accounts.update_user(user, tokenUser)
-      response = user_response_format(user)
+      response = token_response_format(token)
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/users/#{user}")
-      |> put_resp_header("authorization", "#{token}")
       |> json(response)
     end
   end
@@ -136,14 +117,9 @@ defmodule GothamCityWeb.UserController do
     end
   end
 
-  def user_response_format(user) do
-      %{
-        data: %{
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          roles: user.roles
-        }
-      }
+  def token_response_format(token) do
+    %{
+      data: %{token: token}
+    }
   end
 end

@@ -15,8 +15,9 @@ defmodule GothamCityWeb.JwtAuthPlug do
         user_id = Map.get(claims, "user_id")
 
         case user do
-          user_id ->
+          {:ok, user} ->
             conn
+            |> assign(:req_user, user)
           {:error, message} ->
             conn
             |> put_status(:unauthorized)

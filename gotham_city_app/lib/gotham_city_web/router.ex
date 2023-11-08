@@ -25,17 +25,17 @@ defmodule GothamCityWeb.Router do
     scope "/users" do
       pipe_through(:jwt)
       get("/", UserController, :identifier)
-      get("/:userID", UserController, :show)
+      get("/me", UserController, :me)
       put("/:userID", UserController, :update)
       delete("/:userID", UserController, :delete)
     end
 
     scope "/users" do
+      get("/:userID", UserController, :show)
       post("/", UserController, :create)
 
       scope "/login" do
         post("/", UserController, :login)
-        get("/token", UserController, :login_with_token)
       end
     end
 
