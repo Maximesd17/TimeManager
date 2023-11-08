@@ -42,15 +42,15 @@ defmodule GothamCityWeb.UserController do
                 |> put_resp_header("authorization", "#{refreshToken}")
                 |> json(response)
               {:error, message} ->
-                conn
                 extra_claims = %{user_id: user.id, exp: expiration_time}
                 {:ok, token, _claims} = Token.generate_and_sign(extra_claims, signer)
                 newToken = %{"refreshToken" => token}
                 Accounts.update_user(user, newToken)
-                |> put_status(:ok)
-                |> put_resp_content_type("text/plain")
-                |> put_resp_header("authorization", "#{newToken}")
-                |> json(response)
+                conn
+                  |> put_status(:ok)
+                  |> put_resp_content_type("text/plain")
+                  |> put_resp_header("authorization", "#{token}")
+                  |> json(response)
             end
             |> put_status(:ok)
             |> put_resp_content_type("text/plain")
