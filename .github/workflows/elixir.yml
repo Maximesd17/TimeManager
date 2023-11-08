@@ -68,8 +68,10 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         port: ${{ secrets.SSH_PORT }}
         script: |
+          branch_name=${GITHUB_REF#refs/heads/}
+          echo "Branch name is $branch_name"
           if [ ! -d "timeManager" ]; then
-            git clone ${{ github.server_url }}/${{ github.repository }} timeManager
+              git clone ${{ github.server_url }}/${{ github.repository }} timeManager
           else
               echo "Repo already exists in server..."
           fi
