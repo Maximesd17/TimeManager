@@ -4,92 +4,68 @@
         :height="layout !== 'desktop' ? '95vh' : '80vh'"
         @close="emits('close')"
     >
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-2 h-full w-full relative">
             <div class="flex">
                 <h1 class="ml-4 text 2xl sm:text-4xl font-bold">
                     Working Times
                 </h1>
+                <VDropdown class="place-self-end" :shown="isOpen">
+                    <Button
+                        class="ml-4 h-8 w-8 !p-1.5 z-10 dateSelectorButton"
+                        @click="isOpen = !isOpen"
+                    >
+                        <img
+                            class="w-full h-full"
+                            src="@/assets/svg/edit.svg"
+                        />
+                    </Button>
+                    <template #popper>
+                        <DateRange
+                            @update:interval="emits('update:interval', $event)"
+                            @cancel="isOpen = false"
+                            :start="interval.start"
+                            :end="interval.end"
+                            :month="interval.start"
+                        />
+                    </template>
+                </VDropdown>
                 <Button
                     class="h-8 place-self-end ml-auto"
                     @click="pushChanges"
-                    :disabled="
-                        updatedWorkingTimes.length === 0 &&
-                        deletedWorkingTimes.length === 0
-                    "
+                    :disabled="wTTable?.hasChanges"
                 >
                     Save Changes
                 </Button>
             </div>
             <div
-                class="overflow-auto h-[calc(80vh-10.5rem)] max-lg:h-[calc(95vh-13rem)]"
+                class="overflow-auto h-[calc(80vh-10.5rem)] max-lg:h-[calc(95vh-13rem)] relative"
             >
-                <table class="w-full">
-                    <thead class="head w-full sticky top-0 bg-secondary">
-                        <tr class="row">
-                            <th>Day</th>
-                            <th>Start</th>
-                            <th>End</th>
-                            <th>duration</th>
-                        </tr>
-                    </thead>
-                    <tbody class="w-full text-center body">
-                        <template
-                            v-for="(workingTime, index) in workingTimes"
-                            :key="workingTime.id"
-                        >
-                            <tr
-                                class="row rounded-b-[0.25rem]"
-                                :class="{
-                                    'bg-white': index % 2 === 0,
-                                    clicked: clickedLine === index,
-                                    deleted: deletedWorkingTimes.some(
-                                        wt => wt.id === workingTime.id
-                                    )
-                                }"
-                                @click="toggleClickedLine(index)"
-                            >
-                                <td>
-                                    {{
-                                        formatDateToHuman(
-                                            workingTime.start,
-                                            false
-                                        )
-                                    }}
-                                </td>
-                                <td>
-                                    {{ formatDateToHuman(workingTime.start) }}
-                                </td>
-                                <td>
-                                    {{ formatDateToHuman(workingTime.end) }}
-                                </td>
-                                <td>
-                                    {{
-                                        formatHours(
-                                            getHoursDiff(
-                                                workingTime.start,
-                                                workingTime.end
-                                            )
-                                        )
-                                    }}
-                                </td>
-                            </tr>
-                            <EditRow
-                                v-if="
-                                    clickedLine === index &&
-                                    !deletedWorkingTimes.some(
-                                        wt => wt.id === workingTime.id
-                                    )
-                                "
-                                :index="index"
-                                :start="workingTime.start"
-                                :end="workingTime.end"
-                                @update:start="updateStart(index, $event)"
-                                @update:end="updateEnd(index, $event)"
-                                @delete="deleteWorkingTime(index)"
-                            />
-                        </template>
-                    </tbody>
-                </table>
+                <TableVue
+                    ref="wTTable"
+                    v-model:working-times="workingTimes"
+                    :minimum-rows="15"
+                />
+                <div
+                    v-if="!workingTimes.length && !isLoading"
+                    class="absolute w-full h-full top-0"
+                >
+                    <div
+                        class="bg-white bg-opacity-80 shadow-lg shadow-white w-full h-full"
+                    ></div>
+                    <div class="absolute-center">
+                        {{
+                            interval.start.toDateString() ===
+                            interval.end.toDateString()
+                                ? `No working times on ${formatDateToHuman(
+                                      interval.start,
+                                      false
+                                  )}`
+                                : `No working times on period
+                        ${formatDateToHuman(interval.start, false)}
+                        -> ${formatDateToHuman(interval.end, false)}`
+                        }}
+                    </div>
+                </div>
             </div>
             <Rectangle class="w-full mt-2 !rounded-2xl h-16">
                 <form
@@ -118,35 +94,30 @@
 </template>
 
 <script lang="ts" setup>
-import type { WorkingTime } from '@/types';
-import { ref, type PropType } from 'vue';
+import type { APIWorkingTime, WorkingTime } from '@/types';
+import { ref, type PropType, watch } from 'vue';
 import {
-formatDate,
+    formatDate,
     formatDateTime,
     formatDateToHuman,
     formatTime,
-    getHoursDiff,
-    newNaiveDateTime,
-    padStartZero
+    newNaiveDateTime
 } from '@/utils/dates';
 import { useScreenStore } from '@/store/screen';
 import { storeToRefs } from 'pinia';
+import { useApiFetch } from '@/composables/useApiFetch';
 
+import DateRange from '@/components/ui/input/DateRange.vue';
 import Modal from '../ui/Modal.vue';
 import Rectangle from '../ui/cards/Rectangle.vue';
 import Button from '../ui/input/Button.vue';
-import EditRow from './EditRow.vue';
 import DateVue from '../ui/input/Date.vue';
 import TimeVue from '../ui/input/Time.vue';
-import { useApiFetch } from '@/composables/useApiFetch';
+import TableVue from './Table.vue';
 
 const props = defineProps({
-    date: {
-        type: Date,
-        required: true
-    },
-    workingTimes: {
-        type: Array as PropType<WorkingTime[]>,
+    interval: {
+        type: Object as PropType<{ start: Date; end: Date }>,
         required: true
     },
     userId: {
@@ -157,176 +128,89 @@ const props = defineProps({
 
 const emits = defineEmits<{
     (e: 'close'): void;
-    (e: 'update:workingTimes', workingTimes: WorkingTime[]): void;
+    (e: 'update:interval', interval: { start: Date; end: Date }): void;
 }>();
 
 const { layout } = storeToRefs(useScreenStore());
 
-const clickedLine = ref(null as number | null);
-const newWTDate = ref(newNaiveDateTime());
+const newWTDate = ref(newNaiveDateTime(props.interval.start));
 const newWTStart = ref(newNaiveDateTime());
 const newWTEnd = ref(newNaiveDateTime());
-const updatedWorkingTimes = ref([] as WorkingTime[]);
-const deletedWorkingTimes = ref([] as WorkingTime[]);
+const workingTimes = ref([] as WorkingTime[]);
+const isLoading = ref(true);
 
-function formatHours(time: number) {
-    let hours = Math.floor(time);
-    let minutes = Math.round((time - hours) * 60);
-    if (minutes === 60) {
-        hours++;
-        minutes = 0;
-    }
-    return `${padStartZero(hours)}:${padStartZero(minutes)}`;
-}
+const wTTable = ref(null as typeof TableVue | null);
 
-function toggleClickedLine(index: number) {
-    let timeout = 0;
+const isOpen = ref(false);
 
-    if (clickedLine.value !== null) {
-        timeout = 300;
-        const row = document.querySelector(`.tmp-row`) as HTMLElement;
-        row.classList.remove('grow-in');
-        row.classList.add('grow-out');
-    }
-    setTimeout(() => {
-        clickedLine.value = clickedLine.value === index ? null : index;
-    }, timeout);
-}
-
-function updateStart(index: number, start: Date) {
-    const uIndex = updatedWorkingTimes.value.findIndex(
-        wt => wt.id === props.workingTimes[index].id
-    );
-    if (uIndex !== -1) updatedWorkingTimes.value[uIndex].start = start;
-    else
-        updatedWorkingTimes.value.push({ ...props.workingTimes[index], start });
-}
-
-function updateEnd(index: number, end: Date) {
-    const uIndex = updatedWorkingTimes.value.findIndex(
-        wt => wt.id === props.workingTimes[index].id
-    );
-    if (uIndex !== -1) updatedWorkingTimes.value[uIndex].end = end;
-    else updatedWorkingTimes.value.push({ ...props.workingTimes[index], end });
-}
-
-async function createWorkingTime() {
-    console.log(newWTDate.value, newWTStart.value, newWTEnd.value);
-    const { data } = await useApiFetch<WorkingTime>(`/workingtimes/${props.userId}`, {
-        method: 'POST',
-        data: {
-            workingtime: {
-                start: `${formatDate(newWTDate.value)} ${formatTime(newWTStart.value)}`,
-                end: `${formatDate(newWTDate.value)} ${formatTime(newWTEnd.value)}`
+async function fetchWorkingTimes() {
+    const { data, error } = await useApiFetch<APIWorkingTime[]>(
+        `/workingtimes/${props.userId}`,
+        {
+            params: {
+                start: `${formatDateTime(props.interval.start)}`,
+                end: `${formatDateTime(props.interval.end)}`
             }
         }
-    });
-    emits('update:workingTimes', [...props.workingTimes, data.value]);
-    newWTDate.value = newNaiveDateTime();
-    newWTStart.value = newNaiveDateTime();
-    newWTEnd.value = newNaiveDateTime();
-}
-
-function deleteWorkingTime(index: number) {
-    const dIndex = deletedWorkingTimes.value.findIndex(
-        wt => wt.id === props.workingTimes[index].id
     );
-    if (dIndex === -1)
-        deletedWorkingTimes.value.push(props.workingTimes[index]);
-    if (clickedLine.value === index) clickedLine.value += 1;
+    if (error.value) {
+        isLoading.value = false;
+        return;
+    } else {
+        workingTimes.value = data.value
+            .map(wt => ({
+                ...wt,
+                start: newNaiveDateTime(wt.start),
+                end: newNaiveDateTime(wt.end)
+            }))
+            .sort((a, b) => a.id - b.id);
+        isLoading.value = false;
+    }
 }
 
-async function pushChanges() {
-    if (updatedWorkingTimes.value.length > 0) {
-        for (const wt of updatedWorkingTimes.value) {
-            await useApiFetch<WorkingTime>(`/workingtimes/${wt.id}`, {
-                method: 'PUT',
-                data: {
-                    workingtime: {
-                        start: formatDateTime(wt.start),
-                        end: formatDateTime(wt.end)
-                    }
+watch(
+    () => props.interval,
+    () => fetchWorkingTimes(),
+    { deep: true, immediate: true }
+);
+
+async function createWorkingTime() {
+    const { data } = await useApiFetch<WorkingTime>(
+        `/workingtimes/${props.userId}`,
+        {
+            method: 'POST',
+            data: {
+                workingtime: {
+                    start: `${formatDate(newWTDate.value)} ${formatTime(
+                        newWTStart.value
+                    )}`,
+                    end: `${formatDate(newWTDate.value)} ${formatTime(
+                        newWTEnd.value
+                    )}`
                 }
-            });
+            }
         }
-        const newWts = props.workingTimes.map(wt => {
-            const uIndex = updatedWorkingTimes.value.findIndex(
-                uwt => uwt.id === wt.id
-            );
-            if (uIndex !== -1) return updatedWorkingTimes.value[uIndex];
-            return wt;
+    );
+
+    if (
+        newWTDate.value.getTime() >= props.interval.start.getTime() &&
+        newWTDate.value.getTime() <= props.interval.end.getTime()
+    ) {
+        workingTimes.value.push({
+            ...data.value,
+            start: newNaiveDateTime(data.value.start),
+            end: newNaiveDateTime(data.value.end)
         });
-        emits('update:workingTimes', newWts);
-        updatedWorkingTimes.value = [];
     }
-    if (deletedWorkingTimes.value.length > 0) {
-        for (const wt of deletedWorkingTimes.value) {
-            await useApiFetch(`/workingtimes/${wt.id}`, {
-                method: 'DELETE'
-            });
-        }
-        const newWts = props.workingTimes.filter(
-            wt => !deletedWorkingTimes.value.some(dwt => dwt.id === wt.id)
-        );
-        emits('update:workingTimes', newWts);
-        deletedWorkingTimes.value = [];
-    }
+}
+
+function pushChanges() {
+    wTTable.value?.pushChanges();
 }
 </script>
 
 <style lang="scss" scoped>
 legend {
     @apply text-xs font-semibold ml-1;
-}
-
-.head {
-    &::after {
-        content: '';
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        height: 1px;
-        background-color: var(--primary);
-    }
-
-    z-index: 1000;
-    .row {
-        th {
-            &:first-child {
-                border-right: solid 1px var(--primary);
-            }
-        }
-    }
-}
-
-.body {
-    .row {
-        td {
-            cursor: pointer;
-            &:first-child {
-                border-radius: 0.25rem 0 0 0.25rem;
-                border-right: solid 1px var(--primary);
-            }
-            &:last-child {
-                border-radius: 0 0.25rem 0.25rem 0;
-            }
-        }
-
-        &.deleted {
-            color: var(--red) !important;
-            opacity: 0.6;
-        }
-        &.clicked {
-            td {
-                &:first-child {
-                    border-radius: 0.25rem 0 0 0;
-                }
-                &:last-child {
-                    border-radius: 0 0.25rem 0 0;
-                }
-            }
-        }
-    }
 }
 </style>

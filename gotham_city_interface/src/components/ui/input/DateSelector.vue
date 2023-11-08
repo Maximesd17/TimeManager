@@ -8,8 +8,8 @@
                 <img src="@/assets/svg/arrowLeft.svg" class="w-full h-full" />
             </div>
             <h3 class="w-40 text-center">
-                {{ monthNames[month.getMonth()] }}
-                {{ month.getFullYear() }}
+                {{ monthNames[dateForMonth.getMonth()] }}
+                {{ dateForMonth.getFullYear() }}
             </h3>
             <div
                 class="w-4 h-4 ml-1 rotate-180 flex items-center cursor-pointer"
@@ -47,16 +47,17 @@ import {
     getFormattedDaysInInterval,
     monthNames,
     prevMonth,
-    nextMonth
+    nextMonth,
+newNaiveDateTime
 } from '@/utils/dates';
 
 const props = defineProps({
     month: {
-        type: Date,
-        required: true
+        type: Date as PropType<Date | null>,
+        default: null
     },
     date: {
-        type: Date as PropType<Date | null>,
+        type: Date as PropType<Date>,
         required: true
     }
 });
@@ -66,31 +67,31 @@ const emits = defineEmits<{
     (e: 'update:date', date: Date): void;
 }>();
 
-const date = ref(new Date(props.month));
-date.value.setDate(1);
-date.value.setHours(0, 0, 0, 0);
+const dateForMonth = ref(newNaiveDateTime(props.month ?? props.date));
+dateForMonth.value.setDate(1);
+dateForMonth.value.setHours(0, 0, 0, 0);
 
 const dateSelector = ref();
 const datesArray = ref([] as { date: Date; isCurrentMonth: boolean }[]);
 
 function setPrevMonth() {
-    date.value = prevMonth(date.value);
+    dateForMonth.value = prevMonth(dateForMonth.value);
     generateDateArray();
 }
 
 function setNextMonth() {
-    date.value = nextMonth(date.value);
+    dateForMonth.value = nextMonth(dateForMonth.value);
     generateDateArray();
 }
 
 function generateDateArray() {
-    const firstDayOfMonth = new Date(date.value);
+    const firstDayOfMonth = new Date(dateForMonth.value);
     firstDayOfMonth.setHours(0, 0, 0, 0);
-    firstDayOfMonth.setMonth(date.value.getMonth());
+    firstDayOfMonth.setMonth(dateForMonth.value.getMonth());
     firstDayOfMonth.setDate(1);
 
     const lastDayOfMonth = new Date(firstDayOfMonth);
-    lastDayOfMonth.setMonth(date.value.getMonth() + 1);
+    lastDayOfMonth.setMonth(dateForMonth.value.getMonth() + 1);
     lastDayOfMonth.setDate(0);
 
     const firstDayOfCalendar = new Date(firstDayOfMonth);
@@ -114,7 +115,7 @@ function generateDateArray() {
         const nDate = new Date(d);
         return {
             date: nDate,
-            isCurrentMonth: nDate.getMonth() === date.value.getMonth()
+            isCurrentMonth: nDate.getMonth() === dateForMonth.value.getMonth()
         };
     });
 }
@@ -122,12 +123,6 @@ function generateDateArray() {
 function updateDate(date: Date) {
     const d = new Date(date);
 
-    d.setHours(
-        props.month.getHours(),
-        props.month.getMinutes(),
-        props.month.getSeconds(),
-        props.month.getMilliseconds()
-    );
     emits('update:date', d);
 }
 

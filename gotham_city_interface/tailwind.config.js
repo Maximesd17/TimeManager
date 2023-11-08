@@ -17,5 +17,40 @@ module.exports = {
             }
         }
     },
-    plugins: []
+    plugins: [
+        function ({ addUtilities }) {
+            addUtilities({
+                '.text-ellipsis': {
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                },
+
+                '.absolute-center': {
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)'
+                },
+
+                '.fixed-center': {
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)'
+                },
+
+                '.grid-center': {
+                    display: 'grid',
+                    placeItems: 'center'
+                },
+
+                '.flex-center': {
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }
+            });
+        }
+    ]
 };

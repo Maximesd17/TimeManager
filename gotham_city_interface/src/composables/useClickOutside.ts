@@ -8,7 +8,6 @@ export default function useDetectOutsideClick(
 	if (!component) return;
 
 	function listener(event: MouseEvent) {
-		console.log('listener');
 		const origins = (component instanceof Array ? component : [component])
 			.map(origin => origin.value?.$el || origin.value)
 			.filter(Boolean);
