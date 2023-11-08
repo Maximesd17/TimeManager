@@ -33,11 +33,11 @@ defmodule GothamCityWeb.UserController do
         current_time = System.system_time(:second)
         expiration_time = current_time + 60 * 60 * 24 * 30  # 30 days
 
-        refreshToken = user.refreshToken
-        response = token_response_format(refreshToken)
+        token = user.token
+        response = token_response_format(token)
         case Bcrypt.verify_pass(password, password_in_db) do
           true ->
-            case Token.verify_and_validate(refreshToken, signer) do
+            case Token.verify_and_validate(token, signer) do
               {:ok, claims} ->
                 conn
                 |> put_status(:ok)
@@ -47,7 +47,7 @@ defmodule GothamCityWeb.UserController do
                 extra_claims = %{user_id: user.id, exp: expiration_time}
                 {:ok, token, _claims} = Token.generate_and_sign(extra_claims, signer)
 
-                newToken = %{"refreshToken" => token}
+                newToken = %{"token" => token}
                 response = token_response_format(token)
                 Accounts.update_user(user, newToken)
                 conn
@@ -86,7 +86,7 @@ defmodule GothamCityWeb.UserController do
 
       {:ok, token, _claims} = Token.generate_and_sign(extra_claims, signer)
       {:ok, claims} = Token.verify_and_validate(token, signer)
-      tokenUser = %{"refreshToken" => token}
+      tokenUser = %{"token" => token}
       Accounts.update_user(user, tokenUser)
       response = token_response_format(token)
       conn

@@ -34,19 +34,23 @@ import Button from '@/components/ui/input/Button.vue';
 import InputText from '@/components/ui/input/Text.vue';
 import { useApiFetch } from '@/composables/useApiFetch';
 import useCookies from '@/composables/useCookies';
+import useToast from '@/composables/useToast';
 import { ref } from 'vue';
 
 const username = ref('valentin.caure@epitech.eu');
 const password = ref('root');
-
 async function login() {
-    const { data } = await useApiFetch('/users/login', {
+    const { data } = await useApiFetch<{ token: string }>('/users/login', {
         method: 'POST',
         data: { email: username.value, password: password.value }
     });
     console.log(data.value);
-    // useCookies().setCookie('token', 'token', 1);
-    document.location.reload();
+    if (!data.value) useToast.error('Wrong credentials');
+    else {
+        useToast.success('Logged in');
+        useCookies().setCookie('token', data.value.token, 30);
+        document.location.reload();
+    }
 }
 </script>
 
