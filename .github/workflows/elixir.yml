@@ -60,5 +60,15 @@ jobs:
       run: mix ecto.create
     - name: Migrating to DataBase
       run: mix ecto.migrate
-    # - name: Run tests
-    #   run: mix test
+    - name: Build docker image
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        key: ${{ secrets.SSH_KEY }}
+        user: ${{ secrets.SSH_USER }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          git clone ${{ github.server_url }}/${{ github.repository }} timeManager
+          cd timeManager
+          git pull
+          docker compose up -d --build

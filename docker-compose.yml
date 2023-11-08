@@ -9,8 +9,8 @@ services:
       - "5432:5432"
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
+      PGUSER: postgres
+      PGPASSWORD: postgres
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - 'pgdata:/var/lib/postgresql/data'
@@ -19,8 +19,12 @@ services:
   gotham_city_app:
     build:
       context: ./api
-    env_file:
-      - .env
+    environment:
+        PGUSER: ${PG_USER}
+        PGPASSWORD: ${PG_PASSWORD}
+        PGDATABASE: ${PG_DATABASE}
+        PGPORT: ${PG_PORT}
+        PGHOST: ${PG_HOST}
     ports:
       - '4000:4000'
     depends_on:
