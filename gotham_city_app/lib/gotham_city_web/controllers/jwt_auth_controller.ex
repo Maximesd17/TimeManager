@@ -32,8 +32,38 @@ defmodule GothamCityWeb.JwtAuthPlug do
 
   defp get_token_from_header(conn) do
     tokenList = get_req_header(conn, "authorization")
-    Enum.join(tokenList, " ")
+    token = Enum.join(tokenList, " ")
+
+    tokenSplit = String.split(token, " ")
+    case Enum.at(tokenSplit, 0) === "Bearer" do
+      true ->
+        conn
+        |> put_status(:ok)
+        |> put_resp_content_type("application/json")
+        |> send_resp(200, "Bearer")
+      false ->
+        conn
+        |> put_status(:unauthorized)
+        |> put_resp_content_type("application/json")
+        |> send_resp(401, "not Bearer")
+    end
   end
+
+#  def verify_token(token) do
+#    tokenSplit = String.split(token, " ")
+#    case Enum.at(tokenSplit, 0) === "Bearer" do
+#      true ->
+#        conn
+#        |> put_status(:ok)
+#        |> put_resp_content_type("application/json")
+#        |> send_resp(200, "pa mal")
+#      false ->
+#        conn
+#        |> put_status(:unauthorized)
+#        |> put_resp_content_type("application/json")
+#        |> send_resp(401, "t'es nul")
+#    end
+#  end
 
   def is_user_exist(claims) do
     user_id = Map.get(claims, "user_id")
