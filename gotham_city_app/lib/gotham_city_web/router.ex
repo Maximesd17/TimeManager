@@ -42,7 +42,7 @@ defmodule GothamCityWeb.Router do
 
     scope "/workingtimes" do
       pipe_through(:jwt)
-      get("/me", ClockController, :me)
+      get("/me", WorkingtimeController, :me)
       get("/:userID", WorkingtimeController, :index)
       get("/:userID/:id", WorkingtimeController, :show)
       post("/:userID", WorkingtimeController, :create)
