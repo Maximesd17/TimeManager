@@ -13,11 +13,11 @@ defmodule GothamCityWeb.JwtAuthPlug do
       {:ok, claims} ->
         user = is_user_exist(claims)
         user_id = Map.get(claims, "user_id")
-
+        req_user = user_response(user)
         case user do
           user ->
             conn
-            |> assign(:req_user, user)
+            |> assign(:req_user, req_user)
           {:error, message} ->
             conn
             |> put_status(:unauthorized)
@@ -38,5 +38,14 @@ defmodule GothamCityWeb.JwtAuthPlug do
   def is_user_exist(claims) do
     user_id = Map.get(claims, "user_id")
     Accounts.get_user!(user_id)
+  end
+
+  def user_response(user)do
+     %{
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        roles: user.roles
+      }
   end
 end
