@@ -12,8 +12,11 @@ defmodule GothamCityWeb.UserController do
     render(conn, :show, user: user)
   end
 
-  def me(conn) do
-    IO.inspect(conn)
+  def me(conn, _params) do
+    conn
+    |> put_status(:ok)
+    |> put_resp_content_type("application/json")
+    |> json(conn.assigns)
   end
 
   def login(conn, %{"email" => email, "password" => password}) do

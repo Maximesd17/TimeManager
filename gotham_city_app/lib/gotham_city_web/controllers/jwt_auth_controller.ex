@@ -17,7 +17,7 @@ defmodule GothamCityWeb.JwtAuthPlug do
         case user do
           user ->
             conn
-            |> assign(:req_user, req_user)
+            |> assign(:user, req_user)
           {:error, message} ->
             conn
             |> put_status(:unauthorized)
