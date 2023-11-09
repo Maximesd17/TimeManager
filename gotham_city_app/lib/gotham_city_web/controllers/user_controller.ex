@@ -23,7 +23,7 @@ defmodule GothamCityWeb.UserController do
       nil ->
         conn
         |> put_status(:unauthorized)
-        |> put_resp_content_type("text/plain")
+        |> put_resp_content_type("application/json")
         |> send_resp(401, "User not found")
 
       _ ->
@@ -41,7 +41,7 @@ defmodule GothamCityWeb.UserController do
               {:ok, claims} ->
                 conn
                 |> put_status(:ok)
-                |> put_resp_content_type("text/plain")
+                |> put_resp_content_type("application/json")
                 |> json(response)
               {:error, message} ->
                 extra_claims = %{user_id: user.id, exp: expiration_time}
@@ -52,17 +52,17 @@ defmodule GothamCityWeb.UserController do
                 Accounts.update_user(user, newToken)
                 conn
                   |> put_status(:ok)
-                  |> put_resp_content_type("text/plain")
+                  |> put_resp_content_type("application/json")
                   |> json(response)
             end
             |> put_status(:ok)
-            |> put_resp_content_type("text/plain")
+            |> put_resp_content_type("application/json")
             |> json(response)
 
           false ->
             conn
             |> put_status(:unauthorized)
-            |> put_resp_content_type("text/plain")
+            |> put_resp_content_type("application/json")
             |> send_resp(401, "Invalid username or password")
         end
     end
