@@ -12,17 +12,37 @@ defmodule GothamCityWeb.ClockController do
     render(conn, :show, clock: clock)
   end
 
+  def me(conn, _params) do
+    user_id = conn.assigns.data.id
+    user = Accounts.get_user!(user_id)
+    clock = Accounts.get_clock_by_user(user)
+    render(conn, :show, clock: clock)
+  end
+
+  def update_me(conn, _params) do
+    user_id = conn.assigns.data.id
+
+    now = NaiveDateTime.local_now()
+    user = Accounts.get_user!(user_id)
+    clock = Accounts.get_clock_by_user(user)
+    manage_clock(conn, user, clock, now)
+  end
+
   def update(conn, %{"userID" => user_id}) do
     user = Accounts.get_user!(user_id)
     now = NaiveDateTime.local_now()
     clock = Accounts.get_clock_by_user(user)
 
+    manage_clock(conn, user, clock, now)
+  end
+
+  defp manage_clock(conn,user, clock, now) do
     if clock do
       if clock.status do
         with {:ok, %Clock{} = updated_clock} <-
                Accounts.update_clock(clock, %{"status" => false}) do
-                Accounts.create_workingtime(user, %{"start" => clock.time, "end" => now})
-                render(conn, :show, clock: updated_clock)
+          Accounts.create_workingtime(user, %{"start" => clock.time, "end" => now})
+          render(conn, :show, clock: updated_clock)
         end
       else
         with {:ok, %Clock{} = updated_clock} <-

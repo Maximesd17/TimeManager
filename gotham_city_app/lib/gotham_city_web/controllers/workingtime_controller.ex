@@ -34,6 +34,13 @@ defmodule GothamCityWeb.WorkingtimeController do
     render(conn, :show, workingtime: workingtime)
   end
 
+  def me(conn, _params) do
+    user_id = conn.assigns.data.id
+    user = Accounts.get_user!(user_id)
+    workingtime = Accounts.get_workingtime(user)
+    render(conn, :show, workingtime: workingtime)
+  end
+
   def update(conn, %{"id" => id, "workingtime" => workingtime_params}) do
     workingtime = Accounts.get_workingtime!(id)
 

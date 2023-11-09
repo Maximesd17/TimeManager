@@ -21,25 +21,28 @@ defmodule GothamCityWeb.Router do
   scope "/api", GothamCityWeb do
     pipe_through(:api)
 
-    #secured users route
     scope "/users" do
-      pipe_through(:jwt)
-      get("/", UserController, :identifier)
-      get("/me", UserController, :me)
-      put("/:userID", UserController, :update)
-      delete("/:userID", UserController, :delete)
-    end
-
-    scope "/users" do
-      get("/:userID", UserController, :show)
       post("/", UserController, :create)
-
       scope "/login" do
         post("/", UserController, :login)
       end
     end
 
+    #secured users route
+    scope "/users" do
+      pipe_through(:jwt)
+      get("/", UserController, :identifier)
+      get("/me", UserController, :me)
+      get("/:userID", UserController, :show)
+      put("/:userID", UserController, :update)
+      delete("/:userID", UserController, :delete)
+    end
+
+
+
     scope "/workingtimes" do
+      pipe_through(:jwt)
+      get("/me", ClockController, :me)
       get("/:userID", WorkingtimeController, :index)
       get("/:userID/:id", WorkingtimeController, :show)
       post("/:userID", WorkingtimeController, :create)
@@ -48,6 +51,9 @@ defmodule GothamCityWeb.Router do
     end
 
     scope "/clocks" do
+      pipe_through(:jwt)
+      get("/me", ClockController, :me)
+      post("/me", ClockController, :update_me)
       get("/:userID", ClockController, :show)
       post("/:userID", ClockController, :update)
     end
