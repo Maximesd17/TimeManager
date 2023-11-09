@@ -17,7 +17,7 @@ defmodule GothamCityWeb.JwtAuthPlug do
         case user do
           user ->
             conn
-            |> assign(:user, req_user)
+            |> assign(:data, req_user)
           {:error, message} ->
             conn
             |> put_status(:unauthorized)
@@ -69,10 +69,12 @@ defmodule GothamCityWeb.JwtAuthPlug do
 
   def user_response(user)do
      %{
+       user: %{
         id: user.id,
         username: user.username,
         email: user.email,
         roles: user.roles
+          }
       }
   end
 end
