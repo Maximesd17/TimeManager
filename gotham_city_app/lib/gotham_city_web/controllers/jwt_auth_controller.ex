@@ -46,22 +46,6 @@ defmodule GothamCityWeb.JwtAuthPlug do
     end
   end
 
-#  def verify_token(token) do
-#    tokenSplit = String.split(token, " ")
-#    case Enum.at(tokenSplit, 0) === "Bearer" do
-#      true ->
-#        conn
-#        |> put_status(:ok)
-#        |> put_resp_content_type("application/json")
-#        |> send_resp(200, "pa mal")
-#      false ->
-#        conn
-#        |> put_status(:unauthorized)
-#        |> put_resp_content_type("application/json")
-#        |> send_resp(401, "t'es nul")
-#    end
-#  end
-
   def is_user_exist(claims) do
     user_id = Map.get(claims, "user_id")
     Accounts.get_user!(user_id)
@@ -69,12 +53,10 @@ defmodule GothamCityWeb.JwtAuthPlug do
 
   def user_response(user)do
      %{
-       user: %{
         id: user.id,
         username: user.username,
         email: user.email,
         roles: user.roles
-          }
       }
   end
 end
