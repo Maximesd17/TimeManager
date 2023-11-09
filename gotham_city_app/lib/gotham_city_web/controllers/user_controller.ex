@@ -47,7 +47,7 @@ defmodule GothamCityWeb.UserController do
                 |> put_resp_content_type("application/json")
                 |> json(response)
               {:error, message} ->
-                extra_claims = %{user_id: user.id, exp: expiration_time}
+                extra_claims = %{user_id: user.id, roles: user.roles, exp: expiration_time}
                 {:ok, token, _claims} = Token.generate_and_sign(extra_claims, signer)
 
                 newToken = %{"token" => token}
@@ -85,7 +85,7 @@ defmodule GothamCityWeb.UserController do
       current_time = System.system_time(:second)
       expiration_time = current_time + 60 * 60 * 24 * 30  # 30 days
 
-      extra_claims = %{user_id: user.id, exp: expiration_time}
+      extra_claims = %{user_id: user.id, roles: user.roles, exp: expiration_time}
 
       {:ok, token, _claims} = Token.generate_and_sign(extra_claims, signer)
       {:ok, claims} = Token.verify_and_validate(token, signer)
