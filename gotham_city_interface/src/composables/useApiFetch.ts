@@ -2,10 +2,12 @@ import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 import type { Ref } from 'vue';
 import { ref } from 'vue';
+import useCookies from './useCookies';
+import useToast from './useToast';
 
 type AsyncData<T> = {
     data: Ref<T>;
-    error: Ref<string | boolean>;
+    error: Ref<{ status: number; message: string } | false>;
 };
 
 export async function useApiFetch<T>(
@@ -13,12 +15,15 @@ export async function useApiFetch<T>(
     opts: AxiosRequestConfig = {}
 ): Promise<AsyncData<T>> {
     const data = ref(undefined as T);
-    const error = ref(false as string | boolean);
+    const error = ref(false as { status: number; message: string } | boolean);
+    const token = useCookies().getCookie('token');
 
-    // if (opts.method && opts.method !== 'GET' && opts.method !== 'get') {
-    //     console.log('Adding CORS header');
-    //     opts.headers = { ...opts.headers, 'Access-Control-Allow-Origin': '*' };
-    // }
+    if (token) {
+        opts.headers = {
+            ...opts.headers,
+            Authorization: `Bearer ${token}`
+        };
+    }
     const res = await axios({
         ...opts,
         url: request,
@@ -29,8 +34,21 @@ export async function useApiFetch<T>(
         },
         data: opts.data ? JSON.stringify(opts.data) : undefined
     });
+
     data.value = res.data.data ?? undefined;
-    error.value = !data.value && res.status !== 204 ? `${res.status} (${res.statusText})` : false;
+    if (
+        res.status.toString().startsWith('4') ||
+        res.status.toString().startsWith('5')
+    ) {
+        error.value = { status: res.status, message: res.statusText };
+        if (res.status === 401) {
+            useCookies().revokeCookie('token');
+            useToast.error('You session has expired. Please log in again.');
+            document.location.reload();
+        }
+    } else {
+        error.value = false;
+    }
 
     return Promise.resolve({ data, error } as AsyncData<T>);
 }

@@ -25,7 +25,7 @@
             <div class="h-full w-full relative flex flex-col justify-between">
                 <div class="flex items-center flex-wrap">
                     <h2 class="h-4 text-center mb-4 ml-[50%] -translate-x-1/2">
-                        Past Month Data
+                        Month Data
                     </h2>
                     <div class="flex items-center ml-auto text-lg font-bold">
                         <div
@@ -72,7 +72,6 @@ import { monthNames } from '@/utils/dates';
 import Card from '@/components/ui/cards/Rectangle.vue';
 import MonthData from '@/components/workingTimes/MonthData.vue';
 import Button from '@/components/ui/input/Button.vue';
-import DateSelector from '@/components/ui/input/DateSelector.vue';
 import Modal from './Modal.vue';
 import DateRange from '../ui/input/DateRange.vue';
 

@@ -17,7 +17,7 @@
                 maxWidth="20rem"
                 class="w-[20rem]"
             />
-            <InputText
+            <InputPassword
                 v-model="password"
                 label="Password"
                 maxWidth="20rem"
@@ -30,12 +30,14 @@
 </template>
 
 <script lang="ts" setup>
-import Button from '@/components/ui/input/Button.vue';
-import InputText from '@/components/ui/input/Text.vue';
 import { useApiFetch } from '@/composables/useApiFetch';
 import useCookies from '@/composables/useCookies';
 import useToast from '@/composables/useToast';
 import { ref } from 'vue';
+
+import Button from '@/components/ui/input/Button.vue';
+import InputText from '@/components/ui/input/Text.vue';
+import InputPassword from '@/components/ui/input/Password.vue';
 
 const username = ref('valentin.caure@epitech.eu');
 const password = ref('root');
@@ -44,7 +46,7 @@ async function login() {
         method: 'POST',
         data: { email: username.value, password: password.value }
     });
-    console.log(data.value);
+
     if (!data.value) useToast.error('Wrong credentials');
     else {
         useToast.success('Logged in');

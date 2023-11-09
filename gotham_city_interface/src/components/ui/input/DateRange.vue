@@ -29,7 +29,7 @@
                 <div
                     class="date"
                     :class="{
-                        inRange: inRange(date.date),
+                        inRange: inRange(date.date) || isDate(date.date),
                         'rounded-l-full': isLeftRounded(date.date),
                         'rounded-r-full': isRightRounded(date.date)
                     }"
@@ -102,7 +102,7 @@ function inRange(target: Date) {
             (target.getTime() >= start.value.getTime() &&
                 hoveredDate.value.getTime() > start.value.getTime() &&
                 target.getTime() <= hoveredDate.value.getTime()) ||
-            (target.getTime() <= start.value.getTime() &&
+            (target.getTime() < start.value.getTime() &&
                 hoveredDate.value.getTime() < start.value.getTime() &&
                 target.getTime() >= hoveredDate.value.getTime())
         );

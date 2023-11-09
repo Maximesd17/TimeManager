@@ -8,8 +8,7 @@ export const useUserStore = defineStore('useUserStore', () => {
 
     async function refresh() {
         const { data } = await useApiFetch<APIUser>('/users/me');
-
-        user.value = data.value;
+        if (data.value) user.value = data.value;
     }
 
     return {

@@ -1,10 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import Login from '@/views/Login.vue';
-import Dashboard from '@/views/Dashboard.vue';
+import UserDashboard from '@/views/UserDashboard.vue';
+import Dashboard from '@/views/MyDashboard.vue';
+import Page404 from '@/views/404.vue';
 
 import noauthenticated from '@/middleware/noauthenticated';
 import authenticated from '@/middleware/authenticated';
+import manager from '@/middleware/manager';
 
 const routes = [
     {
@@ -21,13 +24,38 @@ const routes = [
     {
         path: '/dashboard',
         component: Dashboard,
-        name: 'Dashboard',
+        name: 'MyDashboard',
         meta: {
             middleware: authenticated,
             layout: 'default',
             title: 'Dashboard - Time manager',
             description: 'Dashboard'
         }
+    },
+    {
+        path: '/dashboard/:userID',
+        component: UserDashboard,
+        name: 'Dashboard',
+        meta: {
+            middleware: [authenticated, manager],
+            layout: 'default',
+            title: 'Dashboard - Time manager',
+            description: 'Dashboard'
+        }
+    },
+    {
+        path: '/404',
+        component: Page404,
+        name: '404',
+        meta: {
+            layout: 'empty',
+            title: 'Not found - Time manager',
+            description: '404'
+        }
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        redirect: '/404'
     }
 ];
 

@@ -16,7 +16,9 @@ export interface APIUser {
     id: number;
     username: string;
     email: string;
+    roles: string[];
 }
+
 
 export interface WorkingTime {
     id: number;
@@ -36,5 +38,6 @@ export interface User {
     id: number;
     username: string;
     email: string;
+    roles: string[];
 }
 
