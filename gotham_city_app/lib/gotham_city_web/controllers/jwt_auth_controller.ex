@@ -37,15 +37,12 @@ defmodule GothamCityWeb.JwtAuthPlug do
     tokenSplit = String.split(token, " ")
     case Enum.at(tokenSplit, 0) === "Bearer" do
       true ->
-        conn
-        |> put_status(:ok)
-        |> put_resp_content_type("application/json")
-        |> send_resp(200, "Bearer")
+        Enum.at(tokenSplit, 1)
       false ->
         conn
         |> put_status(:unauthorized)
         |> put_resp_content_type("application/json")
-        |> send_resp(401, "not Bearer")
+        |> send_resp(401, "Unauthorized")
     end
   end
 
