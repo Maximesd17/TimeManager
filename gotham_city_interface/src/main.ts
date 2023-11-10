@@ -27,17 +27,6 @@ axios.defaults.baseURL = import.meta.env.BACKEND_URL
 
 app.use(Toast);
 
-// app.use(VueTippy, {
-//     directive: 'tooltip',
-//     component: 'tippy',
-//     componentSingleton: 'tippy-singleton',
-//     defaultProps: {
-//         theme: 'dark',
-//         placement: 'auto-end',
-//         allowHTML: true
-//     }
-// });
-
 app.use(FloatingVue);
 
 app.mount('#app');

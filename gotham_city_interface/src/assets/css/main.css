@@ -1,26 +1,71 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Exo 2:700|Exo 2:400');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    font-family: Rubik, sans-serif;
-    --primary: #2e4250;
-    --secondary: #EBEDE7;
-    --button: #879CA4;
-    --darker: #1a2a38;
-    --red: #ff4d4d;
-    --green: #4bb543;
-    line-height: 1.5;
-    font-weight: 400;
+@media (prefers-color-scheme: light) {
+    :root {
+        --text: #562b31;
+        --background: #f3e7e9;
+        --primary: #eabca4;
+        --secondary: #e4c8cc;
+        --accent: #a65461;
+        --success: #81e052;
+        --danger: #ee2b3b;
+        --warning: #f9c753;
+    }
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: #f8f1f2;
+        --background: #180c0e;
+        --primary: #5b2e15;
+        --secondary: #371b1f;
+        --accent: #ab5967;
+        --success: #58c322;
+        --danger: #d41121;
+        --warning: #f7b722;
+    }
+}
 
-    color-scheme: light dark;
-    color: var(--primary);
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-text-size-adjust: 100%;
+body {
+    @apply font-body font-normal text-base text-text;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+    @apply font-bold font-heading;
+}
+
+html {
+    font-size: 100%;
+} /* 16px */
+
+h1 {
+    @apply text-5xl;
+}
+
+h2 {
+    @apply text-4xl;
+}
+
+h3 {
+    @apply text-3xl;
+}
+
+h4 {
+    @apply text-2xl;
+}
+
+h5 {
+    @apply text-xl;
+}
+
+small {
+    @apply text-sm;
 }
 
 html,
@@ -29,7 +74,7 @@ body,
 #app {
     margin: 0;
     padding: 0;
-    background-color: var(--secondary);
+    background-color: var(--background);
     overflow: hidden;
 }
 
@@ -64,28 +109,18 @@ body,
     margin-bottom: 10px;
 }
 
-body {
-    color: var(--color-text);
-    background: var(--color-background);
-    transition:
-        color 0.5s,
-        background-color 0.5s;
-    line-height: 1.6;
-    font-family:
-        Inter,
-        -apple-system,
-        BlinkMacSystemFont,
-        'Segoe UI',
-        Roboto,
-        Oxygen,
-        Ubuntu,
-        Cantarell,
-        'Fira Sans',
-        'Droid Sans',
-        'Helvetica Neue',
-        sans-serif;
-    font-size: 15px;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+.v-popper--theme-dropdown {
+    background-color: transparent !important;
+    border-radius: 0 !important;
+}
+
+.v-popper--theme-dropdown .v-popper__inner {
+    border: none !important;
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: 0 0 0 0 !important;
+}
+
+.v-popper--theme-dropdown .v-popper__arrow-container {
+    display: none !important;
 }

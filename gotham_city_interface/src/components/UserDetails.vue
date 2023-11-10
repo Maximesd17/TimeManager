@@ -62,7 +62,7 @@
             </form>
             <UiButton
                 v-if="isEditMode"
-                class="absolute right-2 top-2 h-8 w-8 !p-1.5 !bg-red"
+                class="absolute right-2 top-2 h-8 w-8 !p-1"
                 :class="{
                     'slide-in': isEditMode,
                     'slide-out': isEditModeClosing
@@ -70,15 +70,16 @@
                 :style="{
                     '--translateX': `${isEditMode ? '-2.5rem' : '0'}`
                 }"
+                variant="danger"
                 @click="isDeletingUser = true"
             >
-                <img class="w-full h-full" src="../assets/svg/delete.svg" />
+                <SvgDelete class="w-full h-full" color="white" />
             </UiButton>
             <UiButton
                 class="absolute right-2 top-2 h-8 w-8 !p-1.5"
                 @click="toggleEditMode"
             >
-                <img class="w-full h-full" src="../assets/svg/edit.svg" />
+                <SvgEdit class="w-full h-full" />
             </UiButton>
         </Card>
         <Card
@@ -114,6 +115,8 @@ import Card from '@/components/ui/cards/Rectangle.vue';
 import CurrentDayData from './CurrentDayData.vue';
 import UiButton from '@/components/ui/input/Button.vue';
 import Confirm from './ui/input/Confirm.vue';
+import SvgEdit from '@/components/svg/Edit.vue';
+import SvgDelete from '@/components/svg/Delete.vue';
 
 const props = defineProps({
     user: {

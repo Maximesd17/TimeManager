@@ -39,6 +39,6 @@ export default function useCookies() {
         cookies,
         setCookie,
         getCookie,
-        revokeCookie
+        revoke: revokeCookie
     }
 }

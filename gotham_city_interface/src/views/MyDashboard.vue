@@ -1,5 +1,5 @@
 <template>
-    <main class="relative h-[calc(100vh-4.5rem)] w-full max-sm:overflow-auto">
+    <main class="relative h-[calc(100vh-3.5rem)] w-full max-sm:overflow-auto">
         <div
             class="flex gap-4 p-4 h-full max-sm:flex-wrap"
             v-if="currentUser"

@@ -42,7 +42,7 @@ export async function useApiFetch<T>(
     ) {
         error.value = { status: res.status, message: res.statusText };
         if (res.status === 401) {
-            useCookies().revokeCookie('token');
+            useCookies().revoke('token');
             useToast.error('You session has expired. Please log in again.');
             document.location.reload();
         }

@@ -31,6 +31,7 @@ const datasets = ref(
 );
 
 function fillChartData() {
+    const style = getComputedStyle(document.body);
     const timeWorked = props.clock.time
         ? getHoursDiff(props.clock.time, date)
         : 0;
@@ -61,8 +62,8 @@ function fillChartData() {
                 minutesRemaining
             )}`
         ],
-        backgroundColor: ['#4bb543', '#ff4d4d'],
-        borderColor: '#2e4250'
+        backgroundColor: [style.getPropertyValue('--primary'), style.getPropertyValue('--accent')],
+        borderColor: style.getPropertyValue('--secondary')
     });
 }
 

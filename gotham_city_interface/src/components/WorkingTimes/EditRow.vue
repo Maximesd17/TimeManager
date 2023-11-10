@@ -1,7 +1,7 @@
 <template>
     <tr
         class="grow-in tmp-row overflow-hidden"
-        :class="{ 'bg-white': index % 2 === 0 }"
+        :class=" index % 2 === 0 ? 'bg-background': 'bg-secondary' "
         :style="`--height: ${layout === 'mobile' ? '5' : '3'}rem`"
     >
         <td
@@ -41,10 +41,10 @@
                 id="delete"
                 class="w-8 rounded-full !p-1 absolute left-1/2 -translate-x-1/2 top-[1.375rem] sm:top-2"
                 :style="{ '--translateX': '-50%' }"
-                variant="red"
+                variant="danger"
                 @click="emits('delete')"
             >
-                <img src="@/assets/svg/delete.svg" />
+                <SvgDelete class="w-full h-full"  color="white"/>
             </Button>
         </td>
     </tr>
@@ -57,6 +57,7 @@ import { storeToRefs } from 'pinia';
 import Button from '../ui/input/Button.vue';
 import DateInput from '../ui/input/Date.vue';
 import TimeInput from '../ui/input/Time.vue';
+import SvgDelete from '@/components/svg/Delete.vue';
 
 const { layout } = storeToRefs(useScreenStore());
 

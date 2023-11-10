@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col items-center gap-4 h-full">
         <div class="mt-auto justify-end flex items-end flex-1">
-            <img
+            <SvgGotham
                 src="@/assets/img/gotham_city.png"
                 alt="gotham_city_icon"
                 class="w-[60vw] min-w-[25rem]"
@@ -23,7 +23,7 @@
                 maxWidth="20rem"
                 class="w-[20rem]"
             />
-            <Button type="submit" class="h-8 w-[15rem]">login</Button>
+            <Button type="submit" class="h-8 w-[15rem]">Sign in</Button>
         </form>
         <div class="flex-1"></div>
     </div>
@@ -38,9 +38,11 @@ import { ref } from 'vue';
 import Button from '@/components/ui/input/Button.vue';
 import InputText from '@/components/ui/input/Text.vue';
 import InputPassword from '@/components/ui/input/Password.vue';
+import SvgGotham from '@/components/svg/Gotham.vue';
 
-const username = ref('valentin.caure@epitech.eu');
-const password = ref('root');
+const username = ref('');
+const password = ref('');
+
 async function login() {
     const { data } = await useApiFetch<{ token: string }>('/users/login', {
         method: 'POST',

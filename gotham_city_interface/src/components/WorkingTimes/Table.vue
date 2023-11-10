@@ -1,6 +1,6 @@
 <template>
     <table class="w-full">
-        <thead class="head w-full sticky top-0 bg-secondary">
+        <thead class="head w-full sticky top-0 bg-background">
             <tr class="row">
                 <th>Day</th>
                 <th>Start</th>
@@ -16,7 +16,8 @@
                 <tr
                     class="row rounded-b-[0.25rem]"
                     :class="{
-                        'bg-white': index % 2 === 0,
+                        'bg-background': index % 2 === 0,
+                        'bg-secondary': index % 2 !== 0,
                         clicked: clickedLine === index,
                         deleted: deletedWorkingTimes.some(
                             wt => wt.id === workingTime.id

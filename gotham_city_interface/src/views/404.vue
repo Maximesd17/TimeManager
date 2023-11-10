@@ -1,11 +1,11 @@
 <template>
     <div
         id="error-page-404"
-        class="flex h-full w-full flex-col items-center justify-evenly gap-5 text-center"
+        class="flex h-full w-full bg-background flex-col items-center justify-evenly gap-5 text-center"
     >
-        <div class="text-primary">
-            <h2 class="text-9xl">404</h2>
-            <span class="text-5xl">La page n'existe pas</span>
+        <div class="text-text">
+            <h1 class="text-9xl text-accent">404</h1>
+            <h1>La page n'existe pas</h1>
         </div>
 
         <a href="/dashboard">

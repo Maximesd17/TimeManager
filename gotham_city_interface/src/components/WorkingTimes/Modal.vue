@@ -14,10 +14,7 @@
                         class="ml-4 h-8 w-8 !p-1.5 z-10 dateSelectorButton"
                         @click="isOpen = !isOpen"
                     >
-                        <img
-                            class="w-full h-full"
-                            src="@/assets/svg/edit.svg"
-                        />
+                        <SvgEdit class="h-full w-full" />
                     </Button>
                     <template #popper>
                         <DateRange
@@ -114,6 +111,7 @@ import Button from '../ui/input/Button.vue';
 import DateVue from '../ui/input/Date.vue';
 import TimeVue from '../ui/input/Time.vue';
 import TableVue from './Table.vue';
+import SvgEdit from '@/components/svg/Edit.vue';
 
 const props = defineProps({
     interval: {

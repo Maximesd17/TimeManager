@@ -5,9 +5,16 @@
 </template>
 <style lang="scss" scoped>
 .card {
-    background-color: var(--secondary);
-    box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.1);
+    background-color: var(--background);
     border-radius: 0.5rem;
     padding: 0.5rem;
+
+    @media (prefers-color-scheme: light) {
+        background-color: rgba($color: #000000, $alpha: 0.03);
+    }
+
+    @media (prefers-color-scheme: dark) {
+        background-color: rgba($color: #ffffff, $alpha: 0.03);
+    }
 }
 </style>

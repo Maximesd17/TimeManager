@@ -51,6 +51,7 @@ watch(
 );
 
 function fillChartData() {
+    const style = getComputedStyle(document.body);
     dates = getFormattedDaysInInterval(props.start, props.end, true);
     labels.value = dates.map(d => formatDateToHuman(d, false)) as string[];
     datasets.value = [];
@@ -85,7 +86,8 @@ function fillChartData() {
     datasets.value.push({
         data: data,
         label: dataLabels,
-        backgroundColor: '#879CA4'
+        backgroundColor: style.getPropertyValue('--primary') || '#fff',
+        borderColor: style.getPropertyValue('--secondary')
     });
 }
 

@@ -36,13 +36,13 @@ export function useBarChartGenerateOptions(): ChartOptions<'bar'> {
             x: {
                 ticks: {
                     font: { family: "'Montserrat', sans-serif" },
-                    color: useChartColors['primary']
+                    color: useChartColors['text']
                 },
                 grid: {
                     color: ({ tick }) => {
                         if (!tick || tick.value !== 0)
                             return useChartColors['hidden'];
-                        return useChartColors['primary'];
+                        return useChartColors['secondary'];
                     }
                 }
             },
@@ -51,12 +51,12 @@ export function useBarChartGenerateOptions(): ChartOptions<'bar'> {
                 border: { display: false },
                 ticks: {
                     font: { family: "'Montserrat', sans-serif" },
-                    color: useChartColors['primary']
+                    color: useChartColors['text']
                 },
                 grid: {
                     color: ({ tick }) => {
-                        if (tick.value !== 0) return useChartColors['primary'];
-                        return useChartColors['primary'];
+                        if (tick.value !== 0) return useChartColors['secondary'];
+                        return useChartColors['secondary'];
                     }
                 }
             }
@@ -65,11 +65,11 @@ export function useBarChartGenerateOptions(): ChartOptions<'bar'> {
             legend: { display: false },
             title: { display: false },
             tooltip: {
-                backgroundColor: useChartColors['light'],
-                titleColor: useChartColors['primary'],
-                bodyColor: useChartColors['primary'],
+                backgroundColor: useChartColors['background'],
+                titleColor: useChartColors['text'],
+                bodyColor: useChartColors['text'],
                 borderWidth: 1,
-                borderColor: useChartColors['button'],
+                borderColor: useChartColors['primary'],
                 callbacks: {
                     label: context => {
                         // @ts-ignore
@@ -97,7 +97,7 @@ export function useBarChart(
         ? computed(useBarChartGenerateOptions)
         : ({} as Ref<ChartOptions<'bar'>>);
     const colors = labels.value?.map((_, i) =>
-        i % 2 ? useChartColors['button'] : useChartColors['primary']
+        i % 2 ? useChartColors['primary'] : useChartColors['primary']
     );
 
     const data = computed<ChartData<'bar'>>(() => ({
