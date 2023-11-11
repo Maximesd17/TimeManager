@@ -19,7 +19,9 @@ defmodule GothamCityWeb.UserJSON do
     %{
       id: user.id,
       username: user.username,
-      email: user.email
+      email: user.email,
+      roles: user.roles,
+      teams: user.teams
     }
   end
 end

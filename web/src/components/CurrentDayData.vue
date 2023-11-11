@@ -8,7 +8,7 @@
 import type { Clock } from '@/types';
 import { ref, type PropType, watch } from 'vue';
 import { usePieChart } from '@/composables/charts/usePieChart';
-import { getHoursDiff, padStartZero } from '@/utils/dates';
+import { getHoursDiff, newNaiveDateTime, padStartZero } from '@/utils/dates';
 
 const props = defineProps({
     clock: {
@@ -17,9 +17,7 @@ const props = defineProps({
     }
 });
 
-const date = new Date();
-const timeZoneOffset = date.getTimezoneOffset() / 60;
-date.setHours(date.getHours() + timeZoneOffset);
+const date = newNaiveDateTime();
 
 const labels = ref(['Worked Time', 'Remaining Working Time'] as string[]);
 const datasets = ref(
@@ -33,6 +31,7 @@ const datasets = ref(
 );
 
 function fillChartData() {
+    const style = getComputedStyle(document.body);
     const timeWorked = props.clock.time
         ? getHoursDiff(props.clock.time, date)
         : 0;
@@ -63,8 +62,11 @@ function fillChartData() {
                 minutesRemaining
             )}`
         ],
-        backgroundColor: ['#4bb543', '#ff4d4d'],
-        borderColor: '#213547'
+        backgroundColor: [
+            style.getPropertyValue('--primary'),
+            style.getPropertyValue('--accent')
+        ],
+        borderColor: style.getPropertyValue('--secondary')
     });
 }
 

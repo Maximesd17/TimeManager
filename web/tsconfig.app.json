@@ -1,13 +1,18 @@
 {
     "extends": "@vue/tsconfig/tsconfig.dom.json",
     "include": [
-        "src/composables/**/*.ts",
-        "src/utils/**/*.ts",
         "src/components/**/*.vue",
+        "src/composables/**/*.ts",
+        "src/layouts/**/*.vue",
+        "src/middleware/**/*.ts",
+        "src/router/**/*.ts",
+        "src/store/**/*.ts",
+        "src/utils/**/*.ts",
+        "src/plugins/**/*.ts",
+        "src/views/**/*.vue",
+
         "env.d.ts",
-        "src/**/*",
-        "src/**/*.vue",
-        "src/**/*.ts"
+        "src/App.vue",
     ],
     "exclude": ["src/**/__tests__/*"],
     "compilerOptions": {
@@ -15,6 +20,7 @@
         "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]
-        }
+        },
+        "allowJs": true
     }
 }

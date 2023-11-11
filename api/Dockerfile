@@ -9,7 +9,7 @@ RUN apt-get update && \
 WORKDIR /app
 COPY ./ /app
 
-RUN mix local.hex --force && mix local.rebar --force && mix deps.get  && mix compile
+RUN mix local.hex --force && mix local.rebar --force && mix deps.get && mix compile && mix phx.digest
 
 EXPOSE 4000
 

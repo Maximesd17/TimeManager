@@ -5,6 +5,10 @@ defmodule GothamCity.Repo.Migrations.CreateUsers do
     create table(:users) do
       add :username, :string, null: false
       add :email, :string, null: false
+      add :password, :string, null: false
+      add :roles, {:array, :string}, default: []
+      add :teams, {:array, :string}, default: []
+      add :token, :text
 
       timestamps(type: :utc_datetime)
     end
