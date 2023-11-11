@@ -21,7 +21,7 @@
                 class="absolute inset-2 h-8 w-8 !p-1.5 z-10 dateSelectorButton"
                 @click="dateSelectorIsOpen = !dateSelectorIsOpen"
             >
-                <SvgEdit class="h-full w-full" />
+                <SvgCalendar class="h-auto w-full" />
             </Button>
             <div class="h-full w-full relative flex flex-col justify-between">
                 <div class="flex items-center flex-wrap">
@@ -70,7 +70,7 @@ import Modal from './Modal.vue';
 import DateRange from '../ui/input/DateRange.vue';
 import ArrowLeft from '@/components/svg/arrow/Left.vue';
 import ArrowRight from '@/components/svg/arrow/Right.vue';
-import SvgEdit from '@/components/svg/Edit.vue';
+import SvgCalendar from '@/components/svg/Calendar.vue';
 import { useEventBus } from '@/composables/useEventBus';
 
 defineProps({
