@@ -1,7 +1,6 @@
 export default {
-    //@ts-ignore
-
-    install: (app, options) => {
+    // @ts-ignore
+    install: (app) => {
         const all = new Map<string, Function[]>();
 
         app.config.globalProperties.$eventBus = {

@@ -50,7 +50,7 @@ axios.defaults.baseURL = import.meta.env.BACKEND_URL
 
 app.use(Toast);
 
-app.use(bus.install(app, null));
+app.use(bus.install(app));
 
 app.use(FloatingVue);
 

@@ -75,7 +75,7 @@
     </table>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { useApiFetch } from '@/composables/useApiFetch';
 import type { WorkingTime } from '@/types';
 import {

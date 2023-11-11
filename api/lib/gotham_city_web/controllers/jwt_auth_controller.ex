@@ -64,7 +64,8 @@ defmodule GothamCityWeb.JwtAuthPlug do
         id: user.id,
         username: user.username,
         email: user.email,
-        roles: user.roles
+        roles: user.roles,
+        teams: user.teams
       }
   end
 end
