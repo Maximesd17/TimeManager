@@ -18,6 +18,10 @@ defmodule GothamCityWeb.Router do
     plug GothamCityWeb.JwtAuthPlug
   end
 
+  pipeline :permissions do
+    plug GothamCityWeb.RoutePermissionsPlug
+  end
+
   scope "/api", GothamCityWeb do
     pipe_through(:api)
 
@@ -30,7 +34,7 @@ defmodule GothamCityWeb.Router do
 
     #secured users route
     scope "/users" do
-      pipe_through(:jwt)
+      pipe_through([:jwt, :permissions])
       get("/", UserController, :identifier)
       get("/me", UserController, :me)
       get("/:userID", UserController, :show)

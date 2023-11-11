@@ -42,6 +42,9 @@ defmodule GothamCityWeb.UserController do
           true ->
             case Token.verify_and_validate(token, signer) do
               {:ok, claims} ->
+                user_role_max = role_maximal(user.roles)
+                IO.inspect(user_role_max)
+                IO.inspect(has_admin_role?(user.id))
                 conn
                 |> put_status(:ok)
                 |> put_resp_content_type("application/json")
@@ -125,4 +128,31 @@ defmodule GothamCityWeb.UserController do
       data: %{token: token}
     }
   end
+
+  defp role_maximal(roles) do
+    roles_order = %{"manager" => 1, "general_manager" => 2, "administrator" => 3}
+
+    role_values = fn role ->
+      Map.get(roles_order, role, :unknown)
+    end
+
+    if Enum.empty?(roles) do
+      "employee"
+    else
+      Enum.max_by(roles, &role_values.(&1))
+    end
+  end
+
+  def has_admin_role?(id) do
+    IO.inspect(Accounts.get_user!(id))
+    case Accounts.get_user!(id) do
+      %User{roles: roles} ->
+        highest_role = role_maximal(roles)
+        IO.inspect(highest_role)
+        highest_role == "administrator"
+      _ ->
+        false
+    end
+  end
+
 end
