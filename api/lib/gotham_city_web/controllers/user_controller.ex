@@ -25,8 +25,12 @@ defmodule GothamCityWeb.UserController do
 
   def me_update(conn, %{"user" => user_params}) do
     user = Accounts.get_user!(conn.assigns.data.id)
-
-    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+    IO.inspect(user_params)
+    modifications = %{
+      "email" => user_params["email"],
+      "username" => user_params["username"]
+    }
+    with {:ok, %User{} = user} <- Accounts.update_user(user, modifications) do
       render(conn, :show, user: user)
     end
   end
