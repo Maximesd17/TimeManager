@@ -16,11 +16,15 @@ const screenStore = useScreenStore();
 const route = useRoute();
 
 const layout = computed(() => {
-    if (route.meta.layout === 'empty') {
-        return Empty;
+    console.log(route.meta.layout)
+    switch (route.meta.layout) {
+        case 'default':
+            return Default;
+        case 'empty':
+            return Empty;
+        default:
+            return Empty;
     }
-
-    return Default;
 })
 
 onMounted(() => {

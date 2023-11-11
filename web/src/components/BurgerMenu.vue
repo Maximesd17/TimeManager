@@ -138,6 +138,7 @@ const screenStore = useScreenStore();
 const { layout } = storeToRefs(screenStore);
 
 const userStore = useUserStore();
+console.log("test")
 const { user } = storeToRefs(userStore);
 if (!user.value) userStore.refresh();
 
@@ -149,8 +150,9 @@ const isOpen = ref(false);
 const currTheme = ref(useCookies().get('theme') || 'automatic');
 
 const token = useCookies().get('token');
+let roles = ref([] as string[]);
 // @ts-ignore
-const roles = jwtDecode(token)?.roles || [];
+if (token) roles.value = jwtDecode(token)?.roles || [];
 
 const search = ref('');
 const filteredUsers = computed(() => {
@@ -192,9 +194,9 @@ function togglePreferredTheme() {
 async function fetchUsers() {
     if (
         !(
-            roles.includes('manager') ||
-            roles.includes('general_manager') ||
-            roles.includes('admin')
+            roles.value.includes('manager') ||
+            roles.value.includes('general_manager') ||
+            roles.value.includes('admin')
         )
     )
         return [];
