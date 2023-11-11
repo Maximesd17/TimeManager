@@ -1,68 +1,148 @@
 <template>
-    <div class="password">
-        <label v-if="label" :style="{ maxWidth }" class="label">{{
-            label
-        }}</label>
-        <input
-            class="input"
-            :type="isShowed ? 'text' : 'password'"
-            :value="modelValue"
-            :style="{ maxWidth }"
-            @input="handleInput"
-            @keydown.enter.prevent="emits('enter')"
-        />
+    <div
+        class="text"
+        :style="{
+            '--border-color': borderColor,
+            '--label-color': labelColor,
+            '--focus-color': focusColor
+        }"
+        :class="{
+            [`${variant}-text`]: true,
+            focus: isFocus
+        }"
+    >
+        <label v-if="label.length" style="{ maxWidth }" class="label">
+            {{ label }}
+        </label>
+        <div class="flex w-full input" :class="{ [variant]: true }">
+            <input
+                class="w-full bg-transparent text-xl border-none outline-none"
+                :class="{ [textAlign]: true }"
+                :type="isVisible ? 'text' : 'password'"
+                :value="modelValue"
+                :style="{ maxWidth }"
+                @focus="isFocus = true"
+                @blur="isFocus = false"
+                @input="handleInput"
+                @keydown.enter.prevent="emits('enter')"
+            />
+            <div
+                class="flex items-center justify-center w-7 h-7 mr-1"
+                @click="isVisible = !isVisible"
+            >
+                <SvgEye
+                    v-if="isVisible"
+                    class="h-full"
+                    src="@/assets/svg/eye.svg"
+                />
+                <SvgEyeSlash
+                    v-else
+                    class="h-full"
+                    src="@/assets/svg/eye-slash.svg"
+                />
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, type PropType } from 'vue';
+
+import SvgEye from '@/components/svg/Eye.vue';
+import SvgEyeSlash from '@/components/svg/EyeSlash.vue';
 
 const emits = defineEmits(['update:modelValue', 'enter']);
+
 defineProps({
     modelValue: {
         type: String,
         required: true
     },
-    maxWidth: {
-        type: String,
-        default: '14rem'
-    },
     label: {
         type: String,
         default: ''
+    },
+
+    maxWidth: {
+        type: String,
+        default: '224px'
+    },
+    textAlign: {
+        type: String as PropType<'left' | 'center' | 'right'>,
+        default: 'left'
+    },
+    labelColor: {
+        type: String,
+        default: 'var(--text)'
+    },
+    borderColor: {
+        type: String,
+        default: 'var(--primary)'
+    },
+    focusColor: {
+        type: String,
+        default: 'var(--accent)'
+    },
+
+    variant: {
+        type: String as PropType<'default' | 'userEdit'>,
+        default: 'default'
     }
 });
+
+const isFocus = ref(false);
+const isVisible = ref(false);
+
 function handleInput(event: Event) {
     const target = event?.target as HTMLInputElement;
     emits('update:modelValue', target?.value);
 }
-const isShowed = ref(false);
 </script>
 
 <style lang="scss" scoped>
-.password {
+.text {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
+
     .label {
         width: 100%;
-        font-size: small;
-        font-weight: 400;
         text-align: left;
         margin: 0;
-        margin-left: 4px;
+        color: var(--label-color) !important;
+        margin-left: 0.125rem;
+    }
+    &.focus {
+        .input {
+            outline: 0.125rem solid var(--focus-color) !important;
+        }
     }
     .input {
         width: 100%;
         border: none;
-        background-color: white;
-        outline: 0.2rem solid var(--primary);
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-        font-size: large;
-        font-weight: 600;
-        color: var(--primary);
+
+        &.default {
+            outline: 0.125rem solid var(--border-color);
+            padding-left: 4px;
+            border-radius: 8px;
+
+            &:focus {
+                outline: 0.125rem solid var(--focus-color) !important;
+            }
+        }
+
+        &.left {
+            text-align: left;
+        }
+
+        &.center {
+            text-align: center;
+        }
+
+        &.right {
+            text-align: right;
+        }
     }
 }
 </style>

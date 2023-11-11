@@ -6,7 +6,34 @@ import Config
 # which you should run after static files are built and
 # before starting your production server.
 config :gotham_city, GothamCityWeb.Endpoint,
+  load_from_system_env: true,
+  http: [port: 4000],
+  url: [host: "localhost", port: 4000],
   cache_static_manifest: "priv/static/cache_manifest.json"
+
+# Configure your database connection
+config :gotham_city, GothamCity.Repo,
+       username: System.get_env("PGUSER", "postgres"),
+       password: System.get_env("PGPASSWORD", "root"),
+       hostname: System.get_env("PGHOST", "db"),
+       database: System.get_env("PGDATABASE", "gotham_city"),
+       port: String.to_integer(System.get_env("PGPORT", "5432")),
+       stacktrace: true,
+       show_sensitive_data_on_connection_error: true,
+       pool_size: 10
+
+config :gotham_city, GothamCityWeb.Endpoint,
+       # Binding to loopback ipv4 address prevents access from other machines.
+       # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
+       http: [ip: {0, 0, 0, 0}, port: 4000],
+       check_origin: false,
+       code_reloader: false,
+       debug_errors: true,
+       secret_key_base: "Pctw+u5euohYlM/CCZsxfKDTx/7fFJrufOgAsiDlvT1uhYDXZHgo1pD4s04v6E5g",
+       watchers: [
+         esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+         tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
+       ]
 
 # Configures Swoosh API Client
 config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: GothamCity.Finch
