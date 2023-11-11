@@ -28,7 +28,6 @@ defmodule GothamCityWeb.RoutePermissionsPlug do
 
   defp restrict_general_manager_access(conn) do
     IO.inspect(conn)
-
     if conn.method !== "DELETE" && conn.method !== "PUT" do
       conn
       |> put_status(401)
@@ -52,21 +51,18 @@ defmodule GothamCityWeb.RoutePermissionsPlug do
     # promote employee to manager
     if conn.method == "PUT" do
       user_id = Map.get(conn.params, "userID")
+      update_role = Map.get(conn.body_params, "roles")
+      IO.inspect(user_id)
+      IO.inspect(update_role)
 
-      if user_id && GothamCityWeb.UserController.role_maximal(conn.assigns.data.roles) === [] do
+
+      if user_id && GothamCityWeb.UserController.role_maximal(conn.assigns.data.roles) === [] && update_role === ["manager"]do
         #          il faut trouver un moyen pour acceder a la valeur ["manager"] de body_params
         #          body_params: %{"user" => %{"roles" => ["manager"]}},
         #          pour dire que general manager peut SEULEMENT promote employee -> manager
         #         (ex: general manager ne peut pas promote un employe a admin)
 
-#        case Map.get(conn.body_params, "user") do
-#          %{"roles" => roles} when roles == ["manager"] ->
             conn
-#        _ ->
-#          conn
-#          |> put_status(403)  # Forbidden status code
-#          |> Plug.Conn.send_resp(403, "Forbidden, permission denied")
-#        end
       else
         conn
         |> put_status(403)  # Forbidden status code
@@ -78,6 +74,11 @@ defmodule GothamCityWeb.RoutePermissionsPlug do
 
 
   defp restrict_manager_access(conn) do
+
+  end
+
+  defp restrict_employee_access(conn) do
+    user_id = Map.get(conn.params, "userID")
 
   end
 
