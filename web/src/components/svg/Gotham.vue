@@ -11,11 +11,8 @@
     </svg>
 </template>
 
-<script type="ts" setup>
-defineProps({
-    color: {
-        type: String,
-        default: 'var(--accent)',
-    },
+<script setup lang="ts">
+const { color } = defineProps({
+    color: { type: String, default: 'var(--accent)' }
 });
 </script>
