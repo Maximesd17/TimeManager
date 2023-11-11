@@ -12,8 +12,13 @@ defmodule GothamCityWeb.UserController do
     render(conn, :show, user: user)
   end
   def teams(conn, _params) do
-    user = Accounts.list_users_team(conn.assigns.data.teams)
-    render(conn, :index, users: user)
+    if Enum.member?(conn.assigns.data.roles, "general_manager") || Enum.member?(conn.assigns.data.roles, "administrator") do
+      users = Accounts.list_users()
+      render(conn, :index, users: users)
+    else
+      users = Accounts.list_users_team(conn.assigns.data.teams)
+      render(conn, :index, users: users)
+    end
   end
 
   def me(conn, _params) do
