@@ -15,11 +15,12 @@
             {{ label }}
         </label>
         <input
-            class="input"
+            class="input text-xl"
             :class="{ [textAlign]: true, [variant]: true }"
             type="text"
             :value="modelValue"
             :style="{ maxWidth }"
+            :placeholder="placeholder"
             @focus="isFocus = true"
             @blur="isFocus = false"
             @input="handleInput"
@@ -42,6 +43,10 @@ defineProps({
         type: String,
         default: ''
     },
+    placeholder: {
+        type: String,
+        default: ''
+    },
 
     maxWidth: {
         type: String,
@@ -53,7 +58,7 @@ defineProps({
     },
     labelColor: {
         type: String,
-        default: 'var(--primary)'
+        default: 'var(--text)'
     },
     borderColor: {
         type: String,
@@ -61,7 +66,7 @@ defineProps({
     },
     focusColor: {
         type: String,
-        default: 'var(--button)'
+        default: 'var(--accent)'
     },
 
     variant: {
@@ -87,8 +92,6 @@ function handleInput(event: Event) {
 
     .label {
         width: 100%;
-        font-size: small;
-        font-weight: 500;
         text-align: left;
         margin: 0;
         color: var(--label-color) !important;
@@ -98,17 +101,12 @@ function handleInput(event: Event) {
     .input {
         width: 100%;
         border: none;
-        font-size: large;
-        font-weight: 600;
-        background-color: white;
+        background-color: transparent;
 
         &.default {
             outline: 2px solid var(--border-color);
             padding-left: 0.25rem;
             border-radius: 0.5rem;
-            font-size: large;
-            font-weight: 600;
-            color: var(--primary);
 
             &:focus {
                 outline: 2px solid var(--focus-color) !important;
@@ -116,10 +114,7 @@ function handleInput(event: Event) {
         }
 
         &.userEdit {
-            font-size: large;
-            font-weight: 500;
-            color: var(--primary);
-            background-color: var(--secondary);
+            background-color: transparent;
 
             &:focus {
                 outline: none;

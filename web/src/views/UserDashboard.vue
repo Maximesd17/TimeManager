@@ -26,7 +26,7 @@
                 <div v-if="workingTimes" class="h-full">
                     <WorkingTimeComponent
                         v-model:workingTimes="workingTimes"
-                        :userId="user?.id || currentUser!.id"
+                        :userId="user?.id"
                         :start="startDate"
                         :end="endDate"
                         @prevMonth="setPrevMonth"

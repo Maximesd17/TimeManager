@@ -61,8 +61,14 @@
                 </UiButton>
             </form>
             <UiButton
-                v-if="isEditMode"
-                class="absolute right-2 top-2 h-8 w-8 !p-1.5 !bg-red"
+                v-if="
+                    isEditMode &&
+                    !isMe &&
+                    (roles.includes('manager') ||
+                        roles.includes('general_manager') ||
+                        roles.includes('admin'))
+                "
+                class="absolute right-2 top-2 h-8 w-8 !p-1"
                 :class="{
                     'slide-in': isEditMode,
                     'slide-out': isEditModeClosing
@@ -70,15 +76,16 @@
                 :style="{
                     '--translateX': `${isEditMode ? '-2.5rem' : '0'}`
                 }"
+                variant="danger"
                 @click="isDeletingUser = true"
             >
-                <img class="w-full h-full" src="../assets/svg/delete.svg" />
+                <SvgDelete class="w-full h-full" color="white" />
             </UiButton>
             <UiButton
                 class="absolute right-2 top-2 h-8 w-8 !p-1.5"
                 @click="toggleEditMode"
             >
-                <img class="w-full h-full" src="../assets/svg/edit.svg" />
+                <SvgEdit class="w-full h-full" />
             </UiButton>
         </Card>
         <Card
@@ -93,7 +100,7 @@
             <h2 class="absolute top-2">Current Day Data</h2>
             <CurrentDayData
                 v-if="isPieOpen || !(isPieClosing && layout === 'mobile')"
-                :key="clock.status.toString()"
+                :key="clock.status.toString() + chartReload.toString()"
                 class="h-full pt-[2.5rem] mt-auto"
                 :clock="clock"
             />
@@ -103,7 +110,7 @@
 
 <script lang="ts" setup>
 import type { Clock, User } from '@/types';
-import { ref, type PropType, watch } from 'vue';
+import { ref, type PropType, watch, onMounted } from 'vue';
 import { useApiFetch } from '@/composables/useApiFetch';
 import { useScreenStore } from '@/store/screen';
 import { storeToRefs } from 'pinia';
@@ -114,11 +121,20 @@ import Card from '@/components/ui/cards/Rectangle.vue';
 import CurrentDayData from './CurrentDayData.vue';
 import UiButton from '@/components/ui/input/Button.vue';
 import Confirm from './ui/input/Confirm.vue';
+import SvgEdit from '@/components/svg/Edit.vue';
+import SvgDelete from '@/components/svg/Delete.vue';
+import { useEventBus } from '@/composables/useEventBus';
+import useCookies from '@/composables/useCookies';
+import { jwtDecode } from 'jwt-decode';
 
 const props = defineProps({
     user: {
         type: Object as PropType<User>,
         required: true
+    },
+    isMe: {
+        type: Boolean,
+        default: false
     },
     clock: {
         type: Object as PropType<Clock>,
@@ -135,6 +151,9 @@ const emits = defineEmits<{
 const screenStore = useScreenStore();
 const { layout } = storeToRefs(screenStore);
 
+// @ts-ignore
+const roles = jwtDecode(useCookies().get('token')!).roles || [];
+
 const isPieOpen = ref(props.clock?.status ?? false);
 const isPieOpening = ref(false);
 const isPieClosing = ref(false);
@@ -146,6 +165,8 @@ const email = ref(props.user.email);
 const username = ref(props.user.username);
 
 const isDeletingUser = ref(false);
+
+const chartReload = ref(false);
 
 function toggleEditMode() {
     isEditModeClosing.value = true;
@@ -159,9 +180,12 @@ function toggleEditMode() {
 }
 
 async function postClock() {
-    const { data } = await useApiFetch<Clock>(`/clocks/${props.user.id}`, {
-        method: 'POST'
-    });
+    const { data } = await useApiFetch<Clock>(
+        `/clocks/${props.isMe ? 'me' : props.user.id}`,
+        {
+            method: 'POST'
+        }
+    );
 
     emits('update:clock', data.value);
 }
@@ -207,6 +231,12 @@ function togglePie() {
         }, 400);
     }
 }
+
+onMounted(() => {
+    useEventBus.on('refresh_charts', () => {
+        chartReload.value = !chartReload.value;
+    });
+});
 </script>
 
 <style lang="scss" scoped>

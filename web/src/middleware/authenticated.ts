@@ -8,7 +8,7 @@ export default function authenticated({
     to: RouteLocationNormalized;
     next: Function;
 }) {
-    const token = useCookies().getCookie('token');
+    const token = useCookies().get('token');
 
     if (!token) {
         const [path, uri] = to.fullPath.split('?uri=');

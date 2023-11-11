@@ -1,5 +1,5 @@
 <template>
-    <main class="relative h-[calc(100vh-4.5rem)] w-full max-sm:overflow-auto">
+    <main class="relative h-[calc(100vh-3.5rem)] w-full max-sm:overflow-auto">
         <div
             class="flex gap-4 p-4 h-full max-sm:flex-wrap"
             v-if="currentUser"
@@ -8,6 +8,7 @@
                 v-if="clock"
                 class="w-full sm:w-1/3 relative"
                 :user="currentUser"
+                :isMe="true"
                 v-model:clock="clock"
                 @update:user="updateUser"
             />
@@ -18,19 +19,11 @@
                         :userId="currentUser!.id"
                         :start="startDate"
                         :end="endDate"
+                        :isMe="true"
                         @prevMonth="setPrevMonth"
                         @nextMonth="setNextMonth"
                     />
                 </div>
-            </div>
-        </div>
-        <div
-            v-else
-            class="flex justify-center items-center h-[calc(100vh-4.5rem)]"
-        >
-            <div class="flex flex-col items-center">
-                <div class="text-2xl font-bold">No user selected</div>
-                <div class="text-xl">Please select a user</div>
             </div>
         </div>
     </main>
@@ -58,7 +51,6 @@ import {
     newNaiveDateTime
 } from '@/utils/dates';
 
-import Confirm from '@/components/ui/input/Confirm.vue';
 import WorkingTimeComponent from '@/components/workingTimes/WorkingTimes.vue';
 import UserDetailsComponent from '@/components/UserDetails.vue';
 
@@ -69,7 +61,6 @@ if (!currentUser.value) userStore.refresh();
 const workingTimes = ref(null as WorkingTime[] | null);
 const clock = ref(null as Clock | null);
 
-const tmpUserCreation = ref(null as { username: string; email: string } | null);
 
 const startDate = ref(newNaiveDateTime());
 startDate.value.setDate(1);

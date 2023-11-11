@@ -45,7 +45,7 @@ const emits = defineEmits<{
 }>();
 
 function disconnect() {
-    useCookies().revokeCookie('token');
+    useCookies().revoke('token');
     document.location.reload();
 }
 

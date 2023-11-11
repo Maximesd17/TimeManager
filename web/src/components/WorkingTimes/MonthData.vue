@@ -4,7 +4,7 @@
 
 <script lang="ts" setup>
 import type { WorkingTime } from '@/types';
-import { ref, type PropType, watch } from 'vue';
+import { ref, type PropType, watch, onMounted } from 'vue';
 import { useBarChart } from '@/composables/charts/useBarChart';
 import {
     getFormattedDaysInInterval,
@@ -13,6 +13,7 @@ import {
     getHoursDiff,
     padStartZero
 } from '@/utils/dates';
+import { useEventBus } from '@/composables/useEventBus';
 
 const props = defineProps({
     workingTimes: {
@@ -51,6 +52,7 @@ watch(
 );
 
 function fillChartData() {
+    const style = getComputedStyle(document.body);
     dates = getFormattedDaysInInterval(props.start, props.end, true);
     labels.value = dates.map(d => formatDateToHuman(d, false)) as string[];
     datasets.value = [];
@@ -85,12 +87,13 @@ function fillChartData() {
     datasets.value.push({
         data: data,
         label: dataLabels,
-        backgroundColor: '#879CA4'
+        backgroundColor: style.getPropertyValue('--primary') || '#fff',
+        borderColor: style.getPropertyValue('--secondary')
     });
 }
 
 // @ts-ignore
-const { Bar, data, options } = useBarChart(labels, datasets);
+let { Bar, data, options } = useBarChart(labels, datasets);
 </script>
 
 <style lang="scss" scoped>

@@ -1,6 +1,6 @@
 <template>
     <button
-        class="button select-none"
+        class="button select-none font-bold"
         @click="click"
         :type="type"
         :class="{ [variant]: Boolean(variant), disabled }"
@@ -37,15 +37,13 @@ function click() {
     border: none;
     outline: none;
 
-    padding: 0 1rem;
+    padding: 0.5rem 1rem;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
     border-radius: 1rem;
     cursor: pointer;
     transition: all 0.1s ease-in-out;
-    font-weight: 800;
 
     &:not(.disabled) {
         &:hover {
@@ -70,24 +68,24 @@ function click() {
 }
 
 .default {
-    background-color: var(--button);
-    color: var(--secondary);
+    background-color: var(--secondary);
+    color: var(--text);
 }
 
 .defaultBorder {
     background-color: transparent;
-    border: 2px solid var(--button);
+    border: 2px solid var(--secondary);
     color: var(--text);
 }
 
-.red {
-    background-color: var(--red);
+.danger {
+    background-color: var(--danger);
     color: var(--text);
 }
 
-.redBorder {
+.dangerBorder {
     background-color: transparent;
-    border: 2px solid var(--red);
+    border: 2px solid var(--danger);
     color: var(--text);
 }
 

@@ -1,4 +1,5 @@
 import useCookies from '@/composables/useCookies';
+import { jwtDecode } from 'jwt-decode';
 import { type RouteLocationNormalized } from 'vue-router';
 
 export default async function manager({
@@ -8,12 +9,13 @@ export default async function manager({
     to: RouteLocationNormalized;
     next: Function;
 }) {
-    // if (!user.value) await userStore.refresh();
+    const token = useCookies().get('token') as string;
+    //@ts-ignore
+    const roles = jwtDecode(token).roles || [];
 
-    // if (!user.value?.roles.includes('manager')) {
-
-    //     return next({ path: `/404` });
-    // }
+    if (!roles.includes('manager')) {
+        return next({ path: `/404` });
+    }
 
     next();
 }

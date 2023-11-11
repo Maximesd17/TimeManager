@@ -1,21 +1,19 @@
 <template>
     <div class="date-selector flex flex-col" ref="dateSelector">
         <div class="flex items-center text-lg font-bold mx-auto">
-            <div
-                class="w-4 h-4 mr-1 flex items-center cursor-pointer"
-                @click="setPrevMonth"
-            >
-                <img src="@/assets/svg/arrowLeft.svg" class="w-full h-full" />
-            </div>
-            <h3 class="w-40 text-center">
-                {{ monthNames[dateForMonth.getMonth()] }}
-                {{ dateForMonth.getFullYear() }}
-            </h3>
-            <div
-                class="w-4 h-4 ml-1 rotate-180 flex items-center cursor-pointer"
-                @click="setNextMonth"
-            >
-                <img src="@/assets/svg/arrowLeft.svg" class="w-full h-full" />
+            <div class="flex items-center ml-auto text-lg font-bold">
+                <ArrowLeft
+                    class="h-4 w-4 mr-1 cursor-pointer"
+                    @click="setPrevMonth"
+                />
+                <h5 class="text-center">
+                    {{ monthNames[date.getMonth()] }}
+                    {{ date.getFullYear() }}
+                </h5>
+                <ArrowRight
+                    class="h-4 w-4 ml-1 cursor-pointer"
+                    @click="setNextMonth"
+                />
             </div>
         </div>
         <div
@@ -27,7 +25,7 @@
 
             <template v-for="date in datesArray" :key="date.toString()">
                 <p
-                    class="date"
+                    class="date  p-1.5"
                     :class="{ 'font-bold': date.isCurrentMonth }"
                     @click="updateDate(date.date)"
                 >
@@ -48,8 +46,11 @@ import {
     monthNames,
     prevMonth,
     nextMonth,
-newNaiveDateTime
+    newNaiveDateTime
 } from '@/utils/dates';
+
+import ArrowLeft from '@/components/svg/arrow/Left.vue';
+import ArrowRight from '@/components/svg/arrow/Right.vue';
 
 const props = defineProps({
     month: {
@@ -137,11 +138,12 @@ useClickOutside(dateSelector, cancel, ['.dateSelectorButton']);
 
 <style lang="scss" scoped>
 .date-selector {
+    color: var(--text);
     width: 16rem;
     height: 16rem;
     z-index: 13;
     padding: 0.5rem 0.75rem;
-    background-color: var(--secondary);
+    background-color: var(--background);
     border: 2px solid var(--primary);
     border-radius: 0.375rem;
 

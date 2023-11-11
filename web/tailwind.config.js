@@ -9,11 +9,36 @@ module.exports = {
     theme: {
         extend: {
             colors: {
+                text: 'var(--text)',
+                background: 'var(--background)',
                 primary: 'var(--primary)',
                 secondary: 'var(--secondary)',
-                button: 'var(--button)',
-                green: 'var(--green)',
-                red: 'var(--red)'
+                accent: 'var(--accent)',
+                green: 'var(--success)',
+                yellow: 'var(--warning)',
+                red: 'var(--danger)',
+                success: 'var(--success)',
+                warning: 'var(--warning)',
+                danger: 'var(--danger)',
+                'card-color': 'var(--card-bg)',
+                'hover': 'var(--hover-bg)',
+            },
+            fontSize: {
+                sm: '0.600rem',
+                base: '0.8rem',
+                xl: '1.066rem',
+                '2xl': '1.421rem',
+                '3xl': '1.894rem',
+                '4xl': '2.525rem',
+                '5xl': '3.366rem'
+            },
+            fontFamily: {
+                heading: 'Exo 2',
+                body: 'Exo 2'
+            },
+            fontWeight: {
+                normal: '400',
+                bold: '700'
             }
         }
     },

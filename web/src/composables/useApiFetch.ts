@@ -16,7 +16,7 @@ export async function useApiFetch<T>(
 ): Promise<AsyncData<T>> {
     const data = ref(undefined as T);
     const error = ref(false as { status: number; message: string } | boolean);
-    const token = useCookies().getCookie('token');
+    const token = useCookies().get('token');
 
     if (token) {
         opts.headers = {
@@ -42,7 +42,7 @@ export async function useApiFetch<T>(
     ) {
         error.value = { status: res.status, message: res.statusText };
         if (res.status === 401) {
-            useCookies().revokeCookie('token');
+            useCookies().revoke('token');
             useToast.error('You session has expired. Please log in again.');
             document.location.reload();
         }

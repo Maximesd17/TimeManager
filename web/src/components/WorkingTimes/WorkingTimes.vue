@@ -4,6 +4,7 @@
             v-if="interval"
             v-model:interval="interval"
             :user-id="userId"
+            :isMe="isMe"
             @close="interval = null"
         />
         <Card class="w-full h-full trans relative">
@@ -20,40 +21,33 @@
                 class="absolute inset-2 h-8 w-8 !p-1.5 z-10 dateSelectorButton"
                 @click="dateSelectorIsOpen = !dateSelectorIsOpen"
             >
-                <img class="w-full h-full" src="@/assets/svg/edit.svg" />
+                <SvgEdit class="h-full w-full" />
             </Button>
             <div class="h-full w-full relative flex flex-col justify-between">
                 <div class="flex items-center flex-wrap">
-                    <h2 class="h-4 text-center mb-4 ml-[50%] -translate-x-1/2">
+                    <h3 class="text-center mb-4 ml-[50%] -translate-x-1/2">
                         Month Data
-                    </h2>
+                    </h3>
                     <div class="flex items-center ml-auto text-lg font-bold">
-                        <div
-                            class="w-4 h-4 mr-1 flex items-center cursor-pointer"
+                        <ArrowLeft
+                            class="h-5 w-5 mr-1 cursor-pointer"
                             @click="emits('prevMonth')"
-                        >
-                            <img
-                                src="@/assets/svg/arrowLeft.svg"
-                                class="w-full h-full"
-                            />
-                        </div>
-                        <h3 class="w-40 text-center">
+                            :color="'var(--accent)'"
+                        />
+                        <h5 class="text-center">
                             {{ monthNames[start.getMonth()] }}
                             {{ start.getFullYear() }}
-                        </h3>
-                        <div
-                            class="w-4 h-4 ml-1 rotate-180 flex items-center cursor-pointer"
+                        </h5>
+                        <ArrowRight
+                            class="h-5 w-5 ml-1 cursor-pointer"
                             @click="emits('nextMonth')"
-                        >
-                            <img
-                                src="@/assets/svg/arrowLeft.svg"
-                                class="w-full h-full"
-                            />
-                        </div>
+                            :color="'var(--accent)'"
+                        />
                     </div>
                 </div>
                 <div class="h-[calc(100%-4rem)] mt-auto">
                     <MonthData
+                        :key="chartReload.toString()"
                         :workingTimes="workingTimes"
                         :start="start"
                         :end="end"
@@ -66,7 +60,7 @@
 
 <script lang="ts" setup>
 import type { WorkingTime } from '@/types';
-import { ref, type PropType, watch } from 'vue';
+import { ref, type PropType, watch, onMounted } from 'vue';
 import { monthNames } from '@/utils/dates';
 
 import Card from '@/components/ui/cards/Rectangle.vue';
@@ -74,6 +68,10 @@ import MonthData from '@/components/workingTimes/MonthData.vue';
 import Button from '@/components/ui/input/Button.vue';
 import Modal from './Modal.vue';
 import DateRange from '../ui/input/DateRange.vue';
+import ArrowLeft from '@/components/svg/arrow/Left.vue';
+import ArrowRight from '@/components/svg/arrow/Right.vue';
+import SvgEdit from '@/components/svg/Edit.vue';
+import { useEventBus } from '@/composables/useEventBus';
 
 defineProps({
     workingTimes: {
@@ -91,6 +89,10 @@ defineProps({
     end: {
         type: Date,
         required: true
+    },
+    isMe: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -99,6 +101,8 @@ const emits = defineEmits<{
     (e: 'prevMonth'): void;
     (e: 'nextMonth'): void;
 }>();
+
+const chartReload = ref(false);
 
 const interval = ref(null as { start: Date; end: Date } | null);
 
@@ -110,13 +114,15 @@ watch(
         dateSelectorIsOpen.value = false;
     }
 );
+
+onMounted(() => {
+    useEventBus.on('refresh_charts', () => {
+        chartReload.value = !chartReload.value;
+    });
+});
 </script>
 
 <style lang="scss" scoped>
-h2 {
-    @apply font-bold text-xl;
-}
-
 .trans {
     transition: height 0.2s ease-in-out;
 }

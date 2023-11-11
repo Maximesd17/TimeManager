@@ -1,18 +1,15 @@
 <template>
     <label
         class="font-h4 flex items-center justify-between gap-x-2 rounded-3xl min-w-min"
-        :class="`${isDisabled ? '' : 'bg-white'} ${
-            isFocus ? 'focus' : ''
-        }`"
+        :class="`${isDisabled ? '' : 'bg-white'} ${isFocus ? 'focus' : ''}`"
         @keydown.down.prevent="decrement"
         @keydown.up.prevent="increment"
         for="input"
     >
-
         <input
             type="number"
-            class="flex-grow rounded-3xl py-1.5 w-[inherit] text-center"
-            :class="`${isDisabled ? '' : 'bg-white'}`"
+            class="flex-grow rounded-3xl py-1.5 w-[inherit] text-center !bg-background text-text"
+            :class="`${isDisabled ? '' : 'bg-white'} ${isFocus ? 'focus' : ''}`"
             v-model="inputNumber"
             :min="min"
             :max="max"
@@ -105,12 +102,6 @@ function decrement() {
 
 <style lang="scss" scoped>
 label {
-    outline: solid 2px var(--primary);
-
-    &.focus {
-        outline: solid 2px var(--button);
-    }
-
     input {
         @apply rounded-full;
 
@@ -118,12 +109,13 @@ label {
         -moz-appearance: textfield !important;
         appearance: textfield !important;
 
-        outline: none;
-        background-color: white;
+        border: none;
+        outline: solid 2px var(--primary);
         padding: 0 0.5rem;
+        color: var(--text);
 
         &.focus {
-            outline: solid 2px var(--button);
+            outline: solid 2px var(--accent);
         }
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {

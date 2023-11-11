@@ -14,10 +14,10 @@
         <label v-if="label.length" style="{ maxWidth }" class="label">
             {{ label }}
         </label>
-        <div class="flex w-full input" :class="{[variant]: true}">
+        <div class="flex w-full input" :class="{ [variant]: true }">
             <input
-                class="bg-white w-full"
-                :class="{ [textAlign]: true,  }"
+                class="w-full bg-transparent text-xl border-none outline-none"
+                :class="{ [textAlign]: true }"
                 :type="isVisible ? 'text' : 'password'"
                 :value="modelValue"
                 :style="{ maxWidth }"
@@ -27,11 +27,19 @@
                 @keydown.enter.prevent="emits('enter')"
             />
             <div
-                class="flex items-center justify-center h-8 mr-1"
+                class="flex items-center justify-center w-7 h-7 mr-1"
                 @click="isVisible = !isVisible"
             >
-                <img v-if="isVisible" class="h-full" src="@/assets/svg/eye.svg" />
-                <img v-else class="h-full" src="@/assets/svg/eye-slash.svg" />
+                <SvgEye
+                    v-if="isVisible"
+                    class="h-full"
+                    src="@/assets/svg/eye.svg"
+                />
+                <SvgEyeSlash
+                    v-else
+                    class="h-full"
+                    src="@/assets/svg/eye-slash.svg"
+                />
             </div>
         </div>
     </div>
@@ -39,6 +47,9 @@
 
 <script setup lang="ts">
 import { ref, type PropType } from 'vue';
+
+import SvgEye from '@/components/svg/Eye.vue';
+import SvgEyeSlash from '@/components/svg/EyeSlash.vue';
 
 const emits = defineEmits(['update:modelValue', 'enter']);
 
@@ -54,7 +65,7 @@ defineProps({
 
     maxWidth: {
         type: String,
-        default: '14rem'
+        default: '224px'
     },
     textAlign: {
         type: String as PropType<'left' | 'center' | 'right'>,
@@ -62,7 +73,7 @@ defineProps({
     },
     labelColor: {
         type: String,
-        default: 'var(--primary)'
+        default: 'var(--text)'
     },
     borderColor: {
         type: String,
@@ -70,7 +81,7 @@ defineProps({
     },
     focusColor: {
         type: String,
-        default: 'var(--button)'
+        default: 'var(--accent)'
     },
 
     variant: {
@@ -97,42 +108,27 @@ function handleInput(event: Event) {
 
     .label {
         width: 100%;
-        font-size: small;
-        font-weight: 500;
         text-align: left;
         margin: 0;
         color: var(--label-color) !important;
-        margin-left: 2px;
+        margin-left: 0.125rem;
     }
-
+    &.focus {
+        .input {
+            outline: 0.125rem solid var(--focus-color) !important;
+        }
+    }
     .input {
         width: 100%;
         border: none;
-        font-size: large;
-        font-weight: 600;
-        background-color: white;
 
         &.default {
-            outline: 2px solid var(--border-color);
-            padding-left: 0.25rem;
-            border-radius: 0.5rem;
-            font-size: large;
-            font-weight: 600;
-            color: var(--primary);
+            outline: 0.125rem solid var(--border-color);
+            padding-left: 4px;
+            border-radius: 8px;
 
             &:focus {
-                outline: 2px solid var(--focus-color) !important;
-            }
-        }
-
-        &.userEdit {
-            font-size: large;
-            font-weight: 500;
-            color: var(--primary);
-            background-color: var(--secondary);
-
-            &:focus {
-                outline: none;
+                outline: 0.125rem solid var(--focus-color) !important;
             }
         }
 
@@ -146,36 +142,6 @@ function handleInput(event: Event) {
 
         &.right {
             text-align: right;
-        }
-    }
-    &.userEdit-text {
-        position: relative;
-
-        &::after {
-            content: '';
-            position: absolute;
-            top: 60%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 3rem;
-            height: 2px;
-            background-color: var(--primary);
-            margin-top: 0.5rem;
-            transition: width 0.2s ease-in-out;
-        }
-
-        &.focus {
-            &::after {
-                content: '';
-                position: absolute;
-                top: 60%;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 6rem;
-                height: 2px;
-                background-color: var(--primary);
-                margin-top: 0.5rem;
-            }
         }
     }
 }

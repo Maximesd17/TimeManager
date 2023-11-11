@@ -40,7 +40,6 @@ const emits = defineEmits<{
 .main {
     @apply rounded-full;
     outline: solid 2px var(--primary);
-    background-color: white;
     padding: 0 0.5rem;
 
     &.focus {
