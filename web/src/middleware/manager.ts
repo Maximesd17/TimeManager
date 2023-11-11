@@ -15,8 +15,8 @@ export default async function manager({
 
     if (
         !roles.includes('manager') ||
-        roles.includes('general-manager') ||
-        roles.includes('admin')
+        roles.includes('general_manager') ||
+        roles.includes('administrator')
     ) {
         return next({ path: `/404` });
     }

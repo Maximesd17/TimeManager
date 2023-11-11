@@ -37,7 +37,7 @@
                 v-if="
                     roles.includes('manager') ||
                     roles.includes('general_manager') ||
-                    roles.includes('admin')
+                    roles.includes('administrator')
                 "
             >
                 <div
@@ -195,7 +195,7 @@ async function fetchUsers() {
         !(
             roles.value.includes('manager') ||
             roles.value.includes('general_manager') ||
-            roles.value.includes('admin')
+            roles.value.includes('administrator')
         )
     )
         return [];

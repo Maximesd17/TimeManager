@@ -14,7 +14,7 @@ export default async function manager({
     const roles = jwtDecode(token).roles || [];
 
     if (
-        roles.includes('admin')
+        roles.includes('administrator')
     ) {
         return next({ path: `/404` });
     }
