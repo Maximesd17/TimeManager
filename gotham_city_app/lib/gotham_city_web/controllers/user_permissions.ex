@@ -51,18 +51,12 @@ defmodule GothamCityWeb.RoutePermissionsPlug do
     # promote employee to manager
     if conn.method == "PUT" do
       user_id = Map.get(conn.params, "userID")
-      update_role = Map.get(conn.body_params, "roles")
+      update_role = Map.get(conn.body_params, "user", %{})["roles"]
       IO.inspect(user_id)
       IO.inspect(update_role)
 
-
-      if user_id && GothamCityWeb.UserController.role_maximal(conn.assigns.data.roles) === [] && update_role === ["manager"]do
-        #          il faut trouver un moyen pour acceder a la valeur ["manager"] de body_params
-        #          body_params: %{"user" => %{"roles" => ["manager"]}},
-        #          pour dire que general manager peut SEULEMENT promote employee -> manager
-        #         (ex: general manager ne peut pas promote un employe a admin)
-
-            conn
+      if user_id && conn.assigns.data.roles === [] && update_role === ["manager"] do
+        conn
       else
         conn
         |> put_status(403)  # Forbidden status code
