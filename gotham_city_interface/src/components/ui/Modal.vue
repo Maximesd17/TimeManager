@@ -6,7 +6,7 @@
             @click.stop
         >
             <div
-                class="bg-background h-full w-full rounded-l-lg rounded-r-2xl p-4 overflow-auto"
+                class="bg-background h-full w-full rounded-l-lg rounded-r-2xl p-4 overflow-auto flex flex-col"
             >
                 <UiButton
                     v-if="layout !== 'desktop'"
@@ -14,7 +14,7 @@
                     class="button-close"
                     variant="transparent"
                 >
-                <SvgClose />
+                    <SvgClose />
                 </UiButton>
                 <slot />
             </div>
@@ -71,7 +71,7 @@ onUnmounted(() => {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 15;
+    z-index: 60;
     width: 100%;
     height: 100%;
 

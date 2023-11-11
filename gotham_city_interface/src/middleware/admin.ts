@@ -9,7 +9,7 @@ export default async function manager({
     to: RouteLocationNormalized;
     next: Function;
 }) {
-    const token = useCookies().getCookie('token') as string;
+    const token = useCookies().get('token') as string;
     //@ts-ignore
     const roles = jwtDecode(token).roles || [];
 

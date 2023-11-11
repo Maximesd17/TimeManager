@@ -4,7 +4,7 @@
 
 <script lang="ts" setup>
 import type { WorkingTime } from '@/types';
-import { ref, type PropType, watch } from 'vue';
+import { ref, type PropType, watch, onMounted } from 'vue';
 import { useBarChart } from '@/composables/charts/useBarChart';
 import {
     getFormattedDaysInInterval,
@@ -13,6 +13,7 @@ import {
     getHoursDiff,
     padStartZero
 } from '@/utils/dates';
+import { useEventBus } from '@/composables/useEventBus';
 
 const props = defineProps({
     workingTimes: {
@@ -92,7 +93,7 @@ function fillChartData() {
 }
 
 // @ts-ignore
-const { Bar, data, options } = useBarChart(labels, datasets);
+let { Bar, data, options } = useBarChart(labels, datasets);
 </script>
 
 <style lang="scss" scoped>

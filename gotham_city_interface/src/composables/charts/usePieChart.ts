@@ -25,21 +25,22 @@ Chart.register(
 );
 
 export function usePieChartGenerateDefaultOptions(): ChartOptions<'pie'> {
+    const colors = useChartColors();
     return {
         plugins: {
             legend: {
                 display: true,
                 position: 'bottom',
                 align: 'center',
-                labels: { color: useChartColors['text'] }
+                labels: { color: colors['text'] }
             },
             title: { display: false },
             tooltip: {
-                backgroundColor: useChartColors['background'],
-                titleColor: useChartColors['text'],
-                bodyColor: useChartColors['text'],
+                backgroundColor: colors['background'],
+                titleColor: colors['text'],
+                bodyColor: colors['text'],
                 borderWidth: 1,
-                borderColor: useChartColors['primary'],
+                borderColor: colors['primary'],
                 callbacks: {
                     label: context => {
                         // @ts-ignore

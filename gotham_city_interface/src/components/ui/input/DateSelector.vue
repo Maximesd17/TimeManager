@@ -5,7 +5,6 @@
                 <ArrowLeft
                     class="h-4 w-4 mr-1 cursor-pointer"
                     @click="setPrevMonth"
-                    :color="'var(--accent)'"
                 />
                 <h5 class="text-center">
                     {{ monthNames[date.getMonth()] }}
@@ -14,7 +13,6 @@
                 <ArrowRight
                     class="h-4 w-4 ml-1 cursor-pointer"
                     @click="setNextMonth"
-                    :color="'var(--accent)'"
                 />
             </div>
         </div>
@@ -140,11 +138,12 @@ useClickOutside(dateSelector, cancel, ['.dateSelectorButton']);
 
 <style lang="scss" scoped>
 .date-selector {
+    color: var(--text);
     width: 16rem;
     height: 16rem;
     z-index: 13;
     padding: 0.5rem 0.75rem;
-    background-color: var(--secondary);
+    background-color: var(--background);
     border: 2px solid var(--primary);
     border-radius: 0.375rem;
 

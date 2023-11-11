@@ -20,6 +20,8 @@ module.exports = {
                 success: 'var(--success)',
                 warning: 'var(--warning)',
                 danger: 'var(--danger)',
+                'card-color': 'var(--card-bg)',
+                'hover': 'var(--hover-bg)',
             },
             fontSize: {
                 sm: '0.600rem',

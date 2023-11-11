@@ -62,7 +62,10 @@ function fillChartData() {
                 minutesRemaining
             )}`
         ],
-        backgroundColor: [style.getPropertyValue('--primary'), style.getPropertyValue('--accent')],
+        backgroundColor: [
+            style.getPropertyValue('--primary'),
+            style.getPropertyValue('--accent')
+        ],
         borderColor: style.getPropertyValue('--secondary')
     });
 }

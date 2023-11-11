@@ -58,7 +58,10 @@
                         clickedLine === index &&
                         !deletedWorkingTimes.some(
                             wt => wt.id === workingTime.id
-                        )
+                        ) &&
+                        (roles.includes('admin') ||
+                            roles.includes('manager') ||
+                            roles.includes('generalManager'))
                     "
                     :index="index"
                     :start="workingTime.start"
@@ -84,6 +87,8 @@ import {
 import { ref, type PropType, computed } from 'vue';
 
 import EditRow from './EditRow.vue';
+import { jwtDecode } from 'jwt-decode';
+import useCookies from '@/composables/useCookies';
 
 const props = defineProps({
     workingTimes: {
@@ -100,6 +105,9 @@ const props = defineProps({
 const emits = defineEmits<{
     (e: 'update:workingTimes', workingTimes: WorkingTime[]): void;
 }>();
+
+// @ts-ignore
+const roles = jwtDecode(useCookies().get('token')!).roles || [];
 
 defineExpose({
     pushChanges,

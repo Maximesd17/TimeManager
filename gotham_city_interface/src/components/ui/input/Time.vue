@@ -6,7 +6,7 @@
             <span @click="clickedIndex = 2">{{ displaySeconds }}</span>
         </div>
         <template #popper>
-            <div class="border-2 border-primary rounded-md bg-secondary p-3">
+            <div class="border-2 border-primary rounded-md bg-background p-3">
                 <div class="flex gap-2 font-bold flex-wrap min-w-[10rem]">
                     <Number
                         :modelValue="hours"
@@ -121,7 +121,6 @@ const emits = defineEmits<{
 .main {
     @apply rounded-full;
     outline: solid 2px var(--primary);
-    background-color: white;
     padding: 0 0.5rem;
 
     &.focus {

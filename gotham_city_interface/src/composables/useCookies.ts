@@ -8,7 +8,7 @@ interface Cookies {
 export default function useCookies() {
     const cookies = ref<Cookies>({})
 
-    function setCookie(name: string, value: string, days: number) {
+    function set(name: string, value: string, days: number) {
         const date = newNaiveDateTime()
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
         const expires = '; expires=' + date.toUTCString()
@@ -16,7 +16,7 @@ export default function useCookies() {
         cookies.value[name] = value
     }
 
-    function getCookie(name: string) {
+    function get(name: string) {
         const nameEQ = name + '='
         const ca = document.cookie.split(';')
         for (let i = 0; i < ca.length; i++) {
@@ -31,14 +31,14 @@ export default function useCookies() {
         return null
     }
 
-    function revokeCookie(name: string) {
-        setCookie(name, '', -1)
+    function revoke(name: string) {
+        set(name, '', -1)
     }
 
     return {
         cookies,
-        setCookie,
-        getCookie,
-        revoke: revokeCookie
+        set,
+        get,
+        revoke
     }
 }

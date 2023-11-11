@@ -52,7 +52,7 @@ async function login() {
     if (!data.value) useToast.error('Wrong credentials');
     else {
         useToast.success('Logged in');
-        useCookies().setCookie('token', data.value.token, 30);
+        useCookies().set('token', data.value.token, 30);
         document.location.reload();
     }
 }

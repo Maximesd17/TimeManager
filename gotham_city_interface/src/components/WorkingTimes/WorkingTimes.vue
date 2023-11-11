@@ -4,6 +4,7 @@
             v-if="interval"
             v-model:interval="interval"
             :user-id="userId"
+            :isMe="isMe"
             @close="interval = null"
         />
         <Card class="w-full h-full trans relative">
@@ -46,6 +47,7 @@
                 </div>
                 <div class="h-[calc(100%-4rem)] mt-auto">
                     <MonthData
+                        :key="chartReload.toString()"
                         :workingTimes="workingTimes"
                         :start="start"
                         :end="end"
@@ -58,7 +60,7 @@
 
 <script lang="ts" setup>
 import type { WorkingTime } from '@/types';
-import { ref, type PropType, watch } from 'vue';
+import { ref, type PropType, watch, onMounted } from 'vue';
 import { monthNames } from '@/utils/dates';
 
 import Card from '@/components/ui/cards/Rectangle.vue';
@@ -69,6 +71,7 @@ import DateRange from '../ui/input/DateRange.vue';
 import ArrowLeft from '@/components/svg/arrow/Left.vue';
 import ArrowRight from '@/components/svg/arrow/Right.vue';
 import SvgEdit from '@/components/svg/Edit.vue';
+import { useEventBus } from '@/composables/useEventBus';
 
 defineProps({
     workingTimes: {
@@ -86,6 +89,10 @@ defineProps({
     end: {
         type: Date,
         required: true
+    },
+    isMe: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -94,6 +101,8 @@ const emits = defineEmits<{
     (e: 'prevMonth'): void;
     (e: 'nextMonth'): void;
 }>();
+
+const chartReload = ref(false);
 
 const interval = ref(null as { start: Date; end: Date } | null);
 
@@ -105,6 +114,12 @@ watch(
         dateSelectorIsOpen.value = false;
     }
 );
+
+onMounted(() => {
+    useEventBus.on('refresh_charts', () => {
+        chartReload.value = !chartReload.value;
+    });
+});
 </script>
 
 <style lang="scss" scoped>

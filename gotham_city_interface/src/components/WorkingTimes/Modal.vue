@@ -27,6 +27,11 @@
                     </template>
                 </VDropdown>
                 <Button
+                    v-if="
+                        roles.includes('admin') ||
+                        roles.includes('manager') ||
+                        roles.includes('generalManager')
+                    "
                     class="h-8 place-self-end ml-auto"
                     @click="pushChanges"
                     :disabled="wTTable?.hasChanges"
@@ -35,7 +40,14 @@
                 </Button>
             </div>
             <div
-                class="overflow-auto h-[calc(80vh-10.5rem)] max-lg:h-[calc(95vh-13rem)] relative"
+                class="overflow-auto relative"
+                :class="
+                    roles.includes('admin') ||
+                    roles.includes('manager') ||
+                    roles.includes('generalManager')
+                        ? 'h-[calc(80vh-10.5rem)] max-lg:h-[calc(95vh-13rem)]'
+                        : 'h-[calc(80vh-6.5rem)] max-lg:h-[calc(95vh-15rem)]'
+                "
             >
                 <TableVue
                     ref="wTTable"
@@ -47,24 +59,33 @@
                     class="absolute w-full h-full top-0"
                 >
                     <div
-                        class="bg-white bg-opacity-80 shadow-lg shadow-white w-full h-full"
+                        class="bg-white bg-opacity-10 rounded-md w-full h-full"
                     ></div>
                     <div class="absolute-center">
-                        {{
-                            interval.start.toDateString() ===
-                            interval.end.toDateString()
-                                ? `No working times on ${formatDateToHuman(
-                                      interval.start,
-                                      false
-                                  )}`
-                                : `No working times on period
-                        ${formatDateToHuman(interval.start, false)}
-                        -> ${formatDateToHuman(interval.end, false)}`
-                        }}
+                        <p class="mb-[13rem]">
+                            {{
+                                interval.start.toDateString() ===
+                                interval.end.toDateString()
+                                    ? `No working times on ${formatDateToHuman(
+                                          interval.start,
+                                          false
+                                      )}`
+                                    : `No working times on period
+                            ${formatDateToHuman(interval.start, false)}
+                            -> ${formatDateToHuman(interval.end, false)}`
+                            }}
+                        </p>
                     </div>
                 </div>
             </div>
-            <Rectangle class="w-full mt-2 !rounded-2xl h-16">
+            <Rectangle
+                v-if="
+                    roles.includes('admin') ||
+                    roles.includes('manager') ||
+                    roles.includes('generalManager')
+                "
+                class="w-full mt-2 !rounded-2xl h-16"
+            >
                 <form
                     @submit.prevent="createWorkingTime"
                     class="flex px-4 gap-4"
@@ -112,6 +133,8 @@ import DateVue from '../ui/input/Date.vue';
 import TimeVue from '../ui/input/Time.vue';
 import TableVue from './Table.vue';
 import SvgEdit from '@/components/svg/Edit.vue';
+import useCookies from '@/composables/useCookies';
+import { jwtDecode } from 'jwt-decode';
 
 const props = defineProps({
     interval: {
@@ -121,8 +144,16 @@ const props = defineProps({
     userId: {
         type: Number,
         required: true
+    },
+    isMe: {
+        type: Boolean,
+        default: false
     }
 });
+
+const token = useCookies().get('token');
+// @ts-ignore
+const roles = jwtDecode(token)?.roles || [];
 
 const emits = defineEmits<{
     (e: 'close'): void;
@@ -143,7 +174,7 @@ const isOpen = ref(false);
 
 async function fetchWorkingTimes() {
     const { data, error } = await useApiFetch<APIWorkingTime[]>(
-        `/workingtimes/${props.userId}`,
+        `/workingtimes/${props.isMe ? 'me' : props.userId}`,
         {
             params: {
                 start: `${formatDateTime(props.interval.start)}`,
@@ -174,7 +205,7 @@ watch(
 
 async function createWorkingTime() {
     const { data } = await useApiFetch<WorkingTime>(
-        `/workingtimes/${props.userId}`,
+        `/workingtimes/${props.isMe ? 'me' : props.userId}`,
         {
             method: 'POST',
             data: {

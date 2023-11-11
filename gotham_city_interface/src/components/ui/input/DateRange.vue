@@ -277,7 +277,7 @@ useClickOutside(dateSelector, cancel, ['.dateSelectorButton']);
     height: 16rem;
     z-index: 13;
     padding: 0.5rem 0.75rem;
-    background-color: var(--secondary);
+    background-color: var(--background);
     border: 2px solid var(--primary);
     border-radius: 0.375rem;
 
@@ -295,7 +295,7 @@ useClickOutside(dateSelector, cancel, ['.dateSelectorButton']);
         }
 
         &.inRange {
-            background-color: var(--accent);
+            background-color: var(--secondary);
         }
     }
 }

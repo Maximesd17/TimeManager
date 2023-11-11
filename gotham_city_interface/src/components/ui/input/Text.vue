@@ -20,6 +20,7 @@
             type="text"
             :value="modelValue"
             :style="{ maxWidth }"
+            :placeholder="placeholder"
             @focus="isFocus = true"
             @blur="isFocus = false"
             @input="handleInput"
@@ -39,6 +40,10 @@ defineProps({
         required: true
     },
     label: {
+        type: String,
+        default: ''
+    },
+    placeholder: {
         type: String,
         default: ''
     },

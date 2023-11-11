@@ -48,7 +48,7 @@ const routes = [
         component: Page404,
         name: '404',
         meta: {
-            layout: 'default',
+            layout: 'empty',
             title: 'Not found - Time manager',
             description: '404'
         }
