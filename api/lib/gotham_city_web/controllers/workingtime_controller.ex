@@ -34,6 +34,17 @@ defmodule GothamCityWeb.WorkingtimeController do
     render(conn, :show, workingtime: workingtime)
   end
 
+  def me(conn, %{"start" => start_time, "end" => end_time}) do
+    user = Accounts.get_user!(conn.assigns.data.id)
+    {:ok, start_datetime} = NaiveDateTime.from_iso8601(start_time)
+    {:ok, end_datetime} = NaiveDateTime.from_iso8601(end_time)
+
+    IO.inspect("SALUT")
+
+    workingtimes = Accounts.get_workingtime_by_user_and_dates(user, start_datetime, end_datetime)
+    render(conn, :index, workingtimes: workingtimes)
+  end
+
   def update(conn, %{"id" => id, "workingtime" => workingtime_params}) do
     workingtime = Accounts.get_workingtime!(id)
 

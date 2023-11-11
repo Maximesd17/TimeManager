@@ -1,18 +1,36 @@
 <template>
     <div class="modal" @click="close">
-        <div class="modal-content" :style="{ width, height }" @click.stop>
-            <UiButton @click="close" class="button-close" variant="transparent">
-                <img src="../../assets/svg/close.svg" alt="close" />
-            </UiButton>
-            <slot />
+        <div
+            class="modal-content bg-primary p-1 pl-3"
+            :style="{ width, height }"
+            @click.stop
+        >
+            <div
+                class="bg-background h-full w-full rounded-l-lg rounded-r-2xl p-4 overflow-auto flex flex-col"
+            >
+                <UiButton
+                    v-if="layout !== 'desktop'"
+                    @click="close"
+                    class="button-close"
+                    variant="transparent"
+                >
+                    <SvgClose />
+                </UiButton>
+                <slot />
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import UiButton from './input/Button.vue';
+import { onMounted, onUnmounted } from 'vue';
+import { useScreenStore } from '@/store/screen';
+import { storeToRefs } from 'pinia';
 
-const emits = defineEmits(['close']);
+import UiButton from './input/Button.vue';
+import SvgClose from '@/components/svg/Close.vue';
+
+const { layout } = storeToRefs(useScreenStore());
 
 defineProps({
     width: {
@@ -25,40 +43,53 @@ defineProps({
     }
 });
 
+const emits = defineEmits(['close']);
+
 function close() {
     emits('close');
 }
+
+onMounted(() => {
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && document.activeElement?.tagName !== 'INPUT') {
+            close();
+        }
+    });
+});
+
+onUnmounted(() => {
+    document.removeEventListener('keydown', e => {
+        if (e.key === 'Escape' && document.activeElement?.tagName !== 'INPUT') {
+            close();
+        }
+    });
+});
 </script>
 
 <style lang="scss" scoped>
 .modal {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
-    z-index: 1000;
+    z-index: 60;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
 
     .modal-content {
         position: fixed;
         top: 50%;
         left: 50%;
-        padding: 1rem;
         transform: translate(-50%, -50%);
-        background-color: var(--secondary);
-        border-radius: 0.5rem;
-        overflow-y: auto;
+        border-radius: 1rem;
     }
 
     .button-close {
         position: sticky;
-        top: 0.5rem;
-        left: calc(100% - 0.5rem);
-        display: flex;
+        top: 0;
+        right: 0;
+        margin-left: auto;
+
         padding: 0;
-        align-items: center;
-        justify-content: center;
     }
 }
 </style>

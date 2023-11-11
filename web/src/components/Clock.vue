@@ -1,9 +1,9 @@
 <template>
     <div
-        class="absolute rounded-full w-8 h-8 inset-4 shadow-lg cursor-pointer"
+        class="absolute rounded-full w-8 h-8 inset-2 shadow-lg cursor-pointer"
         :class="{
-            'bg-green': clock.status,
-            'bg-red': !clock.status
+            'bg-success': clock.status,
+            'bg-danger': !clock.status
         }"
         v-tooltip="
             clock.status

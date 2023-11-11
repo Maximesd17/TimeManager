@@ -1,14 +1,24 @@
 <template>
     <div class="modal" @click="emits('no')">
         <div class="container" @click.stop :style="{ width, height }">
-            <h3 class="text-center text-xl font-bold h-2/3 flex items-center">
+            <h3 class="text-center text-xl font-bold h-1/2 flex items-end">
                 <slot />
             </h3>
-            <div class="buttons h-1/3">
-                <UiButton @click="emits('yes')" variant="green" class="h-12 w-20">
+            <div class="buttons h-1/2 mt-auto items-end pb-8">
+                <UiButton
+                    @click="emits('yes')"
+                    :variant="variant === 'default' ? 'default' : 'red'"
+                    class="h-12 w-20"
+                >
                     {{ textValidate }}
                 </UiButton>
-                <UiButton @click="emits('no')" variant="red" class="h-12 w-20">
+                <UiButton
+                    @click="emits('no')"
+                    :variant="
+                        variant === 'default' ? 'defaultBorder' : 'redBorder'
+                    "
+                    class="h-12 w-20"
+                >
                     {{ textCancel }}
                 </UiButton>
             </div>
@@ -17,6 +27,7 @@
 </template>
 
 <script lang="ts" setup>
+import { onMounted, onBeforeUnmount, type PropType } from 'vue';
 import UiButton from './Button.vue';
 
 const emits = defineEmits(['no', 'yes']);
@@ -24,7 +35,7 @@ const emits = defineEmits(['no', 'yes']);
 defineProps({
     text: {
         type: String,
-        default: 'Est-tu sur de vouloir faire ca ?'
+        default: 'Are you sure to want this ?'
     },
     textValidate: {
         type: String,
@@ -41,7 +52,28 @@ defineProps({
     height: {
         type: String,
         default: '10rem'
+    },
+
+    variant: {
+        type: String as PropType<'default' | 'danger'>,
+        default: 'default'
     }
+});
+
+onMounted(() => {
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            emits('no');
+        }
+    });
+});
+
+onBeforeUnmount(() => {
+    document.removeEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            emits('no');
+        }
+    });
 });
 </script>
 
@@ -75,8 +107,7 @@ defineProps({
     .buttons {
         display: flex;
         justify-content: center;
-        align-items: flex-start;
-        gap: 2rem;
+        gap: 1rem;
     }
 }
 </style>
