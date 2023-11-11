@@ -59,9 +59,9 @@
                         !deletedWorkingTimes.some(
                             wt => wt.id === workingTime.id
                         ) &&
-                        (roles.includes('admin') ||
+                        (roles.includes('administrator') ||
                             roles.includes('manager') ||
-                            roles.includes('generalManager'))
+                            roles.includes('general_manager'))
                     "
                     :index="index"
                     :start="workingTime.start"

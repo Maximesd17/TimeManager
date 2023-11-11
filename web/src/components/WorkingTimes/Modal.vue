@@ -28,9 +28,9 @@
                 </VDropdown>
                 <Button
                     v-if="
-                        roles.includes('admin') ||
+                        roles.includes('administrator') ||
                         roles.includes('manager') ||
-                        roles.includes('generalManager')
+                        roles.includes('general_manager')
                     "
                     class="h-8 place-self-end ml-auto"
                     @click="pushChanges"
@@ -42,9 +42,9 @@
             <div
                 class="overflow-auto relative"
                 :class="
-                    roles.includes('admin') ||
+                    roles.includes('administrator') ||
                     roles.includes('manager') ||
-                    roles.includes('generalManager')
+                    roles.includes('general_manager')
                         ? 'h-[calc(80vh-10.5rem)] max-lg:h-[calc(95vh-13rem)]'
                         : 'h-[calc(80vh-6.5rem)] max-lg:h-[calc(95vh-15rem)]'
                 "
@@ -80,9 +80,9 @@
             </div>
             <Rectangle
                 v-if="
-                    roles.includes('admin') ||
+                    roles.includes('administrator') ||
                     roles.includes('manager') ||
-                    roles.includes('generalManager')
+                    roles.includes('general_manager')
                 "
                 class="w-full mt-2 !rounded-2xl h-16"
             >

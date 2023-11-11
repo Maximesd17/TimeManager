@@ -12,8 +12,13 @@ defmodule GothamCityWeb.UserController do
     render(conn, :show, user: user)
   end
   def teams(conn, _params) do
-    user = Accounts.list_users_team(conn.assigns.data.teams)
-    render(conn, :index, users: user)
+    if Enum.member?(conn.assigns.data.roles, "general_manager") || Enum.member?(conn.assigns.data.roles, "administrator") do
+      users = Accounts.list_users()
+      render(conn, :index, users: users)
+    else
+      users = Accounts.list_users_team(conn.assigns.data.teams)
+      render(conn, :index, users: users)
+    end
   end
 
   def me(conn, _params) do
@@ -21,6 +26,18 @@ defmodule GothamCityWeb.UserController do
     |> put_status(:ok)
     |> put_resp_content_type("application/json")
     |> json(conn.assigns)
+  end
+
+  def me_update(conn, %{"user" => user_params}) do
+    user = Accounts.get_user!(conn.assigns.data.id)
+    IO.inspect(user_params)
+    modifications = %{
+      "email" => user_params["email"],
+      "username" => user_params["username"]
+    }
+    with {:ok, %User{} = user} <- Accounts.update_user(user, modifications) do
+      render(conn, :show, user: user)
+    end
   end
 
   def login(conn, %{"email" => email, "password" => password}) do

@@ -37,7 +37,7 @@
                 v-if="
                     roles.includes('manager') ||
                     roles.includes('general_manager') ||
-                    roles.includes('admin')
+                    roles.includes('administrator')
                 "
             >
                 <div
@@ -149,8 +149,9 @@ const isOpen = ref(false);
 const currTheme = ref(useCookies().get('theme') || 'automatic');
 
 const token = useCookies().get('token');
+let roles = ref([] as string[]);
 // @ts-ignore
-const roles = jwtDecode(token)?.roles || [];
+if (token) roles.value = jwtDecode(token)?.roles || [];
 
 const search = ref('');
 const filteredUsers = computed(() => {
@@ -192,15 +193,15 @@ function togglePreferredTheme() {
 async function fetchUsers() {
     if (
         !(
-            roles.includes('manager') ||
-            roles.includes('general_manager') ||
-            roles.includes('admin')
+            roles.value.includes('manager') ||
+            roles.value.includes('general_manager') ||
+            roles.value.includes('administrator')
         )
     )
         return [];
-    const { data } = await useApiFetch<APIUser[]>('/users/all');
+    const { data } = await useApiFetch<APIUser[]>('/users/teams');
 
-    return data.value;
+    return data.value || [];
 }
 
 function disconnect() {

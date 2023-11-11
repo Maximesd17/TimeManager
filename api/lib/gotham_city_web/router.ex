@@ -37,6 +37,7 @@ defmodule GothamCityWeb.Router do
       pipe_through([:jwt])
       get("/", UserController, :identifier)
       get("/me", UserController, :me)
+      put("/me", UserController, :me_update)
       get("/teams", UserController, :teams)
       get("/:userID", UserController, :show)
       put("/:userID", UserController, :update)

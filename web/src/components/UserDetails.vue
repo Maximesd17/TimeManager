@@ -66,7 +66,7 @@
                     !isMe &&
                     (roles.includes('manager') ||
                         roles.includes('general_manager') ||
-                        roles.includes('admin'))
+                        roles.includes('administrator'))
                 "
                 class="absolute right-2 top-2 h-8 w-8 !p-1"
                 :class="{
