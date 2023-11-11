@@ -16,7 +16,6 @@ const screenStore = useScreenStore();
 const route = useRoute();
 
 const layout = computed(() => {
-    console.log(route.meta.layout)
     switch (route.meta.layout) {
         case 'default':
             return Default;

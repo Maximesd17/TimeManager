@@ -138,7 +138,6 @@ const screenStore = useScreenStore();
 const { layout } = storeToRefs(screenStore);
 
 const userStore = useUserStore();
-console.log("test")
 const { user } = storeToRefs(userStore);
 if (!user.value) userStore.refresh();
 
@@ -200,9 +199,9 @@ async function fetchUsers() {
         )
     )
         return [];
-    const { data } = await useApiFetch<APIUser[]>('/users/all');
+    const { data } = await useApiFetch<APIUser[]>('/users/teams');
 
-    return data.value;
+    return data.value || [];
 }
 
 function disconnect() {
