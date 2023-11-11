@@ -50,7 +50,7 @@
     </tr>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { useScreenStore } from '@/store/screen';
 import { storeToRefs } from 'pinia';
 

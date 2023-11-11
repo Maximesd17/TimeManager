@@ -21,6 +21,14 @@ defmodule GothamCity.Accounts do
     Repo.all(User)
   end
 
+  def list_users_team(teams) do
+    users =
+      from u in User,
+           where: fragment("? && teams", ^teams),
+           select: u
+    Repo.all(users)
+  end
+
   @doc """
   Gets a single user.
 

@@ -84,6 +84,19 @@
                 </div>
             </div>
 
+            <!-- TODO: Add file link -->
+            <a
+                v-if="layout !== 'desktop'"
+                class="item cursor-pointer opacity-50 hover:opacity-100"
+                href="https://www.01net.com/telecharger/redirect/358169/"
+                download="time_manager.apk"
+            >
+                <SvgPhone class="w-8 h-8" />
+                <div class="flex-center flex-col w-full">
+                    <p class="text-center">Download mobile app</p>
+                </div>
+            </a>
+
             <div
                 class="item cursor-pointer opacity-50 hover:opacity-100"
                 @click="disconnect"
@@ -100,6 +113,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
 import { useUserStore } from '@/store/user';
+import { useScreenStore } from '@/store/screen';
 import { storeToRefs } from 'pinia';
 import { useRoute } from 'vue-router';
 import { useEventBus } from '@/composables/useEventBus';
@@ -118,6 +132,10 @@ import SvgDisconnect from '@/components/svg/Disconnect.vue';
 import SvgAdmin from '@/components/svg/Admin.vue';
 import SvgColorTheme from '@/components/svg/ColorTheme.vue';
 import SvgArrowDown from '@/components/svg/arrow/Bottom.vue';
+import SvgPhone from '@/components/svg/Phone.vue';
+
+const screenStore = useScreenStore();
+const { layout } = storeToRefs(screenStore);
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
