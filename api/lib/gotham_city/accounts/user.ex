@@ -7,6 +7,7 @@ defmodule GothamCity.Accounts.User do
     field(:email, :string)
     field(:password, :string)
     field(:roles, {:array, :string})
+    field(:teams, {:array, :string})
     field(:token, :string)
 
     timestamps(type: :utc_datetime)
@@ -15,7 +16,7 @@ defmodule GothamCity.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:username, :email, :password, :roles, :token])
+    |> cast(attrs, [:username, :email, :password, :roles, :teams, :token])
     |> validate_required([:username, :email, :password])
     |> hash_password()
   end
