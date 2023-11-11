@@ -23,6 +23,14 @@ defmodule GothamCityWeb.UserController do
     |> json(conn.assigns)
   end
 
+  def me_update(conn, %{"user" => user_params}) do
+    user = Accounts.get_user!(conn.assigns.data.id)
+
+    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+      render(conn, :show, user: user)
+    end
+  end
+
   def login(conn, %{"email" => email, "password" => password}) do
     user = Accounts.get_user_by_email(email)
 
