@@ -17,7 +17,7 @@ services:
   api:
     build:
       # a changer une fois merged (./api)
-      context: ./gotham_city_app
+      context: api
     environment:
         PGUSER: ${PG_USER}
         PGPASSWORD: ${PG_PASSWORD}
@@ -31,7 +31,7 @@ services:
   web:
     build:
       # a changer une fois merged (./web)
-      context: ./gotham_city_interface
+      context: web
     ports:
       - '8080:8080'
 volumes:
