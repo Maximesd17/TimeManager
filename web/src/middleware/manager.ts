@@ -14,9 +14,11 @@ export default async function manager({
     const roles = jwtDecode(token).roles || [];
 
     if (
-        !roles.includes('manager') ||
-        roles.includes('general_manager') ||
-        roles.includes('administrator')
+        !(
+            roles.includes('manager') ||
+            roles.includes('general_manager') ||
+            roles.includes('administrator')
+        )
     ) {
         return next({ path: `/404` });
     }

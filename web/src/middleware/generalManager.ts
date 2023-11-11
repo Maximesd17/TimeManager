@@ -13,7 +13,7 @@ export default async function manager({
     //@ts-ignore
     const roles = jwtDecode(token).roles || [];
 
-    if (roles.includes('general_manager') || roles.includes('administrator')) {
+    if (!(roles.includes('general_manager') || roles.includes('administrator'))) {
         return next({ path: `/404` });
     }
 
