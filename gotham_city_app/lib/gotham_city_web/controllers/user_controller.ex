@@ -42,9 +42,9 @@ defmodule GothamCityWeb.UserController do
           true ->
             case Token.verify_and_validate(token, signer) do
               {:ok, claims} ->
-                user_role_max = role_maximal(user.roles)
-                IO.inspect(user_role_max)
-                IO.inspect(has_admin_role?(user.id))
+#                user_role_max = role_maximal(user.roles)
+#                IO.inspect(user_role_max)
+#                IO.inspect(has_admin_role?(user.id))
                 conn
                 |> put_status(:ok)
                 |> put_resp_content_type("application/json")
@@ -143,7 +143,7 @@ defmodule GothamCityWeb.UserController do
     end
   end
 
-  def has_admin_role?(id) do
+  def has_admin_max_role?(id) do
     IO.inspect(Accounts.get_user!(id))
     case Accounts.get_user!(id) do
       %User{roles: roles} ->
