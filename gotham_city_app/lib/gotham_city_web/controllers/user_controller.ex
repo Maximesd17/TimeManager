@@ -11,6 +11,10 @@ defmodule GothamCityWeb.UserController do
     user = Accounts.get_user_by_username_and_email(username, email)
     render(conn, :show, user: user)
   end
+  def teams(conn, _params) do
+    user = Accounts.list_users_team(conn.assigns.data.teams)
+    render(conn, :index, users: user)
+  end
 
   def me(conn, _params) do
     conn

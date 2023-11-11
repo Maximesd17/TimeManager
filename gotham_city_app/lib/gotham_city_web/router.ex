@@ -34,9 +34,10 @@ defmodule GothamCityWeb.Router do
 
     #secured users route
     scope "/users" do
-      pipe_through([:jwt, :permissions])
+      pipe_through([:jwt])
       get("/", UserController, :identifier)
       get("/me", UserController, :me)
+      get("/teams", UserController, :teams)
       get("/:userID", UserController, :show)
       put("/:userID", UserController, :update)
       delete("/:userID", UserController, :delete)
