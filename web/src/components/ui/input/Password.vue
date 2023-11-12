@@ -14,9 +14,13 @@
         <label v-if="label.length" style="{ maxWidth }" class="label">
             {{ label }}
         </label>
-        <div class="flex w-full input" :class="{ [variant]: true }">
+        <div
+            class="flex w-full input"
+            :class="{ [variant]: true }"
+            :style="{ maxWidth }"
+        >
             <input
-                class="w-full bg-transparent text-xl border-none outline-none"
+                class="w-full flex-1 bg-transparent text-xl border-none outline-none"
                 :class="{ [textAlign]: true }"
                 :type="isVisible ? 'text' : 'password'"
                 :value="modelValue"
@@ -34,11 +38,13 @@
                     v-if="isVisible"
                     class="h-full"
                     src="@/assets/svg/eye.svg"
+                    :color="isFocus ? 'var(--accent)' : 'var(--primary)'"
                 />
                 <SvgEyeSlash
                     v-else
                     class="h-full"
                     src="@/assets/svg/eye-slash.svg"
+                    :color="isFocus ? 'var(--accent)' : 'var(--primary)'"
                 />
             </div>
         </div>

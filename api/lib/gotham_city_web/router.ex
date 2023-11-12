@@ -15,11 +15,11 @@ defmodule GothamCityWeb.Router do
   end
 
   pipeline :jwt do
-    plug GothamCityWeb.JwtAuthPlug
+    plug(GothamCityWeb.JwtAuthPlug)
   end
 
   pipeline :permissions do
-    plug GothamCityWeb.RoutePermissionsPlug
+    plug(GothamCityWeb.RoutePermissionsPlug)
   end
 
   scope "/api", GothamCityWeb do
@@ -27,38 +27,42 @@ defmodule GothamCityWeb.Router do
 
     scope "/users" do
       post("/login", UserController, :login)
-      post("/", UserController, :create)
     end
 
-    #secured users route
+    # secured users route
     scope "/users" do
       pipe_through([:jwt])
       get("/", UserController, :identifier)
       get("/me", UserController, :me)
-      put("/me", UserController, :me_update)
-      get("/teams", UserController, :teams)
       get("/:userID", UserController, :show)
+      get("/teams", UserController, :teams)
+      post("/", UserController, :create)
+
+      put("/me", UserController, :me_update)
       put("/:userID", UserController, :update)
+
       delete("/:userID", UserController, :delete)
     end
-
-
 
     scope "/workingtimes" do
       pipe_through(:jwt)
       get("/me", WorkingtimeController, :me)
       get("/:userID", WorkingtimeController, :index)
       get("/:userID/:id", WorkingtimeController, :show)
+
       post("/:userID", WorkingtimeController, :create)
+
       put("/:id", WorkingtimeController, :update)
+
       delete("/:id", WorkingtimeController, :delete)
     end
 
     scope "/clocks" do
       pipe_through(:jwt)
       get("/me", ClockController, :me)
-      post("/me", ClockController, :update_me)
       get("/:userID", ClockController, :show)
+
+      post("/me", ClockController, :update_me)
       post("/:userID", ClockController, :update)
     end
   end
