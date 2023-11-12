@@ -103,7 +103,7 @@
                 </div>
             </div>
 
-            <!-- TODO: Add file link -->
+            <!-- TODO: Add file link
             <a
                 v-if="layout !== 'desktop'"
                 class="item cursor-pointer opacity-50 hover:opacity-100"
@@ -114,7 +114,7 @@
                 <div class="flex-center flex-col w-full">
                     <p class="text-center">Download mobile app</p>
                 </div>
-            </a>
+            </a> -->
 
             <div
                 class="item cursor-pointer opacity-50 hover:opacity-100"
