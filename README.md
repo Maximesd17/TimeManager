@@ -1,4 +1,9 @@
 # Time Manager
-Branch of Maxime Silverio Dias
 
-Check my [notes](./notes.md):
+## Project members
+
+- Valentin Caure
+- Maxime Silverio Dias
+- Stevens Gonzalez Arango
+- Minh Duc Bui
+- Elie Renneson
