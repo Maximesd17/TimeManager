@@ -26,10 +26,8 @@ defmodule GothamCityWeb.Router do
     pipe_through(:api)
 
     scope "/users" do
+      post("/login", UserController, :login)
       post("/", UserController, :create)
-      scope "/login" do
-        post("/", UserController, :login)
-      end
     end
 
     #secured users route
