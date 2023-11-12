@@ -129,10 +129,35 @@ defmodule GothamCityWeb.UserController do
   end
 
   def update(conn, %{"userID" => id, "user" => user_params}) do
-    user = Accounts.get_user!(id)
-
-    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
-      render(conn, :show, user: user)
+    if !Enum.empty?(conn.assigns.data.roles) do
+      user = Accounts.get_user!(id)
+      highest_role = role_maximal(conn.assigns.data.roles)
+      target_highest_role = role_maximal(user.roles)
+      if highest_role == "administrator" do
+        with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+          render(conn, :show, user: user)
+          end
+        end
+      if highest_role == "general_manager" do
+        if target_highest_role != "general_manager" && target_highest_role != "administrator"do
+          with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+            render(conn, :show, user: user)
+            end
+        else
+            send_resp(conn, :forbidden, "Forbidden, permission denied")
+          end
+        end
+      if highest_role == "manager" do
+        if target_highest_role == "employee"do
+          with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+            render(conn, :show, user: user)
+            end
+        else
+          send_resp(conn, :forbidden, "Forbidden, permission denied")
+        end
+      end
+    else
+      send_resp(conn, :forbidden, "Forbidden, permission denied")
     end
   end
 
