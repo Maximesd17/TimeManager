@@ -13,7 +13,7 @@
             </h1>
             <InputText
                 v-model="username"
-                label="Username"
+                label="Email"
                 maxWidth="20rem"
                 class="w-[20rem]"
             />

@@ -1,13 +1,13 @@
 <template>
     <div class="modal" @click="emits('no')">
         <div class="container" @click.stop :style="{ width, height }">
-            <h3 class="text-center text-xl font-bold h-1/2 flex items-end">
+            <h5 class="text-center font-bold h-1/2 flex items-end">
                 <slot />
-            </h3>
+            </h5>
             <div class="buttons h-1/2 mt-auto items-end pb-8">
                 <UiButton
                     @click="emits('yes')"
-                    :variant="variant === 'default' ? 'default' : 'red'"
+                    :variant="variant === 'default' ? 'default' : 'danger'"
                     class="h-12 w-20"
                 >
                     {{ textValidate }}
@@ -15,7 +15,7 @@
                 <UiButton
                     @click="emits('no')"
                     :variant="
-                        variant === 'default' ? 'defaultBorder' : 'redBorder'
+                        variant === 'default' ? 'defaultBorder' : 'dangerBorder'
                     "
                     class="h-12 w-20"
                 >
@@ -92,11 +92,10 @@ onBeforeUnmount(() => {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background-color: var(--primary);
+        background-color: var(--background);
         border-radius: 0.5rem;
         overflow-y: auto;
         z-index: 1001;
-        color: white;
 
         display: flex;
         flex-direction: column;

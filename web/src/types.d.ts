@@ -17,6 +17,7 @@ export interface APIUser {
     username: string;
     email: string;
     roles: string[];
+    teams: string[];
 }
 
 
@@ -39,5 +40,6 @@ export interface User {
     username: string;
     email: string;
     roles: string[];
+    teams: string[];
 }
 

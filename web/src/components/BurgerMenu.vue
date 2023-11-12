@@ -1,5 +1,10 @@
 <template>
     <div class="z-[50] absolute left-0 top-0" ref="menu">
+        <CreateUserModal
+            v-if="isModalOpen"
+            @close="isModalOpen = false"
+            v-model:users="users"
+        />
         <div class="burger-toggle overflow-hidden" @click="isOpen = !isOpen">
             <SvgDrag class="svg" :rotate="isOpen" />
         </div>
@@ -75,6 +80,20 @@
             </div>
 
             <div
+                v-if="
+                    roles.includes('general_manager') ||
+                    roles.includes('administrator')
+                "
+                class="item cursor-pointer opacity-50 hover:opacity-100"
+                @click="isModalOpen = true"
+            >
+                <SvgAdd class="w-8 h-8" />
+                <div class="flex-center flex-col w-full">
+                    <p class="text-center">Add an employee</p>
+                </div>
+            </div>
+
+            <div
                 class="item cursor-pointer opacity-50 hover:opacity-100"
                 @click="togglePreferredTheme"
             >
@@ -84,7 +103,7 @@
                 </div>
             </div>
 
-            <!-- TODO: Add file link -->
+            <!-- TODO: Add file link
             <a
                 v-if="layout !== 'desktop'"
                 class="item cursor-pointer opacity-50 hover:opacity-100"
@@ -95,7 +114,7 @@
                 <div class="flex-center flex-col w-full">
                     <p class="text-center">Download mobile app</p>
                 </div>
-            </a>
+            </a> -->
 
             <div
                 class="item cursor-pointer opacity-50 hover:opacity-100"
@@ -133,6 +152,8 @@ import SvgAdmin from '@/components/svg/Admin.vue';
 import SvgColorTheme from '@/components/svg/ColorTheme.vue';
 import SvgArrowDown from '@/components/svg/arrow/Bottom.vue';
 import SvgPhone from '@/components/svg/Phone.vue';
+import SvgAdd from '@/components/svg/Add.vue';
+import CreateUserModal from './CreateUserModal.vue';
 
 const screenStore = useScreenStore();
 const { layout } = storeToRefs(screenStore);
@@ -146,6 +167,7 @@ const route = useRoute();
 const menu = ref();
 
 const isOpen = ref(false);
+const isModalOpen = ref(false);
 const currTheme = ref(useCookies().get('theme') || 'automatic');
 
 const token = useCookies().get('token');
@@ -250,6 +272,7 @@ useDetectOutsideClick(menu, () => {
 .user-list {
     @apply flex flex-col gap-2 max-h-[15rem] overflow-auto;
 }
+
 </style>
 
 <style lang="scss"></style>

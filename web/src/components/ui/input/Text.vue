@@ -15,7 +15,7 @@
             {{ label }}
         </label>
         <input
-            class="input text-xl"
+            class="input text-xl h-[28px] py-auto"
             :class="{ [textAlign]: true, [variant]: true }"
             type="text"
             :value="modelValue"
