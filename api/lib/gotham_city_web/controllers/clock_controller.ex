@@ -9,14 +9,22 @@ defmodule GothamCityWeb.ClockController do
   def show(conn, %{"userID" => user_id}) do
     user = Accounts.get_user!(user_id)
     clock = Accounts.get_clock_by_user(user)
-    render(conn, :show, clock: clock)
+    if clock do
+      render(conn, :show, clock: clock)
+    else
+      send_resp(conn, :not_found, "Clock not found")
+    end
   end
 
   def me(conn, _params) do
     user_id = conn.assigns.data.id
     user = Accounts.get_user!(user_id)
     clock = Accounts.get_clock_by_user(user)
+    if clock do
     render(conn, :show, clock: clock)
+    else
+      send_resp(conn, :not_found, "Clock not found")
+    end
   end
 
   def update_me(conn, _params) do
