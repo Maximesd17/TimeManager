@@ -46,7 +46,7 @@ switch (preferredTheme) {
 
 axios.defaults.baseURL = import.meta.env.BACKEND_URL
     ? import.meta.env.BACKEND_URL + '/api'
-    : 'http://localhost:4000/api';
+    : 'http://0.0.0.0:4000/api';
 
 app.use(Toast);
 
