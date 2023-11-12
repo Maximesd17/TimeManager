@@ -45,7 +45,7 @@ defineProps({
     },
     placeholder: {
         type: String,
-        default: '14rem'
+        default: ''
     },
     textAlign: {
         type: String as PropType<'left' | 'center' | 'right'>,
