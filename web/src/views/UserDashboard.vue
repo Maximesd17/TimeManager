@@ -10,10 +10,7 @@
     </Confirm>
 
     <main class="relative h-[calc(100vh-4.5rem)] w-full max-sm:overflow-auto">
-        <div
-            class="flex gap-4 p-4 h-full max-sm:flex-wrap"
-            v-if="user"
-        >
+        <div class="flex gap-4 p-4 h-full max-sm:flex-wrap" v-if="user">
             <UserDetailsComponent
                 v-if="clock"
                 class="w-full sm:w-1/3 relative"
@@ -72,6 +69,7 @@ import Confirm from '@/components/ui/input/Confirm.vue';
 import WorkingTimeComponent from '@/components/workingTimes/WorkingTimes.vue';
 import UserDetailsComponent from '@/components/UserDetails.vue';
 import { useRoute } from 'vue-router';
+import router from '@/router';
 
 const user = ref(null as User | null);
 const workingTimes = ref(null as WorkingTime[] | null);
@@ -144,21 +142,7 @@ async function getUserById(id: number) {
 
     if (error.value) {
         useToast.error(`Error during user fetching`);
-    } else {
-        user.value = data.value;
-    }
-}
-
-async function fetchUser(fUser: { username: string; email: string }) {
-    const { data, error } = await useApiFetch<APIUser>('/users', {
-        params: {
-            username: fUser.username,
-            email: fUser.email
-        }
-    });
-
-    if (error.value) {
-        tmpUserCreation.value = fUser;
+        router.push('/404');
     } else {
         user.value = data.value;
     }

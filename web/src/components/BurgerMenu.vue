@@ -272,6 +272,7 @@ useDetectOutsideClick(menu, () => {
 .user-list {
     @apply flex flex-col gap-2 max-h-[15rem] overflow-auto;
 }
+
 </style>
 
 <style lang="scss"></style>

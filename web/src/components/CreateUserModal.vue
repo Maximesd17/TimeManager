@@ -136,7 +136,7 @@ async function createUser() {
         if (!newUserTeam.value) teams = [];
     }
 
-    const { data } = await useApiFetch<{ user: User }>('/users', {
+    const { data } = await useApiFetch<User>('/users', {
         method: 'POST',
         data: {
             user: {
@@ -150,7 +150,10 @@ async function createUser() {
     });
 
     if (data.value) {
-        emits('update:users', [...props.users, data.value.user]);
+        emits('update:users', [
+            ...props.users,
+            data.value
+        ]);
         useToast.success('User created successfully');
         newUserUsername.value = '';
         newUserMail.value = '';

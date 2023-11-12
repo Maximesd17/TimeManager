@@ -34,13 +34,11 @@ defmodule GothamCityWeb.Router do
       pipe_through([:jwt])
       get("/", UserController, :identifier)
       get("/me", UserController, :me)
-      get("/:userID", UserController, :show)
-      get("/teams", UserController, :teams)
       post("/", UserController, :create)
-
+      get("/teams", UserController, :teams)
       put("/me", UserController, :me_update)
+      get("/:userID", UserController, :show)
       put("/:userID", UserController, :update)
-
       delete("/:userID", UserController, :delete)
     end
 
@@ -48,21 +46,17 @@ defmodule GothamCityWeb.Router do
       pipe_through(:jwt)
       get("/me", WorkingtimeController, :me)
       get("/:userID", WorkingtimeController, :index)
-      get("/:userID/:id", WorkingtimeController, :show)
-
       post("/:userID", WorkingtimeController, :create)
-
       put("/:id", WorkingtimeController, :update)
-
       delete("/:id", WorkingtimeController, :delete)
+      get("/:userID/:id", WorkingtimeController, :show)
     end
 
     scope "/clocks" do
       pipe_through(:jwt)
       get("/me", ClockController, :me)
-      get("/:userID", ClockController, :show)
-
       post("/me", ClockController, :update_me)
+      get("/:userID", ClockController, :show)
       post("/:userID", ClockController, :update)
     end
   end
